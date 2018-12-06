@@ -9,7 +9,10 @@
             "email": "master@evalor.cn"
         }
     ],
-    "require": {},
+    "require": {
+        "easyswoole/curl": "^1.0",
+        "easyswoole/spl": "^1.0"
+    },
     "autoload": {
         "psr-4": {
             "EasySwoole\\EasyPay\\": "src/"
