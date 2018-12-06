@@ -1,0 +1,18 @@
+{
+    "name": "easyswoole/easy-pay",
+    "description": "use online payment easily just like echo \"hello world\";",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "evalor",
+            "email": "master@evalor.cn"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "EasySwoole\\EasyPay\\": "src/"
+        }
+    }
+}
