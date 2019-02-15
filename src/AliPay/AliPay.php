@@ -11,6 +11,7 @@ namespace EasySwoole\Pay\AliPay;
 
 use EasySwoole\Pay\AliPay\RequestBean\App;
 use EasySwoole\Pay\AliPay\RequestBean\MiniProgram;
+use EasySwoole\Pay\AliPay\RequestBean\NotifyRequest;
 use EasySwoole\Pay\AliPay\RequestBean\Pos;
 use EasySwoole\Pay\AliPay\RequestBean\Scan;
 use EasySwoole\Pay\AliPay\RequestBean\Transfer;
@@ -83,6 +84,11 @@ class AliPay
      * 小程序支付
      */
     public function miniProgram(MiniProgram $miniProgram):MiniProgramResponse
+    {
+
+    }
+
+    public function verify(NotifyRequest $request):bool
     {
 
     }
