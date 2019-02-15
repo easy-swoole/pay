@@ -9,6 +9,15 @@
 namespace EasySwoole\Pay\AliPay;
 
 
+use EasySwoole\Pay\AliPay\RequestBean\App;
+use EasySwoole\Pay\AliPay\RequestBean\MiniProgram;
+use EasySwoole\Pay\AliPay\RequestBean\Pos;
+use EasySwoole\Pay\AliPay\RequestBean\Scan;
+use EasySwoole\Pay\AliPay\RequestBean\Transfer;
+use EasySwoole\Pay\AliPay\RequestBean\Wap;
+use EasySwoole\Pay\AliPay\RequestBean\Web;
+use EasySwoole\Pay\AliPay\ResponseBean\Web as WebResponse;
+
 class AliPay
 {
     private $config;
@@ -21,14 +30,14 @@ class AliPay
     /*
      * 电脑支付
      */
-    public function web()
+    public function web(Web $web):WebResponse
     {
 
     }
     /*
      * 手机网站支付
      */
-    public function wap()
+    public function wap(Wap $wap)
     {
 
     }
@@ -36,14 +45,14 @@ class AliPay
     /*
      * APP 支付
      */
-    public function app()
+    public function app(App $app)
     {
 
     }
     /*
      * 刷卡支付
      */
-    public function pos()
+    public function pos(Pos $pos)
     {
 
     }
@@ -51,7 +60,7 @@ class AliPay
     /*
      * 扫码支付
      */
-    public function scan()
+    public function scan(Scan $scan)
     {
 
     }
@@ -59,7 +68,7 @@ class AliPay
     /*
      * 帐户转账
      */
-    public function transfer()
+    public function transfer(Transfer $transfer)
     {
 
     }
@@ -67,7 +76,7 @@ class AliPay
     /*
      * 小程序支付
      */
-    public function miniProgram()
+    public function miniProgram(MiniProgram $miniProgram)
     {
 
     }
