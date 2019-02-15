@@ -17,6 +17,12 @@ use EasySwoole\Pay\AliPay\RequestBean\Transfer;
 use EasySwoole\Pay\AliPay\RequestBean\Wap;
 use EasySwoole\Pay\AliPay\RequestBean\Web;
 use EasySwoole\Pay\AliPay\ResponseBean\Web as WebResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\Wap as WapResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\App as AppResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\Pos as PosResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\Scan as ScanResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\Transfer as TransferResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\MiniProgram as MiniProgramResponse;
 
 class AliPay
 {
@@ -37,7 +43,7 @@ class AliPay
     /*
      * 手机网站支付
      */
-    public function wap(Wap $wap)
+    public function wap(Wap $wap):WapResponse
     {
 
     }
@@ -45,14 +51,14 @@ class AliPay
     /*
      * APP 支付
      */
-    public function app(App $app)
+    public function app(App $app):AppResponse
     {
 
     }
     /*
      * 刷卡支付
      */
-    public function pos(Pos $pos)
+    public function pos(Pos $pos):PosResponse
     {
 
     }
@@ -60,7 +66,7 @@ class AliPay
     /*
      * 扫码支付
      */
-    public function scan(Scan $scan)
+    public function scan(Scan $scan):ScanResponse
     {
 
     }
@@ -68,7 +74,7 @@ class AliPay
     /*
      * 帐户转账
      */
-    public function transfer(Transfer $transfer)
+    public function transfer(Transfer $transfer):TransferResponse
     {
 
     }
@@ -76,7 +82,7 @@ class AliPay
     /*
      * 小程序支付
      */
-    public function miniProgram(MiniProgram $miniProgram)
+    public function miniProgram(MiniProgram $miniProgram):MiniProgramResponse
     {
 
     }
