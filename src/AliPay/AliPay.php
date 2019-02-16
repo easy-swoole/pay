@@ -92,4 +92,9 @@ class AliPay
     {
 
     }
+
+    private function generateSign(array $data):string
+    {
+
+    }
 }
