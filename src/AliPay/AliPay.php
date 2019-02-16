@@ -46,7 +46,7 @@ class AliPay
 
 	public function web( Web $web ) : WebResponse
 	{
-        $array = $web->toArray( null, $web::FILTER_NOT_NULL ) + $this->getSysParams();
+        $array = $web->toArray(  ) + $this->getSysParams();
         $array['biz_content'] = json_encode($array,JSON_UNESCAPED_UNICODE);
         $array['sign'] = $this->generateSign($array);
         return new WebResponse($array);

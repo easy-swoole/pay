@@ -81,4 +81,9 @@ class Base extends SplBean
 	{
 		$this->timeout_express = $timeout_express;
 	}
+
+    public function toArray(array $columns = null, $filter = null): array
+    {
+        return parent::toArray(null, self::FILTER_NOT_NULL);
+    }
 }
