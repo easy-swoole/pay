@@ -81,20 +81,24 @@ class AliPay
 		return $this->baseUri;
 	}
 
-	/*
+	/**
 	 * 电脑支付
+	 * @param Web $web
+	 * @return string
 	 */
-	public function web( Web $web ) : WebResponse
+	public function web( Web $web ) : string
 	{
-		return new WebResponse( $web->getPayload() );
+		return $web->pay( $this->getBaseUri());
 	}
 
-	/*
+	/**
 	 * 手机网站支付
+	 * @param Wap $wap
+	 * @return string
 	 */
-	public function wap( Wap $wap ) : WapResponse
+	public function wap( Wap $wap ) : string
 	{
-		return new WapResponse( $wap->getPayload() );
+		return $wap->pay( $this->getBaseUri());
 	}
 
 	/**
@@ -127,43 +131,50 @@ class AliPay
 		return new PosResponse( $result );
 	}
 
-	/*
+	/**
 	 * 扫码支付
+	 * @param Scan $scan
+	 * @return ScanResponse
+	 * @throws GatewayException
+	 * @throws InvalidConfigException
+	 * @throws InvalidSignException
 	 */
 	public function scan( Scan $scan ) : ScanResponse
 	{
-		$payload['spbill_create_ip'] = Request::createFromGlobals()->server->get( 'SERVER_ADDR' );
-		$payload['trade_type']       = $this->getTradeType();
-		return $this->preOrder( $payload );
+		$payload = $scan->getPayload();
+		$result  = $this->requestApi( $payload );
+		return new ScanResponse( $result );
 	}
 
-	/*
+	/**
 	 * 帐户转账
+	 * @param Transfer $transfer
+	 * @return TransferResponse
+	 * @throws GatewayException
+	 * @throws InvalidConfigException
+	 * @throws InvalidSignException
 	 */
 	public function transfer( Transfer $transfer ) : TransferResponse
 	{
-		$payload['method']      = $this->getMethod();
-		$payload['biz_content'] = json_encode( array_merge( json_decode( $payload['biz_content'], true ), ['product_code' => $this->getProductCode()] ) );
-		$payload['sign']        = $this->generateSign( $payload );
-
-
-		return $this->requestApi( $payload );
+		$payload = $transfer->getPayload();
+		$result  = $this->requestApi( $payload );
+		return new TransferResponse( $result );
 	}
 
-	/*
+	/**
 	 * 小程序支付
+	 * @param MiniProgram $miniProgram
+	 * @return MiniProgramResponse
+	 * @throws GatewayException
+	 * @throws InvalidArgumentException
+	 * @throws InvalidConfigException
+	 * @throws InvalidSignException
 	 */
 	public function miniProgram( MiniProgram $miniProgram ) : MiniProgramResponse
 	{
-		if( empty( json_decode( $payload['biz_content'], true )['buyer_id'] ) ){
-			throw new \EasySwoole\Pay\Exceptions\InvalidArgumentException( 'buyer_id required' );
-		}
-
-		$payload['method'] = $this->getMethod();
-		$payload['sign']   = $this->generateSign( $payload );
-
-
-		return $this->requestApi( $payload );
+		$payload = $miniProgram->getPayload();
+		$result  = $this->requestApi( $payload );
+		return new MiniProgramResponse( $result );
 	}
 
 	public function verify( NotifyRequest $request ) : bool

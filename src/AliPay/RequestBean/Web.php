@@ -14,7 +14,12 @@ class Web extends Base
 	protected $product_code = 'FAST_INSTANT_TRADE_PAY';
 	protected $method = 'alipay.trade.app.pay';
 
-	protected function buildPayHtml( $endpoint, $payload ) : Response
+	/**
+	 * @param $endpoint
+	 * @param $payload
+	 * @return string
+	 */
+	public function buildPayHtml( $endpoint, $payload ) : string
 	{
 		$sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='".$endpoint."' method='POST'>";
 		foreach( $payload as $key => $val ){
@@ -24,7 +29,7 @@ class Web extends Base
 		$sHtml .= "<input type='submit' value='ok' style='display:none;'></form>";
 		$sHtml .= "<script>document.forms['alipaysubmit'].submit();</script>";
 
-		return Response::create( $sHtml );
+		return $sHtml;
 	}
 
 	/**
@@ -38,5 +43,11 @@ class Web extends Base
 		$payload['biz_content'] = json_encode( array_merge( json_decode( $payload['biz_content'], true ), ['product_code' => $this->getProductCode()] ) );
 		$payload['sign']        = $this->generateSign( $payload );
 		return $payload;
+	}
+
+	public function pay( string $endpoint ) : string
+	{
+		$payload = $this->getPayload();
+		return $this->buildPayHtml( $endpoint, $payload );
 	}
 }

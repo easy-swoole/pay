@@ -9,6 +9,7 @@
 namespace EasySwoole\Pay\AliPay\RequestBean;
 
 use \EasySwoole\Pay\Exceptions\InvalidArgumentException;
+use EasySwoole\Pay\AliPay\ResponseBean\MiniProgram as MiniProgramResponse;
 
 class MiniProgram extends Base
 {
@@ -28,4 +29,5 @@ class MiniProgram extends Base
 		$payload['sign']   = $this->generateSign( $payload );
 		return $payload;
 	}
+
 }
