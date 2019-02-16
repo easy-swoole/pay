@@ -22,4 +22,12 @@ class Web extends Base
     {
         return $this->body;
     }
+
+    /**
+     * @param mixed $body
+     */
+    public function setBody($body): void
+    {
+        $this->body = $body;
+    }
 }
