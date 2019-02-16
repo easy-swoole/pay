@@ -17,6 +17,7 @@ use EasySwoole\Pay\AliPay\RequestBean\Scan;
 use EasySwoole\Pay\AliPay\RequestBean\Transfer;
 use EasySwoole\Pay\AliPay\RequestBean\Wap;
 use EasySwoole\Pay\AliPay\RequestBean\Web;
+use EasySwoole\Pay\AliPay\ResponseBean\Base;
 use EasySwoole\Pay\AliPay\ResponseBean\Web as WebResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Wap as WapResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\App as AppResponse;
@@ -36,208 +37,58 @@ use EasySwoole\Spl\SplString;
 
 class AliPay
 {
-	/**
-	 * Const mode_normal.
-	 */
-	const MODE_NORMAL = 'normal';
-
-	/**
-	 * Const mode_dev.
-	 */
-	const MODE_DEV = 'dev';
-
-	/**
-	 * Const url.
-	 */
-	const URL
-		= [
-			self::MODE_NORMAL => 'https://openapi.alipay.com/gateway.do',
-			self::MODE_DEV    => 'https://openapi.alipaydev.com/gateway.do',
-		];
-
-	/**
-	 * Alipay gateway.
-	 *
-	 * @var string
-	 */
-	protected $baseUri;
-
-
 	private $config;
 
 	function __construct( Config $config )
 	{
-		$this->baseUri = Alipay::URL[isset( $config['mode'] ) ?? self::MODE_NORMAL];
 		$this->config  = $config;
 	}
 
-	/**
-	 * Get Base Uri.
-	 *
-	 * @return string
-	 */
-	public function getBaseUri()
+	public function web( Web $web ) : WebResponse
 	{
-		return $this->baseUri;
+        $array = $web->toArray( null, $web::FILTER_NOT_NULL ) + $this->getSysParams();
+        $array['biz_content'] = json_encode($array,JSON_UNESCAPED_UNICODE);
+        $array['sign'] = $this->generateSign($array);
+        return new WebResponse($array);
 	}
 
-	/**
-	 * 电脑支付
-	 * @param Web $web
-	 * @return string
-	 */
-	public function web( Web $web ) : string
+
+	public function wap( Wap $wap ) : WapResponse
 	{
-		return $web->pay( $this->getBaseUri());
+
 	}
 
-	/**
-	 * 手机网站支付
-	 * @param Wap $wap
-	 * @return string
-	 */
-	public function wap( Wap $wap ) : string
-	{
-		return $wap->pay( $this->getBaseUri());
-	}
-
-	/**
-	 * APP 支付
-	 * @param App $app
-	 * @return AppResponse
-	 * @throws GatewayException
-	 * @throws InvalidConfigException
-	 * @throws InvalidSignException
-	 */
 	public function app( App $app ) : AppResponse
 	{
-		$payload = $app->getPayload();
-		$result  = $this->requestApi( $payload );
-		return new AppResponse( $result );
+
 	}
 
-	/**
-	 * 刷卡支付
-	 * @param Pos $pos
-	 * @return PosResponse
-	 * @throws GatewayException
-	 * @throws InvalidConfigException
-	 * @throws InvalidSignException
-	 */
+
 	public function pos( Pos $pos ) : PosResponse
 	{
-		$payload = $pos->getPayload();
-		$result  = $this->requestApi( $payload );
-		return new PosResponse( $result );
+
 	}
 
-	/**
-	 * 扫码支付
-	 * @param Scan $scan
-	 * @return ScanResponse
-	 * @throws GatewayException
-	 * @throws InvalidConfigException
-	 * @throws InvalidSignException
-	 */
+
 	public function scan( Scan $scan ) : ScanResponse
 	{
-		$payload = $scan->getPayload();
-		$result  = $this->requestApi( $payload );
-		return new ScanResponse( $result );
+
 	}
 
-	/**
-	 * 帐户转账
-	 * @param Transfer $transfer
-	 * @return TransferResponse
-	 * @throws GatewayException
-	 * @throws InvalidConfigException
-	 * @throws InvalidSignException
-	 */
 	public function transfer( Transfer $transfer ) : TransferResponse
 	{
-		$payload = $transfer->getPayload();
-		$result  = $this->requestApi( $payload );
-		return new TransferResponse( $result );
+
 	}
 
-	/**
-	 * 小程序支付
-	 * @param MiniProgram $miniProgram
-	 * @return MiniProgramResponse
-	 * @throws GatewayException
-	 * @throws InvalidArgumentException
-	 * @throws InvalidConfigException
-	 * @throws InvalidSignException
-	 */
+
 	public function miniProgram( MiniProgram $miniProgram ) : MiniProgramResponse
 	{
-		$payload = $miniProgram->getPayload();
-		$result  = $this->requestApi( $payload );
-		return new MiniProgramResponse( $result );
+
 	}
 
 	public function verify( NotifyRequest $request ) : bool
 	{
 
-	}
-
-
-	/**
-	 * @param $data
-	 * @return array
-	 * @throws GatewayException
-	 * @throws InvalidConfigException
-	 * @throws InvalidSignException
-	 */
-	public function requestApi( $data ) : array
-	{
-		$result = mb_convert_encoding( NewWork::post( $this->getBaseUri(), $data ), 'utf-8', 'gb2312' );
-		$result = json_decode( $result, true );
-
-		$method = str_replace( '.', '_', $data['method'] ).'_response';
-
-		if( !isset( $result['sign'] ) || $result[$method]['code'] != '10000' ){
-			throw new GatewayException( 'Get Alipay API Error:'.$result[$method]['msg'].($result[$method]['sub_code'] ?? ''), $result, $result[$method]['code'] );
-		}
-
-		if( $this->verifySign( $result[$method], true, $result['sign'] ) ){
-			return $result[$method];
-		}
-		throw new InvalidSignException( 'Alipay Sign Verify FAILED', $result );
-	}
-
-	/**
-	 * Verify sign.
-	 *
-	 *
-	 * @param array       $data
-	 * @param bool        $sync
-	 * @param string|null $sign
-	 *
-	 * @throws InvalidConfigException
-	 *
-	 * @return bool
-	 */
-	public function verifySign( array $data, $sync = false, $sign = null ) : bool
-	{
-		$publicKey = $this->config->ali_public_key;
-
-		if( is_null( $publicKey ) ){
-			throw new InvalidConfigException( 'Missing Alipay Config -- [ali_public_key]' );
-		}
-		$string = new SplString( $publicKey );
-		if( $string->endsWith( '.pem' ) ){
-			$publicKey = openssl_pkey_get_public( $publicKey );
-		} else{
-			$publicKey = "-----BEGIN PUBLIC KEY-----\n".wordwrap( $publicKey, 64, "\n", true )."\n-----END PUBLIC KEY-----";
-		}
-
-		$sign = $sign ?? $data['sign'];
-
-		$toVerify = $sync ? mb_convert_encoding( json_encode( $data, JSON_UNESCAPED_UNICODE ), 'gb2312', 'utf-8' ) : self::getSignContent( $data, true );
-
-		return openssl_verify( $toVerify, base64_decode( $sign ), $publicKey, OPENSSL_ALGO_SHA256 ) === 1;
 	}
 
 	/**
@@ -249,12 +100,9 @@ class AliPay
 	 *
 	 * @return string
 	 */
-	public function getSignContent( array $data, $verify = false ) : string
+	private function getSignContent( array $data, $verify = false ) : string
 	{
-		$data = self::encoding( $data, $data['charset'] ?? 'gb2312', 'utf-8' );
-
 		ksort( $data );
-
 		$stringToBeSigned = '';
 		foreach( $data as $k => $v ){
 			if( $verify && $k != 'sign' && $k != 'sign_type' ){
@@ -264,31 +112,7 @@ class AliPay
 				$stringToBeSigned .= $k.'='.$v.'&';
 			}
 		}
-
-		Log::debug( 'Alipay Generate Sign Content Before Trim', [$data, $stringToBeSigned] );
-
 		return trim( $stringToBeSigned, '&' );
-	}
-
-	/**
-	 * Convert encoding.
-	 *
-	 *
-	 * @param string|array $data
-	 * @param string       $to
-	 * @param string       $from
-	 *
-	 * @return array
-	 */
-	public static function encoding( $data, $to = 'utf-8', $from = 'gb2312' ) : array
-	{
-		$encoded = [];
-
-		foreach( $data as $key => $value ){
-			$encoded[$key] = is_array( $value ) ? self::encoding( $value, $to, $from ) : mb_convert_encoding( $value, $to, $from );
-		}
-
-		return $encoded;
 	}
 
 	/**
@@ -301,27 +125,36 @@ class AliPay
 	 *
 	 * @return string
 	 */
-	public function generateSign( array $params ) : string
+	private function generateSign( array $params ) : string
 	{
-		$privateKey = $this->config->private_key;
-
+		$privateKey = $this->config->getPrivateKey();
 		if( is_null( $privateKey ) ){
 			throw new InvalidConfigException( 'Missing Alipay Config -- [private_key]' );
 		}
-
 		$string = new SplString( $privateKey );
 		if( $string->endsWith( '.pem' ) ){
 			$privateKey = openssl_pkey_get_private( $privateKey );
 		} else{
 			$privateKey = "-----BEGIN RSA PRIVATE KEY-----\n".wordwrap( $privateKey, 64, "\n", true )."\n-----END RSA PRIVATE KEY-----";
 		}
-
-		openssl_sign( self::getSignContent( $params ), $sign, $privateKey, OPENSSL_ALGO_SHA256 );
-
+		openssl_sign( $this->getSignContent( $params ), $sign, $privateKey, OPENSSL_ALGO_SHA256 );
 		$sign = base64_encode( $sign );
-
-		Log::debug( 'Alipay Generate Sign', [$params, $sign] );
-
 		return $sign;
 	}
+
+    private function getSysParams():array
+    {
+        $sysParams = [];
+        $sysParams["app_id"] = $this->config->getAppId();
+        $sysParams["version"] = $this->config->getApiVersion();
+        $sysParams["format"] = $this->config->getFormat();
+        $sysParams["sign_type"] = $this->config->getSignType();
+        $sysParams["timestamp"] = date("Y-m-d H:i:s");
+        $sysParams["return_url"] = $this->config->getReturnUrl();
+        $sysParams["notify_url"] = $this->config->getNotifyUrl();
+        $sysParams["charset"] = $this->config->getCharset();
+        $sysParams["app_auth_token"] = $this->config->getAppAuthToken();
+        return (new Base($sysParams))->toArray();
+    }
+
 }

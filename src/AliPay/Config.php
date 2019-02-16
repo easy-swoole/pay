@@ -22,7 +22,8 @@ class Config extends SplBean
 	protected $charset = "UTF-8";
 	protected $format = "json";
 	protected $signType = "RSA2";
-
+    protected $apiVersion = "1.0";
+    protected $appAuthToken;
 	/**
 	 * @return mixed
 	 */
@@ -167,5 +168,35 @@ class Config extends SplBean
 		$this->signType = $signType;
 	}
 
+    /**
+     * @return string
+     */
+    public function getApiVersion(): string
+    {
+        return $this->apiVersion;
+    }
 
+    /**
+     * @param string $apiVersion
+     */
+    public function setApiVersion(string $apiVersion): void
+    {
+        $this->apiVersion = $apiVersion;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAppAuthToken()
+    {
+        return $this->appAuthToken;
+    }
+
+    /**
+     * @param mixed $appAuthToken
+     */
+    public function setAppAuthToken($appAuthToken): void
+    {
+        $this->appAuthToken = $appAuthToken;
+    }
 }
