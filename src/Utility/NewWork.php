@@ -13,7 +13,8 @@ use EasySwoole\HttpClient\HttpClient;
 
 class NewWork
 {
-    public static $TIMEOUT = 15;
+	public static $TIMEOUT = 15;
+
 	/**
 	 * Send a POST request.
 	 *
@@ -24,10 +25,11 @@ class NewWork
 	 *
 	 * @return array|string
 	 */
-    public static function get($endpoint, $data, $options = [])
-    {
-        $client = new HttpClient();
-    }
+	public static function get( $endpoint, $data, $options = [] )
+	{
+		$client = new HttpClient();
+	}
+
 	/**
 	 * Send a POST request.
 	 *
@@ -38,25 +40,25 @@ class NewWork
 	 *
 	 * @return array|string
 	 */
-    public static function post($endpoint, $data, $options = [])
-    {
-	    if (!is_array($data)) {
-		    $options['body'] = $data;
-	    } else {
-		    $options['form_params'] = $data;
-	    }
-	    $client = new HttpClient();
+	public static function post( $endpoint, $data, $options = [] )
+	{
+		if( !is_array( $data ) ){
+			$options['body'] = $data;
+		} else{
+			$options['form_params'] = $data;
+		}
+		$client = new HttpClient();
 
-	    return $client->request('post', $endpoint, $options);
-    }
+		return $client->request( 'post', $endpoint, $options );
+	}
 
-    public static function postJson($endpoint, $data, $options = [])
-    {
+	public static function postJson( $endpoint, $data, $options = [] )
+	{
 
-    }
+	}
 
-    public static function postXML($endpoint, $data, $options = [])
-    {
+	public static function postXML( $endpoint, $data, $options = [] )
+	{
 
-    }
+	}
 }

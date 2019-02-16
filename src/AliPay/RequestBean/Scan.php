@@ -8,19 +8,21 @@
 
 namespace EasySwoole\Pay\AliPay\RequestBean;
 
-/**
- * Class Scan
- * @package EasySwoole\Pay\AliPay\RequestBean
- * @method getProductCode()
- * @method getMethod()
- */
+
 class Scan extends Base
 {
 	protected $product_code = '';
 	protected $method = 'alipay.trade.precreate';
-	public function getPayload():array {
-		$payload['spbill_create_ip'] = Request::createFromGlobals()->server->get('SERVER_ADDR');
-		$payload['trade_type'] = $this->getTradeType();
-		return $this->preOrder($payload);
+
+	/**
+	 * @return array
+	 */
+	public function getPayload() : array
+	{
+		$payload                = $this->toArray( null, self::FILTER_NOT_NULL );
+		$payload['method']      = $this->getMethod();
+		$payload['biz_content'] = json_encode( array_merge( json_decode( $payload['biz_content'], true ), ['product_code' => $this->getProductCode()] ) );
+		$payload['sign']        = $this->generateSign( $payload );
+		return $payload;
 	}
 }

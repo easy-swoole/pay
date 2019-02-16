@@ -16,31 +16,29 @@ use EasySwoole\Pay\WeChat\WeChat;
 
 class Pay
 {
-    private $instanceList = [];
+	private $instanceList = [];
 
-    function weChat(WeChatConfig $config = null):?WeChat
-    {
-        if($config)
-        {
-            $this->instanceList['weChat'] = new WeChat($config);
-        }
-        if(isset($this->instanceList['weChat'])){
-            return $this->instanceList['weChat'];
-        }else{
-            return null;
-        }
-    }
+	function weChat( WeChatConfig $config = null ) : ?WeChat
+	{
+		if( $config ){
+			$this->instanceList['weChat'] = new WeChat( $config );
+		}
+		if( isset( $this->instanceList['weChat'] ) ){
+			return $this->instanceList['weChat'];
+		} else{
+			return null;
+		}
+	}
 
-    function aliPay(AliPayConfig $config = null):?AliPay
-    {
-        if($config)
-        {
-            $this->instanceList['aliPay'] = new AliPay($config);
-        }
-        if(isset($this->instanceList['aliPay'])){
-            return $this->instanceList['aliPay'];
-        }else{
-            return null;
-        }
-    }
+	function aliPay( AliPayConfig $config = null ) : ?AliPay
+	{
+		if( $config ){
+			$this->instanceList['aliPay'] = new AliPay( $config );
+		}
+		if( isset( $this->instanceList['aliPay'] ) ){
+			return $this->instanceList['aliPay'];
+		} else{
+			return null;
+		}
+	}
 }

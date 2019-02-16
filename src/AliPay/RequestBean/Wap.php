@@ -8,12 +8,7 @@
 
 namespace EasySwoole\Pay\AliPay\RequestBean;
 
-/**
- * Class Wap
- * @package EasySwoole\Pay\AliPay\RequestBean
- * @method getProductCode()
- * @method getMethod()
- */
+
 class Wap extends Web
 {
 	protected $product_code = 'QUICK_WAP_WAY';
