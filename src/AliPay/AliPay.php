@@ -95,24 +95,25 @@ class AliPay
 	 * Get signContent that is to be signed.
 	 *
 	 *
-	 * @param array $data
-	 * @param bool  $verify
-	 *
+	 * @param array $params
 	 * @return string
 	 */
-	private function getSignContent( array $data, $verify = false ) : string
+	private function getSignContent( array $params) : string
 	{
-		ksort( $data );
-		$stringToBeSigned = '';
-		foreach( $data as $k => $v ){
-			if( $verify && $k != 'sign' && $k != 'sign_type' ){
-				$stringToBeSigned .= $k.'='.$v.'&';
-			}
-			if( !$verify && $v !== '' && !is_null( $v ) && $k != 'sign' && '@' != substr( $v, 0, 1 ) ){
-				$stringToBeSigned .= $k.'='.$v.'&';
-			}
-		}
-		return trim( $stringToBeSigned, '&' );
+        ksort($params);
+        $stringToBeSigned = "";
+        $i = 0;
+        foreach ($params as $k => $v) {
+            if (false === $this->checkEmpty($v) && "@" != substr($v, 0, 1)) {
+                if ($i == 0) {
+                    $stringToBeSigned .= "$k" . "=" . "$v";
+                } else {
+                    $stringToBeSigned .= "&" . "$k" . "=" . "$v";
+                }
+                $i++;
+            }
+        }
+        return $stringToBeSigned;
 	}
 
 	/**
@@ -155,6 +156,17 @@ class AliPay
         $sysParams["charset"] = $this->config->getCharset();
         $sysParams["app_auth_token"] = $this->config->getAppAuthToken();
         return (new Base($sysParams))->toArray();
+    }
+
+    private function checkEmpty($value)
+    {
+        if (!isset($value))
+            return true;
+        if ($value === null)
+            return true;
+        if (trim($value) === "")
+            return true;
+        return false;
     }
 
 }
