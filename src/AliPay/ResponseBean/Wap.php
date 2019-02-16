@@ -9,7 +9,7 @@
 namespace EasySwoole\Pay\AliPay\ResponseBean;
 
 
-class Wap extends Base
+class Wap extends Web
 {
 
 }
