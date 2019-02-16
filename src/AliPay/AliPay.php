@@ -39,7 +39,9 @@ class AliPay
      */
     public function web(Web $web):WebResponse
     {
-
+        $content = $web->toArray(null,$web::FILTER_NOT_NULL);
+        $content = json_decode($content,JSON_UNESCAPED_UNICODE);
+        return new WebResponse();
     }
     /*
      * 手机网站支付

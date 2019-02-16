@@ -19,6 +19,9 @@ class Config extends SplBean
     protected $publicKey;
     protected $privateKey;
     protected $gateWay = GateWay::SANDBOX;
+    protected $charset = "UTF-8";
+    protected $format = "json";
+    protected $signType = "RSA2";
 
     /**
      * @return mixed
@@ -115,4 +118,54 @@ class Config extends SplBean
     {
         $this->gateWay = $gateWay;
     }
+
+    /**
+     * @return string
+     */
+    public function getCharset(): string
+    {
+        return $this->charset;
+    }
+
+    /**
+     * @param string $charset
+     */
+    public function setCharset(string $charset): void
+    {
+        $this->charset = $charset;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormat(): string
+    {
+        return $this->format;
+    }
+
+    /**
+     * @param string $format
+     */
+    public function setFormat(string $format): void
+    {
+        $this->format = $format;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSignType(): string
+    {
+        return $this->signType;
+    }
+
+    /**
+     * @param string $signType
+     */
+    public function setSignType(string $signType): void
+    {
+        $this->signType = $signType;
+    }
+
+
 }

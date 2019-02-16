@@ -16,6 +16,7 @@ class Base extends SplBean
     protected $out_trade_no;
     protected $total_amount;
     protected $subject;
+    protected $timeout_express;
 
     /**
      * @return mixed
@@ -64,4 +65,21 @@ class Base extends SplBean
     {
         $this->subject = $subject;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getTimeoutExpress()
+    {
+        return $this->timeout_express;
+    }
+
+    /**
+     * @param mixed $timeout_express
+     */
+    public function setTimeoutExpress($timeout_express): void
+    {
+        $this->timeout_express = $timeout_express;
+    }
+
 }
