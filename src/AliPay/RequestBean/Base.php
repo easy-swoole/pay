@@ -18,6 +18,7 @@ class Base extends SplBean
 	protected $total_amount;
 	protected $subject;
 	protected $timeout_express;
+    protected $body;
 	/**
 	 * @return mixed
 	 */
@@ -85,5 +86,21 @@ class Base extends SplBean
     public function toArray(array $columns = null, $filter = null): array
     {
         return parent::toArray(null, self::FILTER_NOT_NULL);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @param mixed $body
+     */
+    public function setBody($body): void
+    {
+        $this->body = $body;
     }
 }
