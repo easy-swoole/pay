@@ -1,9 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: yf
- * Date: 2019-02-16
- * Time: 14:42
+ * User: hanwenbo
+ * Date: 2019-02-17
+ * Time: 20:46
  */
 require_once '../vendor/autoload.php';
 go(function (){
@@ -17,8 +17,11 @@ go(function (){
     $order->setSubject('测试');
     $order->setTotalAmount('0.01');
     $order->setOutTradeNo(time());
-    $aliPay = $pay->aliPay($aliConfig);
-    $data = $aliPay->scan($order)->toArray();
+
+	$aliPay = $pay->aliPay($aliConfig);
+	$data = $aliPay->scan($order)->toArray();
+	$aliPay->preQuest($data);
+
     var_dump($data);
 });
 

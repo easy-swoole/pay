@@ -11,5 +11,4 @@ namespace EasySwoole\Pay\AliPay\RequestBean;
 class OrderFind extends Base
 {
 	protected $method = 'alipay.trade.query';
-
 }

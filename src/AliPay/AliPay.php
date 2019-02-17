@@ -245,7 +245,7 @@ class AliPay
 	 *
 	 * @return string
 	 */
-	public function success(): string
+	public static function success(): string
 	{
 		return 'success';
 	}

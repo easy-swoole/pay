@@ -12,5 +12,5 @@ namespace EasySwoole\Pay\AliPay\RequestBean;
 class Web extends Base
 {
 	protected $product_code = 'FAST_INSTANT_TRADE_PAY';
-	protected $method = 'alipay.trade.app.pay';
+	protected $method = 'alipay.trade.page.pay';
 }

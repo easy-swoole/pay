@@ -16,6 +16,8 @@
 
 ## 电脑支付
 
+>  统一收单下单并支付页面接口
+
 ```php
 $aliConfig = new \EasySwoole\Pay\AliPay\Config();
 $aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::NORMAL);
@@ -43,6 +45,8 @@ file_put_contents('test.html',$html);
 
 所有订单配置参数和官方无任何差别，兼容所有功能，所有参数请参考[这里](https://docs.open.alipay.com/270/alipay.trade.page.pay)，查看「请求参数」一栏。
 
+参数查询：https://docs.open.alipay.com/api_1/alipay.trade.page.pay
+
 生成支付的跳转html示例
 
 ```php
@@ -61,7 +65,7 @@ function buildPayHtml($endpoint, $payload)
 
 
 
-##  手机支付
+##  手机网站支付接口2.0
 
 ```php
 $aliConfig = new \EasySwoole\Pay\AliPay\Config();
@@ -86,13 +90,15 @@ file_put_contents('test.html',$html);
 
 #### 订单配置参数
 
-**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，**`product_code`** 等参数。**
+**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，`product_code` 等参数。**
 
 所有订单配置参数和官方无任何差别，兼容所有功能，所有参数请参考[这里](https://docs.open.alipay.com/203/107090/)，查看「请求参数」一栏。
 
+参数查询：https://docs.open.alipay.com/api_1/alipay.trade.wap.pay
 
 
-## APP支付
+
+## APP支付接口2.0
 
 ```php
 $aliConfig = new \EasySwoole\Pay\AliPay\Config();
@@ -113,9 +119,11 @@ var_dump($aliPay->app($order)->toArray());
 
 #### 订单配置参数
 
-**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，**`product_code`** 等参数。**
+**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如， `product_code` 等参数。**
 
 所有订单配置参数和官方无任何差别，兼容所有功能，所有参数请参考[这里](https://docs.open.alipay.com/204/105465/)，查看「请求参数」一栏。
+
+参数查询：https://docs.open.alipay.com/api_1/alipay.trade.app.pay
 
 
 
@@ -140,9 +148,11 @@ var_dump($data);
 
 #### 订单配置参数
 
-**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，**`product_code`** 等参数。**
+**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，`product_code` 等参数。**
 
 所有订单配置参数和官方无任何差别，兼容所有功能，所有参数请参考[这里](https://docs.open.alipay.com/api_1/alipay.trade.pay)，查看「请求参数」一栏。
+
+参数查询：https://docs.open.alipay.com/api_1/alipay.trade.page.pay
 
 
 
@@ -157,25 +167,30 @@ $aliConfig->setPrivateKey('阿里私钥');
 
 $pay = new \EasySwoole\Pay\Pay();
 
+$pay = new \EasySwoole\Pay\Pay();
 $order = new \EasySwoole\Pay\AliPay\RequestBean\Scan();
 $order->setSubject('测试');
 $order->setTotalAmount('0.01');
 $order->setOutTradeNo(time());
-$aliPay = $pay->aliPay($aliConfig);
 
+$aliPay = $pay->aliPay($aliConfig);
 $data = $aliPay->scan($order)->toArray();
-var_dump($data);
+$response = $aliPay->preQuest($data);
+var_dump($response);
+// qr_code 当前预下单请求生成的二维码码串，可以用二维码生成工具根据该码串值生成对应的二维码	 https://qr.alipay.com/bavh4wjlxf12tper3a
 ```
 
 #### 订单配置参数
 
-**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，**`product_code`** 等参数。**
+**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，`product_code` 等参数。**
 
 所有订单配置参数和官方无任何差别，兼容所有功能，所有参数请参考[这里](https://docs.open.alipay.com/api_1/alipay.trade.precreate)，查看「请求参数」一栏。
 
+参考参数：https://docs.open.alipay.com/api_1/alipay.trade.precreate
 
 
-## 转账
+
+## 单笔转账到支付宝账户接口
 
 ```php
 $aliConfig = new \EasySwoole\Pay\AliPay\Config();
@@ -200,11 +215,11 @@ var_dump($data);
 
 #### 订单配置参数
 
-**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，**`product_code`** 等参数。**
+**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，`product_code` 等参数。**
 
 所有订单配置参数和官方无任何差别，兼容所有功能，所有参数请参考[这里](https://docs.open.alipay.com/api_28/alipay.fund.trans.toaccount.transfer)，查看「请求参数」一栏。
 
-
+参数查询：https://docs.open.alipay.com/api_28/alipay.fund.trans.toaccount.transfer
 
 ## 小程序支付
 
@@ -230,33 +245,154 @@ var_dump($data);
 
 #### 订单配置参数
 
-**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，**`product_code`** 等参数。**
+**所有订单配置中，客观参数均不用配置，扩展包已经为大家自动处理了，比如，`product_code` 等参数。**
 
 所有订单配置参数和官方无任何差别，兼容所有功能，所有参数请参考[这里](https://docs.open.alipay.com/api_1/alipay.trade.create/)，查看「请求参数」一栏。
 
 小程序支付接入文档：<https://docs.alipay.com/mini/introduce/pay>。
 
-
-
-
+参数查询：
 
 ## 订单查询
 
+```php
+$aliConfig = new \EasySwoole\Pay\AliPay\Config();
+$aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::SANDBOX);
+$aliConfig->setAppId('2016091800538339');
+$aliConfig->setPublicKey('阿里公钥');
+$aliConfig->setPrivateKey('阿里私钥');
+$pay = new \EasySwoole\Pay\Pay();
+$order = new \EasySwoole\Pay\AliPay\RequestBean\OrderFind();
+$order->setOutTradeNo(time().'123456');
+$aliPay = $pay->aliPay($aliConfig);
+
+var_dump($aliPay->orderFind($order)->toArray());
+```
+
+官方参数查询：https://docs.open.alipay.com/api_1/alipay.trade.fastpay.refund.query
+
 ## 退款查询
 
-## 转账查询
+```php
+$aliConfig = new \EasySwoole\Pay\AliPay\Config();
+$aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::SANDBOX);
+$aliConfig->setAppId('2016091800538339');
+$aliConfig->setPublicKey('阿里公钥');
+$aliConfig->setPrivateKey('阿里私钥');
+$pay = new \EasySwoole\Pay\Pay();
+$order = new \EasySwoole\Pay\AliPay\RequestBean\RefundFind();
+$order->setOutTradeNo('20150320010101001');
+$order->setOutRequestNo(time().'2014112611001004680073956707');
+$aliPay = $pay->aliPay($aliConfig);
+$data = $aliPay->refundFind($order)->toArray();
+var_dump($aliPay->preQuest($data));
+```
+
+官方参数查询：https://docs.open.alipay.com/api_1/alipay.trade.refund
 
 
 
-## 取消
+## 查询转账订单接口
 
-## 关闭
+```php
+$aliConfig = new \EasySwoole\Pay\AliPay\Config();
+$aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::SANDBOX);
+$aliConfig->setAppId('2016091800538339');
+$aliConfig->setPublicKey('阿里公钥');
+$aliConfig->setPrivateKey('阿里私钥');
+$pay = new \EasySwoole\Pay\Pay();
+$order = new \EasySwoole\Pay\AliPay\RequestBean\TransferFind();
+$order->setOutBizNo('3142321423432');
+// 二选一
+//	$order->setOrderId('20160627110070001502260006780837');
+$aliPay = $pay->aliPay($aliConfig);
+$data = $aliPay->transferFind($order)->toArray();
+var_dump($aliPay->preQuest($data));
+```
 
-## 对账单
+官方参数查询：https://docs.open.alipay.com/api_28/alipay.fund.trans.order.query
+
+
+
+## 交易撤销接口
+
+```php
+$aliConfig = new \EasySwoole\Pay\AliPay\Config();
+$aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::SANDBOX);
+$aliConfig->setAppId('2016091800538339');
+$aliConfig->setPublicKey('阿里公钥');
+$aliConfig->setPrivateKey('阿里私钥');
+$pay = new \EasySwoole\Pay\Pay();
+$order = new \EasySwoole\Pay\AliPay\RequestBean\Cancel();
+$order->setOutTradeNo('20150320010101001');
+$aliPay = $pay->aliPay($aliConfig);
+$data = $aliPay->cancel($order)->toArray();
+var_dump($aliPay->preQuest($data));
+```
+
+官方参数查询：https://docs.open.alipay.com/api_1/alipay.trade.cancel
+
+## 交易关闭接口
+
+```php
+$aliConfig = new \EasySwoole\Pay\AliPay\Config();
+$aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::SANDBOX);
+$aliConfig->setAppId('2016091800538339');
+$aliConfig->setPublicKey('阿里公钥');
+$aliConfig->setPrivateKey('阿里私钥');
+$pay = new \EasySwoole\Pay\Pay();
+$order = new \EasySwoole\Pay\AliPay\RequestBean\Close();
+$order->setOutTradeNo(time().'123456');
+$aliPay = $pay->aliPay($aliConfig);
+$data = $aliPay->close($order)->toArray();
+var_dump($aliPay->preQuest($data));
+```
+
+官方参数查询：https://docs.open.alipay.com/api_1/alipay.trade.close
+
+## 查询对账单下载地址
+
+```php
+$aliConfig = new \EasySwoole\Pay\AliPay\Config();
+$aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::SANDBOX);
+$aliConfig->setAppId('2016091800538339');
+$aliConfig->setPublicKey('阿里公钥');
+$aliConfig->setPrivateKey('阿里私钥');
+$pay = new \EasySwoole\Pay\Pay();
+$order = new \EasySwoole\Pay\AliPay\RequestBean\Download();
+$order->setBillType('trade');
+$order->setBillDate('2016-04-05');
+$aliPay = $pay->aliPay($aliConfig);
+$data = $aliPay->download($order)->toArray();
+var_dump($aliPay->preQuest($data));
+```
+
+官方参数查询：https://docs.open.alipay.com/api_15/alipay.data.dataservice.bill.downloadurl.query
+
+
 
 ## 验证服务器数据
 
+```php
+$aliConfig = new \EasySwoole\Pay\AliPay\Config();
+$aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::SANDBOX);
+$aliConfig->setAppId('2016091800538339');
+$aliConfig->setPublicKey('阿里公钥');
+$aliConfig->setPrivateKey('阿里私钥');
+$pay = new \EasySwoole\Pay\Pay();
+$order = new \EasySwoole\Pay\AliPay\RequestBean\NotifyRequest();
+$aliPay = $pay->aliPay($aliConfig);
+$result = $aliPay->verify($order);
+var_dump($result);
+```
+
+
+
 ## 服务器确认收到异步通知字符串获取
+
+```php
+\EasySwoole\Pay\AliPay::success()
+```
 
 
 
