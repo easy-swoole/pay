@@ -86,7 +86,25 @@ class WeChat
      */
     public function groupRedPack()
     {
+	    $payload['wxappid'] = $payload['appid'];
+	    $payload['amt_type'] = 'ALL_RAND';
 
+	    if ($this->mode === Wechat::MODE_SERVICE) {
+		    $payload['msgappid'] = $payload['appid'];
+	    }
+
+	    unset($payload['appid'], $payload['trade_type'],
+		    $payload['notify_url'], $payload['spbill_create_ip']);
+
+	    $payload['sign'] = Support::generateSign($payload);
+
+	    Events::dispatch(Events::PAY_STARTED, new Events\PayStarted('Wechat', 'Group Redpack', $endpoint, $payload));
+
+	    return Support::requestApi(
+		    'mmpaymkttransfers/sendgroupredpack',
+		    $payload,
+		    true
+	    );
     }
 
 }
