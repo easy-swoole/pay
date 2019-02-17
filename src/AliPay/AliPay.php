@@ -8,7 +8,6 @@
 
 namespace EasySwoole\Pay\AliPay;
 
-
 use EasySwoole\Pay\AliPay\RequestBean\App;
 use EasySwoole\Pay\AliPay\RequestBean\MiniProgram;
 use EasySwoole\Pay\AliPay\RequestBean\NotifyRequest;
@@ -121,9 +120,37 @@ class AliPay
 		return $array;
 	}
 
+	/**
+	 * @param NotifyRequest $request
+	 * @return bool
+	 * @throws InvalidConfigException
+	 */
 	public function verify( NotifyRequest $request ) : bool
 	{
+		$data = $request->toArray();
+		if( isset( $data['fund_bill_list'] ) ){
+			$data['fund_bill_list'] = htmlspecialchars_decode( $data['fund_bill_list'] );
+		}
 
+		$publicKey = $this->config->getPublicKey();
+
+		if( is_null( $publicKey ) ){
+			throw new InvalidConfigException( 'Missing Alipay Config -- [ali_public_key]' );
+		}
+
+		$string = new SplString( $publicKey );
+
+		if( $string->endsWith( '.pem' ) ){
+			$publicKey = openssl_pkey_get_public( $publicKey );
+		} else{
+			$publicKey = "-----BEGIN PUBLIC KEY-----\n".wordwrap( $publicKey, 64, "\n", true )."\n-----END PUBLIC KEY-----";
+		}
+
+		$sign = $sign ?? $data['sign'];
+
+		$toVerify = $this->getSignContent( $data );
+
+		return openssl_verify( $toVerify, base64_decode( $sign ), $publicKey, OPENSSL_ALGO_SHA256 ) === 1;
 	}
 
 	/**
