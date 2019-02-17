@@ -107,18 +107,27 @@ class AliPay
 		return new MiniProgramResponse( $this->getRequestParams( $miniProgram ) );
 	}
 
-	/**
-	 * @param mixed $request
-	 * @return array
-	 * @throws InvalidConfigException
-	 */
-	private function getRequestParams( $request ) : array
-	{
-		$array                = $request->toArray() + $this->getSysParams();
-		$array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
-		$array['sign']        = $this->generateSign( $array );
-		return $array;
-	}
+
+    function find()
+    {
+
+    }
+
+    function refund()
+    {
+
+    }
+
+    function cancel()
+    {
+
+    }
+
+    function close()
+    {
+
+    }
+
 
 	/**
 	 * @param NotifyRequest $request
@@ -230,5 +239,18 @@ class AliPay
 			return true;
 		return false;
 	}
+
+    /**
+     * @param mixed $request
+     * @return array
+     * @throws InvalidConfigException
+     */
+    private function getRequestParams( $request ) : array
+    {
+        $array                = $request->toArray() + $this->getSysParams();
+        $array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
+        $array['sign']        = $this->generateSign( $array );
+        return $array;
+    }
 
 }
