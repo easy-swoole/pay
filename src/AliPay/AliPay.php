@@ -25,13 +25,7 @@ use EasySwoole\Pay\AliPay\ResponseBean\Pos as PosResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Scan as ScanResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Transfer as TransferResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\MiniProgram as MiniProgramResponse;
-use EasySwoole\Pay\Utility\NewWork;
-use EasySwoole\Pay\Exceptions\GatewayException;
-use EasySwoole\Pay\Exceptions\InvalidArgumentException;
 use EasySwoole\Pay\Exceptions\InvalidConfigException;
-use EasySwoole\Pay\Exceptions\InvalidGatewayException;
-use EasySwoole\Pay\Exceptions\InvalidSignException;
-use EasySwoole\Spl\SplArray;
 
 use EasySwoole\Spl\SplString;
 
@@ -41,49 +35,90 @@ class AliPay
 
 	function __construct( Config $config )
 	{
-		$this->config  = $config;
+		$this->config = $config;
 	}
 
+	/**
+	 * @param Web $web
+	 * @return WebResponse
+	 * @throws InvalidConfigException
+	 */
 	public function web( Web $web ) : WebResponse
 	{
-        $array = $web->toArray(  ) + $this->getSysParams();
-        $array['biz_content'] = json_encode($array,JSON_UNESCAPED_UNICODE);
-        $array['sign'] = $this->generateSign($array);
-        return new WebResponse($array);
+		return new WebResponse( $this->getRequestParams( $web ) );
 	}
 
-
+	/**
+	 * @param Wap $wap
+	 * @return WapResponse
+	 * @throws InvalidConfigException
+	 */
 	public function wap( Wap $wap ) : WapResponse
 	{
-
+		return new WapResponse( $this->getRequestParams( $wap ) );
 	}
 
+	/**
+	 * @param App $app
+	 * @return AppResponse
+	 * @throws InvalidConfigException
+	 */
 	public function app( App $app ) : AppResponse
 	{
-
+		return new AppResponse( $this->getRequestParams( $app ) );
 	}
 
-
+	/**
+	 * @param Pos $pos
+	 * @return PosResponse
+	 * @throws InvalidConfigException
+	 */
 	public function pos( Pos $pos ) : PosResponse
 	{
-
+		return new PosResponse( $this->getRequestParams( $pos ) );
 	}
 
-
+	/**
+	 * @param Scan $scan
+	 * @return ScanResponse
+	 * @throws InvalidConfigException
+	 */
 	public function scan( Scan $scan ) : ScanResponse
 	{
-
+		return new ScanResponse( $this->getRequestParams( $scan ) );
 	}
 
+	/**
+	 * @param Transfer $transfer
+	 * @return TransferResponse
+	 * @throws InvalidConfigException
+	 */
 	public function transfer( Transfer $transfer ) : TransferResponse
 	{
-
+		return new TransferResponse( $this->getRequestParams( $transfer ) );
 	}
 
-
+	/**
+	 * @param MiniProgram $miniProgram
+	 * @return MiniProgramResponse
+	 * @throws InvalidConfigException
+	 */
 	public function miniProgram( MiniProgram $miniProgram ) : MiniProgramResponse
 	{
+		return new MiniProgramResponse( $this->getRequestParams( $miniProgram ) );
+	}
 
+	/**
+	 * @param mixed $request
+	 * @return array
+	 * @throws InvalidConfigException
+	 */
+	private function getRequestParams( $request ) : array
+	{
+		$array                = $request->toArray() + $this->getSysParams();
+		$array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
+		$array['sign']        = $this->generateSign( $array );
+		return $array;
 	}
 
 	public function verify( NotifyRequest $request ) : bool
@@ -98,22 +133,22 @@ class AliPay
 	 * @param array $params
 	 * @return string
 	 */
-	private function getSignContent( array $params) : string
+	private function getSignContent( array $params ) : string
 	{
-        ksort($params);
-        $stringToBeSigned = "";
-        $i = 0;
-        foreach ($params as $k => $v) {
-            if (false === $this->checkEmpty($v) && "@" != substr($v, 0, 1)) {
-                if ($i == 0) {
-                    $stringToBeSigned .= "$k" . "=" . "$v";
-                } else {
-                    $stringToBeSigned .= "&" . "$k" . "=" . "$v";
-                }
-                $i++;
-            }
-        }
-        return $stringToBeSigned;
+		ksort( $params );
+		$stringToBeSigned = "";
+		$i                = 0;
+		foreach( $params as $k => $v ){
+			if( false === $this->checkEmpty( $v ) && "@" != substr( $v, 0, 1 ) ){
+				if( $i == 0 ){
+					$stringToBeSigned .= "$k"."="."$v";
+				} else{
+					$stringToBeSigned .= "&"."$k"."="."$v";
+				}
+				$i ++;
+			}
+		}
+		return $stringToBeSigned;
 	}
 
 	/**
@@ -143,30 +178,30 @@ class AliPay
 		return $sign;
 	}
 
-    private function getSysParams():array
-    {
-        $sysParams = [];
-        $sysParams["app_id"] = $this->config->getAppId();
-        $sysParams["version"] = $this->config->getApiVersion();
-        $sysParams["format"] = $this->config->getFormat();
-        $sysParams["sign_type"] = $this->config->getSignType();
-        $sysParams["timestamp"] = date("Y-m-d H:i:s");
-        $sysParams["return_url"] = $this->config->getReturnUrl();
-        $sysParams["notify_url"] = $this->config->getNotifyUrl();
-        $sysParams["charset"] = $this->config->getCharset();
-        $sysParams["app_auth_token"] = $this->config->getAppAuthToken();
-        return (new Base($sysParams))->toArray();
-    }
+	private function getSysParams() : array
+	{
+		$sysParams                   = [];
+		$sysParams["app_id"]         = $this->config->getAppId();
+		$sysParams["version"]        = $this->config->getApiVersion();
+		$sysParams["format"]         = $this->config->getFormat();
+		$sysParams["sign_type"]      = $this->config->getSignType();
+		$sysParams["timestamp"]      = date( "Y-m-d H:i:s" );
+		$sysParams["return_url"]     = $this->config->getReturnUrl();
+		$sysParams["notify_url"]     = $this->config->getNotifyUrl();
+		$sysParams["charset"]        = $this->config->getCharset();
+		$sysParams["app_auth_token"] = $this->config->getAppAuthToken();
+		return (new Base( $sysParams ))->toArray();
+	}
 
-    private function checkEmpty($value)
-    {
-        if (!isset($value))
-            return true;
-        if ($value === null)
-            return true;
-        if (trim($value) === "")
-            return true;
-        return false;
-    }
+	private function checkEmpty( $value )
+	{
+		if( !isset( $value ) )
+			return true;
+		if( $value === null )
+			return true;
+		if( trim( $value ) === "" )
+			return true;
+		return false;
+	}
 
 }
