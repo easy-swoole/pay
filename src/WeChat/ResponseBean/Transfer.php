@@ -8,7 +8,7 @@
  *
  */
 
-namespace EasySwoole\Pay\WeChat\RespBean;
+namespace EasySwoole\Pay\WeChat\ResponseBean;
 
 
 class Transfer

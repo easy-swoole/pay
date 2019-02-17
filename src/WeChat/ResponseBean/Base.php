@@ -6,7 +6,7 @@
  * Time: 19:19
  */
 
-namespace EasySwoole\Pay\Wechat\RespBean;
+namespace EasySwoole\Pay\Wechat\ResponseBean;
 
 
 use EasySwoole\Spl\SplBean;

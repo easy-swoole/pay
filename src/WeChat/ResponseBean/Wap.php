@@ -7,7 +7,7 @@
  * Time: 13:24
  *
  */
-namespace EasySwoole\Pay\WeChat\RespBean;
+namespace EasySwoole\Pay\WeChat\ResponseBean;
 
 
 class Wap

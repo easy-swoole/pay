@@ -6,7 +6,7 @@
  * Time: 19:20
  */
 
-namespace EasySwoole\Pay\Wechat\RespBean;
+namespace EasySwoole\Pay\Wechat\ResponseBean;
 
 
 class OfficialAccount extends Base
