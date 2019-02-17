@@ -28,6 +28,8 @@ use EasySwoole\Pay\Wechat\ResponseBean\Scan as ScanResponse;
 use EasySwoole\Pay\Wechat\ResponseBean\Transfer as TransferResponse;
 use EasySwoole\Pay\Wechat\ResponseBean\Wap as WapResponse;
 
+use EasySwoole\Pay\Exceptions\InvalidConfigException;
+
 class WeChat
 {
 	private $config;
@@ -40,13 +42,13 @@ class WeChat
 	/*
 	 * 公众号支付
 	 */
-	public function officialAccount( OfficialAccount $officialAccount) : OfficialAccountResponse
+	public function officialAccount( OfficialAccount $officialAccount ) : OfficialAccountResponse
 	{
 		$pay_request            = [
-			'appId'     => !$this->payRequestUseSubAppId ? $payload['appid'] : $payload['sub_appid'],
+			'appId'     => !$this->payRequestUseSubAppId ? $array['appid'] : $array['sub_appid'],
 			'timeStamp' => strval( time() ),
 			'nonceStr'  => Str::random(),
-			'package'   => 'prepay_id='.$this->preOrder( $payload )->get( 'prepay_id' ),
+			'package'   => 'prepay_id='.$this->preOrder( $array )->get( 'prepay_id' ),
 			'signType'  => 'MD5',
 		];
 		$pay_request['paySign'] = Support::generateSign( $pay_request );
@@ -55,7 +57,7 @@ class WeChat
 	/*
 	 * 小程序支付
 	 */
-	public function miniProgram(MiniProgram $miniProgram) : MiniProgramResponse
+	public function miniProgram( MiniProgram $miniProgram ) : MiniProgramResponse
 	{
 
 	}
@@ -63,7 +65,7 @@ class WeChat
 	/*
 	 * H5 支付
 	 */
-	public function wap( Wap $wap) : WapResponse
+	public function wap( Wap $wap ) : WapResponse
 	{
 
 	}
@@ -71,7 +73,7 @@ class WeChat
 	/*
 	 * 扫码支付
 	 */
-	public function scan(Scan $scan) : ScanResponse
+	public function scan( Scan $scan ) : ScanResponse
 	{
 
 	}
@@ -79,7 +81,7 @@ class WeChat
 	/*
 	 * 刷卡支付
 	 */
-	public function pos(Pos $pos) : PosResponse
+	public function pos( Pos $pos ) : PosResponse
 	{
 
 	}
@@ -87,15 +89,30 @@ class WeChat
 	/*
 	 * APP 支付
 	 */
-	public function app(App $app) : AppResponse
+	public function app( App $app ) : AppResponse
 	{
+		$array                = $app->toArray() + $this->getSysParams();
+
+		if( $this->mode === Wechat::MODE_SERVICE ){
+			$array['sub_appid'] = Support::getInstance()->sub_appid;
+		}
+
+		$pay_request         = [
+			'appid'     => $this->mode === Wechat::MODE_SERVICE ? $array['sub_appid'] : $array['appid'],
+			'partnerid' => $this->mode === Wechat::MODE_SERVICE ? $array['sub_mch_id'] : $array['mch_id'],
+			'prepayid'  => $this->preOrder( $array )->get( 'prepay_id' ),
+			'timestamp' => strval( time() ),
+			'noncestr'  => Str::random(),
+			'package'   => 'Sign=WXPay',
+		];
+		$pay_request['sign'] = $this->generateSign( $pay_request );
 
 	}
 
 	/*
 	 * 企业付款
 	 */
-	public function transfer(Transfer $transfer) : TransferResponse
+	public function transfer( Transfer $transfer ) : TransferResponse
 	{
 
 	}
@@ -103,7 +120,7 @@ class WeChat
 	/*
 	 * 普通红包
 	 */
-	public function redPack(RedPack $redPack) : RedPackResponse
+	public function redPack( RedPack $redPack ) : RedPackResponse
 	{
 
 	}
@@ -111,22 +128,97 @@ class WeChat
 	/*
 	 * 分裂红包
 	 */
-	public function groupRedPack( GroupRedPack $groupRedPack) : GroupRedPackResponse
+	public function groupRedPack( GroupRedPack $groupRedPack ) : GroupRedPackResponse
 	{
-		$payload['wxappid']  = $payload['appid'];
-		$payload['amt_type'] = 'ALL_RAND';
+		$array['wxappid']  = $array['appid'];
+		$array['amt_type'] = 'ALL_RAND';
 
 		if( $this->mode === Wechat::MODE_SERVICE ){
-			$payload['msgappid'] = $payload['appid'];
+			$array['msgappid'] = $array['appid'];
 		}
 
-		unset( $payload['appid'], $payload['trade_type'], $payload['notify_url'], $payload['spbill_create_ip'] );
+		unset( $array['appid'], $array['trade_type'], $array['notify_url'], $array['spbill_create_ip'] );
 
-		$payload['sign'] = Support::generateSign( $payload );
+		$array['sign'] = Support::generateSign( $array );
 
-		Events::dispatch( Events::PAY_STARTED, new Events\PayStarted( 'Wechat', 'Group Redpack', $endpoint, $payload ) );
+		Events::dispatch( Events::PAY_STARTED, new Events\PayStarted( 'Wechat', 'Group Redpack', $endpoint, $array ) );
 
-		return Support::requestApi( 'mmpaymkttransfers/sendgroupredpack', $payload, true );
+		return Support::requestApi( 'mmpaymkttransfers/sendgroupredpack', $array, true );
 	}
 
+
+	/**
+	 * @param mixed $request
+	 * @return array
+	 * @throws InvalidConfigException
+	 */
+	private function getRequestParams( $request ) : array
+	{
+		$array                = $request->toArray() + $this->getSysParams();
+		$array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
+		$array['sign']        = $this->generateSign( $array );
+		return $array;
+	}
+
+	private function getSysParams() : array
+	{
+		$sysParams                   = [];
+		$sysParams["app_id"]         = $this->config->getAppId();
+		$sysParams["version"]        = $this->config->getApiVersion();
+		$sysParams["format"]         = $this->config->getFormat();
+		$sysParams["sign_type"]      = $this->config->getSignType();
+		$sysParams["timestamp"]      = date( "Y-m-d H:i:s" );
+		$sysParams["return_url"]     = $this->config->getReturnUrl();
+		$sysParams["notify_url"]     = $this->config->getNotifyUrl();
+		$sysParams["charset"]        = $this->config->getCharset();
+		$sysParams["app_auth_token"] = $this->config->getAppAuthToken();
+		return (new Base( $sysParams ))->toArray();
+	}
+
+	private function checkEmpty( $value )
+	{
+		if( !isset( $value ) )
+			return true;
+		if( $value === null )
+			return true;
+		if( trim( $value ) === "" )
+			return true;
+		return false;
+	}
+
+	/**
+	 * Generate wechat sign.
+	 * @param array $data
+	 * @return string
+	 */
+	public function generateSign( array $data ) : string
+	{
+		ksort( $data );
+		$string = md5( $this->getSignContent( $data ).'&key='.$this->config->getKey() );
+		return strtoupper( $string );
+	}
+
+	/**
+	 * Generate sign content.
+	 * @param array $data
+	 * @return string
+	 */
+	public function getSignContent( array $data ) : string
+	{
+		$buff = '';
+		foreach( $data as $k => $v ){
+			$buff .= ($k != 'sign' && $v != '' && !is_array( $v )) ? $k.'='.$v.'&' : '';
+		}
+		return trim( $buff, '&' );
+	}
+
+	/**
+	 * Decrypt refund contents.
+	 * @param string $contents
+	 * @return string
+	 */
+	public function decryptRefundContents( string $contents ) : string
+	{
+		return openssl_decrypt( base64_decode( $contents ), 'AES-256-ECB', md5( $this->config->getKey() ), OPENSSL_RAW_DATA );
+	}
 }

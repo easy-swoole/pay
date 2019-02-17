@@ -46,6 +46,7 @@ class Config extends SplBean
 	 */
 	protected $certKey; // optional，退款等情况时用到
 
+	protected $gateWay = GateWay::SANDBOX;
 	/**
 	 * @return string
 	 */
@@ -157,5 +158,19 @@ class Config extends SplBean
 	{
 		$this->certKey = $certKey;
 	}
+	/**
+	 * @return string
+	 */
+	public function getGateWay() : string
+	{
+		return $this->gateWay;
+	}
 
+	/**
+	 * @param string $gateWay
+	 */
+	public function setGateWay( string $gateWay ) : void
+	{
+		$this->gateWay = $gateWay;
+	}
 }
