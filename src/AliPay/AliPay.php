@@ -16,6 +16,14 @@ use EasySwoole\Pay\AliPay\RequestBean\Scan;
 use EasySwoole\Pay\AliPay\RequestBean\Transfer;
 use EasySwoole\Pay\AliPay\RequestBean\Wap;
 use EasySwoole\Pay\AliPay\RequestBean\Web;
+use EasySwoole\Pay\AliPay\RequestBean\OrderFind;
+use EasySwoole\Pay\AliPay\RequestBean\RefundFind;
+use EasySwoole\Pay\AliPay\RequestBean\TransferFind;
+use EasySwoole\Pay\AliPay\RequestBean\Refund;
+use EasySwoole\Pay\AliPay\RequestBean\Close;
+use EasySwoole\Pay\AliPay\RequestBean\Cancel;
+use EasySwoole\Pay\AliPay\RequestBean\Download;
+
 use EasySwoole\Pay\AliPay\ResponseBean\Base;
 use EasySwoole\Pay\AliPay\ResponseBean\Web as WebResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Wap as WapResponse;
@@ -24,6 +32,14 @@ use EasySwoole\Pay\AliPay\ResponseBean\Pos as PosResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Scan as ScanResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Transfer as TransferResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\MiniProgram as MiniProgramResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\OrderFind as OrderFindResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\RefundFind as RefundFindResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\TransferFind as TransferFindResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\Close as CloseResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\Cancel as CancelResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\Download as DownloadResponse;
+use EasySwoole\Pay\AliPay\ResponseBean\Refund as RefundResponse;
+
 use EasySwoole\Pay\Exceptions\InvalidConfigException;
 
 use EasySwoole\Pay\Utility\NewWork;
@@ -109,52 +125,74 @@ class AliPay
 		return new MiniProgramResponse( $this->getRequestParams( $miniProgram ) );
 	}
 
-
-	function find()
+	/**
+	 * @param OrderFind $orderFind
+	 * @return OrderFindResponse
+	 * @throws InvalidConfigException
+	 */
+	public function orderFind( OrderFind $orderFind ) : OrderFindResponse
 	{
-
-	}
-
-	function refund()
-	{
-
-	}
-
-	function cancel()
-	{
-
-	}
-
-	function close()
-	{
-
+		return new OrderFindResponse( $this->getRequestParams( $orderFind ) );
 	}
 
 	/**
-	 * @param array $data
-	 * @return SplArray
+	 * @param RefundFind $refundFind
+	 * @return RefundFindResponse
 	 * @throws InvalidConfigException
-	 * @throws \EasySwoole\HttpClient\Exception\InvalidUrl
-	 * @throws \EasySwoole\Pay\Exceptions\GatewayException
-	 * @throws \EasySwoole\Pay\Exceptions\InvalidSignException
 	 */
-	public function preQuest( array $data ) : SplArray
+	public function refundFind( RefundFind $refundFind ) : RefundFindResponse
 	{
-		$response = NewWork::post( $this->config->getGateWay(), $data );
+		return new RefundFindResponse( $this->getRequestParams( $refundFind ) );
+	}
 
-		$result   = json_decode( mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ),true );
-		var_dump(mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ));
-		$method   = str_replace( '.', '_', $data['method'] ).'_response';
+	/**
+	 * @param TransferFind $transferFind
+	 * @return TransferFindResponse
+	 * @throws InvalidConfigException
+	 */
+	public function transferFind( TransferFind $transferFind ) : TransferFindResponse
+	{
+		return new TransferFindResponse( $this->getRequestParams( $transferFind ) );
+	}
 
-		if( !isset( $result['sign'] ) || $result[$method]['code'] != '10000' ){
-			throw new \EasySwoole\Pay\Exceptions\GatewayException( 'Get Alipay API Error:'.$result[$method]['msg'].($result[$method]['sub_code'] ?? ''), $result, $result[$method]['code'] );
-		}
+	/**
+	 * @param Refund $refund
+	 * @return RefundResponse
+	 * @throws InvalidConfigException
+	 */
+	public function refund( Refund $refund ) : RefundResponse
+	{
+		return new RefundResponse( $this->getRequestParams( $refund ) );
+	}
 
-		if( $this->verifySign( $result[$method], true, $result['sign'] ) ){
-			return new SplArray( $result[$method] );
-		}
+	/**
+	 * @param Cancel $cancel
+	 * @return CancelResponse
+	 * @throws InvalidConfigException
+	 */
+	public function cancel( Cancel $cancel ) : CancelResponse
+	{
+		return new CancelResponse( $this->getRequestParams( $cancel ) );
+	}
 
-		throw new \EasySwoole\Pay\Exceptions\InvalidSignException( 'Alipay Sign Verify FAILED', $result );
+	/**
+	 * @param Close $close
+	 * @return CloseResponse
+	 * @throws InvalidConfigException
+	 */
+	public function close( Close $close ) : CloseResponse
+	{
+		return new CloseResponse( $this->getRequestParams( $close ) );
+	}
+
+	/**
+	 * @param Download $download
+	 * @return DownloadResponse
+	 * @throws InvalidConfigException
+	 */
+	public function download( Download $download ) : DownloadResponse
+	{
+		return new DownloadResponse( $this->getRequestParams( $download ) );
 	}
 
 	/**
@@ -202,7 +240,15 @@ class AliPay
 
 		return $this->verifySign( $data );
 	}
-
+	/**
+	 * success string to alipay.
+	 *
+	 * @return string
+	 */
+	public function success(): string
+	{
+		return 'success';
+	}
 	/**
 	 * Get signContent that is to be signed.
 	 *
@@ -294,4 +340,30 @@ class AliPay
 		return $array;
 	}
 
+	/**
+	 * @param array $data
+	 * @return SplArray
+	 * @throws InvalidConfigException
+	 * @throws \EasySwoole\HttpClient\Exception\InvalidUrl
+	 * @throws \EasySwoole\Pay\Exceptions\GatewayException
+	 * @throws \EasySwoole\Pay\Exceptions\InvalidSignException
+	 */
+	public function preQuest( array $data ) : SplArray
+	{
+		$response = NewWork::post( $this->config->getGateWay(), $data );
+
+		$result = json_decode( mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ), true );
+		//		var_dump(mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ));
+		$method = str_replace( '.', '_', $data['method'] ).'_response';
+
+		if( !isset( $result['sign'] ) || $result[$method]['code'] != '10000' ){
+			throw new \EasySwoole\Pay\Exceptions\GatewayException( 'Get Alipay API Error:'.$result[$method]['msg'].($result[$method]['sub_code'] ?? ''), $result, $result[$method]['code'] );
+		}
+
+		if( $this->verifySign( $result[$method], true, $result['sign'] ) ){
+			return new SplArray( $result[$method] );
+		}
+
+		throw new \EasySwoole\Pay\Exceptions\InvalidSignException( 'Alipay Sign Verify FAILED', $result );
+	}
 }
