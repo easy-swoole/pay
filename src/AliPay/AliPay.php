@@ -26,6 +26,8 @@ use EasySwoole\Pay\AliPay\ResponseBean\Transfer as TransferResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\MiniProgram as MiniProgramResponse;
 use EasySwoole\Pay\Exceptions\InvalidConfigException;
 
+use EasySwoole\Pay\Utility\NewWork;
+use EasySwoole\Spl\SplArray;
 use EasySwoole\Spl\SplString;
 
 class AliPay
@@ -108,26 +110,83 @@ class AliPay
 	}
 
 
-    function find()
-    {
+	function find()
+	{
 
-    }
+	}
 
-    function refund()
-    {
+	function refund()
+	{
 
-    }
+	}
 
-    function cancel()
-    {
+	function cancel()
+	{
 
-    }
+	}
 
-    function close()
-    {
+	function close()
+	{
 
-    }
+	}
 
+	/**
+	 * @param array $data
+	 * @return SplArray
+	 * @throws InvalidConfigException
+	 * @throws \EasySwoole\HttpClient\Exception\InvalidUrl
+	 * @throws \EasySwoole\Pay\Exceptions\GatewayException
+	 * @throws \EasySwoole\Pay\Exceptions\InvalidSignException
+	 */
+	public function preQuest( array $data ) : SplArray
+	{
+		$response = NewWork::post( $this->config->getGateWay(), $data );
+
+		$result   = json_decode( mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ),true );
+		var_dump(mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ));
+		$method   = str_replace( '.', '_', $data['method'] ).'_response';
+
+		if( !isset( $result['sign'] ) || $result[$method]['code'] != '10000' ){
+			throw new \EasySwoole\Pay\Exceptions\GatewayException( 'Get Alipay API Error:'.$result[$method]['msg'].($result[$method]['sub_code'] ?? ''), $result, $result[$method]['code'] );
+		}
+
+		if( $this->verifySign( $result[$method], true, $result['sign'] ) ){
+			return new SplArray( $result[$method] );
+		}
+
+		throw new \EasySwoole\Pay\Exceptions\InvalidSignException( 'Alipay Sign Verify FAILED', $result );
+	}
+
+	/**
+	 * Verify sign.
+	 * @param array       $data
+	 * @param bool        $sync
+	 * @param string|null $sign
+	 * @throws InvalidConfigException
+	 *
+	 * @return bool
+	 */
+	public function verifySign( array $data, $sync = false, $sign = null ) : bool
+	{
+		$publicKey = $this->config->getPublicKey();
+
+		if( is_null( $publicKey ) ){
+			throw new InvalidConfigException( 'Missing Alipay Config -- [ali_public_key]' );
+		}
+
+		$string = new SplString( $publicKey );
+		if( $string->endsWith( '.pem' ) ){
+			$publicKey = openssl_pkey_get_public( $publicKey );
+		} else{
+			$publicKey = "-----BEGIN PUBLIC KEY-----\n".wordwrap( $publicKey, 64, "\n", true )."\n-----END PUBLIC KEY-----";
+		}
+
+		$sign = $sign ?? $data['sign'];
+
+		$toVerify = $sync ? mb_convert_encoding( json_encode( $data, JSON_UNESCAPED_UNICODE ), 'gb2312', 'utf-8' ) : $this->getSignContent( $data );
+
+		return openssl_verify( $toVerify, base64_decode( $sign ), $publicKey, OPENSSL_ALGO_SHA256 ) === 1;
+	}
 
 	/**
 	 * @param NotifyRequest $request
@@ -141,25 +200,7 @@ class AliPay
 			$data['fund_bill_list'] = htmlspecialchars_decode( $data['fund_bill_list'] );
 		}
 
-		$publicKey = $this->config->getPublicKey();
-
-		if( is_null( $publicKey ) ){
-			throw new InvalidConfigException( 'Missing Alipay Config -- [ali_public_key]' );
-		}
-
-		$string = new SplString( $publicKey );
-
-		if( $string->endsWith( '.pem' ) ){
-			$publicKey = openssl_pkey_get_public( $publicKey );
-		} else{
-			$publicKey = "-----BEGIN PUBLIC KEY-----\n".wordwrap( $publicKey, 64, "\n", true )."\n-----END PUBLIC KEY-----";
-		}
-
-		$sign = $sign ?? $data['sign'];
-
-		$toVerify = $this->getSignContent( $data );
-
-		return openssl_verify( $toVerify, base64_decode( $sign ), $publicKey, OPENSSL_ALGO_SHA256 ) === 1;
+		return $this->verifySign( $data );
 	}
 
 	/**
@@ -240,17 +281,17 @@ class AliPay
 		return false;
 	}
 
-    /**
-     * @param mixed $request
-     * @return array
-     * @throws InvalidConfigException
-     */
-    private function getRequestParams( $request ) : array
-    {
-        $array                = $request->toArray() + $this->getSysParams();
-        $array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
-        $array['sign']        = $this->generateSign( $array );
-        return $array;
-    }
+	/**
+	 * @param mixed $request
+	 * @return array
+	 * @throws InvalidConfigException
+	 */
+	private function getRequestParams( $request ) : array
+	{
+		$array                = $request->toArray() + $this->getSysParams();
+		$array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
+		$array['sign']        = $this->generateSign( $array );
+		return $array;
+	}
 
 }

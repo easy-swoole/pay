@@ -31,28 +31,24 @@ class NewWork
 	}
 
 	/**
-	 * Send a POST request.
-	 *
-	 *
-	 * @param string       $endpoint
-	 * @param string|array $data
-	 * @param array        $options
-	 *
-	 * @return array|string
+	 * @param       $endpoint
+	 * @param       $data
+	 * @return \EasySwoole\HttpClient\Bean\Response
+	 * @throws \EasySwoole\HttpClient\Exception\InvalidUrl
 	 */
-	public static function post( $endpoint, $data, $options = [] )
+	public static function post( $endpoint, $data )
 	{
-		if( !is_array( $data ) ){
-			$options['body'] = $data;
-		} else{
-			$options['form_params'] = $data;
-		}
 		$client = new HttpClient();
-
-		return $client->request( 'post', $endpoint, $options );
+		$client->setUrl( $endpoint )->post( $data,"application/json" );
+		return $client->exec();
 	}
 
-	public static function postJson( $endpoint, $data, $options = [] )
+	/**
+	 * @param       $endpoint
+	 * @param       $data
+	 * @param array $options
+	 */
+	public static function postJson( string $endpoint,array $data, $options = [] )
 	{
 
 	}

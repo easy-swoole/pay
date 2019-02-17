@@ -4,3 +4,4 @@ composer.lock
 *.DS_Store
 .idea
 docker-compose.yml
+/tests/test.html
