@@ -6,21 +6,17 @@ class Exception extends \Exception
 {
     /**
      * Raw error info.
-     *
-     * @var array
      */
-    public $raw;
+    public $extra;
 
-    /**
-     *
-     * @param string       $message
-     * @param array|string $raw
-     * @param int|string   $code
-     */
-    public function __construct($message, $raw = [], $code = 9999)
+    public function __construct($message, $extra = null, $code = 9999)
     {
-        $this->raw = is_array($raw) ? $raw : [$raw];
-
+        $this->extra = $extra;
         parent::__construct($message, intval($code));
+    }
+
+    public function getErrorExtraInfo()
+    {
+        return $this->extra;
     }
 }
