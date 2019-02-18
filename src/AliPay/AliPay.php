@@ -40,8 +40,10 @@ use EasySwoole\Pay\AliPay\ResponseBean\Cancel as CancelResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Download as DownloadResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Refund as RefundResponse;
 
+use EasySwoole\Pay\Exceptions\GatewayException;
 use EasySwoole\Pay\Exceptions\InvalidConfigException;
 
+use EasySwoole\Pay\Exceptions\InvalidSignException;
 use EasySwoole\Pay\Utility\NewWork;
 use EasySwoole\Spl\SplArray;
 use EasySwoole\Spl\SplString;
@@ -348,22 +350,19 @@ class AliPay
 	 * @throws \EasySwoole\Pay\Exceptions\GatewayException
 	 * @throws \EasySwoole\Pay\Exceptions\InvalidSignException
 	 */
-	public function preQuest( array $data ) : SplArray
+	private function preQuest( array $data ) : SplArray
 	{
 		$response = NewWork::post( $this->config->getGateWay(), $data );
-
 		$result = json_decode( mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ), true );
-		//		var_dump(mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ));
 		$method = str_replace( '.', '_', $data['method'] ).'_response';
-
 		if( !isset( $result['sign'] ) || $result[$method]['code'] != '10000' ){
-			throw new \EasySwoole\Pay\Exceptions\GatewayException( 'Get Alipay API Error:'.$result[$method]['msg'].($result[$method]['sub_code'] ?? ''), $result, $result[$method]['code'] );
+			throw new GatewayException( 'Get Alipay API Error:'.$result[$method]['msg'].($result[$method]['sub_code'] ?? ''), $result, $result[$method]['code'] );
 		}
 
 		if( $this->verifySign( $result[$method], true, $result['sign'] ) ){
 			return new SplArray( $result[$method] );
 		}
 
-		throw new \EasySwoole\Pay\Exceptions\InvalidSignException( 'Alipay Sign Verify FAILED', $result );
+		throw new InvalidSignException( 'Alipay Sign Verify FAILED', $result );
 	}
 }
