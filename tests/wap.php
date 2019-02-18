@@ -19,10 +19,9 @@ go(function (){
     $order->setTotalAmount('0.01');
     $res = $pay->aliPay($aliConfig)->wap($order);
     var_dump($res->toArray());
-    $html = buildPayHtml(\EasySwoole\Pay\AliPay\GateWay::NORMAL,$res->toArray());
+    $html = buildPayHtml(\EasySwoole\Pay\AliPay\GateWay::SANDBOX,$res->toArray());
     file_put_contents('test.html',$html);
 });
-
 
 function buildPayHtml($endpoint, $payload)
 {
