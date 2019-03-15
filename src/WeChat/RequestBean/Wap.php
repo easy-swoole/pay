@@ -11,70 +11,59 @@
 namespace EasySwoole\Pay\WeChat\RequestBean;
 
 
-class Wap
+class Wap extends PayBase
 {
-	protected $trade_type = 'MWEB';
+    protected $trade_type = 'MWEB';
 
-	/**
-	 * @var string
-	 */
-	protected $out_trade_no;
-	/**
-	 * @var string
-	 */
-	protected $body;
-	/**
-	 * @var string
-	 */
-	protected $total_fee;
+    protected $notify_url;
+    protected $product_id;
+    protected $openid;
+    protected $scene_info;
 
-	/**
-	 * @return string
-	 */
-	public function getOutTradeNo() : string
-	{
-		return $this->out_trade_no;
-	}
+    /**
+     * @return mixed
+     */
+    public function getOpenid(): string
+    {
+        return $this->openid;
+    }
 
-	/**
-	 * @param string $out_trade_no
-	 */
-	public function setOutTradeNo( string $out_trade_no ) : void
-	{
-		$this->out_trade_no = $out_trade_no;
-	}
+    /**
+     * @param mixed $openid
+     */
+    public function setOpenid(string $openid): void
+    {
+        $this->openid = $openid;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getBody() : string
-	{
-		return $this->body;
-	}
+    public function setSceneInfo(string $sceneInfo): void
+    {
+        $this->scene_info = $sceneInfo;
+    }
 
-	/**
-	 * @param string $body
-	 */
-	public function setBody( string $body ) : void
-	{
-		$this->body = $body;
-	}
+    public function getSceneInfo(): ?string
+    {
+        return $this->scene_info;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getTotalFee() : string
-	{
-		return $this->total_fee;
-	}
+    public function setProductId(string $productId): void
+    {
+        $this->product_id = $productId;
+    }
 
-	/**
-	 * @param string $total_fee
-	 */
-	public function setTotalFee( string $total_fee ) : void
-	{
-		$this->total_fee = $total_fee;
-	}
+    public function getProductId(): ?string
+    {
+        return $this->product_id;
+    }
 
+    public function setNotifyUrl(string $notify_url): void
+    {
+        $this->notify_url = $notify_url;
+    }
+
+    public function getNotifyUrl(): string
+    {
+        return $this->notify_url;
+    }
 
 }

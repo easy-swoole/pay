@@ -10,7 +10,9 @@
 namespace EasySwoole\Pay\WeChat\ResponseBean;
 
 
-class Wap
+class Wap extends Base
 {
-
+    protected $mweb_url;
+    protected $prepay_id;
+    protected $trade_type;
 }
