@@ -9,6 +9,7 @@ use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\Config;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount;
 
+
 class Index extends Controller
 {
 
