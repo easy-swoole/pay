@@ -6,10 +6,9 @@
  * Time: 13:52
  */
 require_once dirname(__DIR__) . '/vendor/autoload.php';
-//5f01b266a82f6c449022aebcd0584b44
 $url = 'https://api.mch.weixin.qq.com/sandboxnew/pay/getsignkey';
-$mch_id = '1490578112';
-$key = 'dYGtX5CT4fZR5cBUrdPdgVzs9u3WL4Lq';
+$mch_id = '';
+$key = '';
 $data['mch_id'] = $mch_id;
 $data['nonce_str'] = \EasySwoole\Utility\Random::character(32);
 

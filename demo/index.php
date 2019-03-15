@@ -5,7 +5,6 @@ namespace App\HttpController;
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use EasySwoole\Http\AbstractInterface\Controller;
-//use EasySwoole\Pay\AliPay\RequestBean\Wap;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\Config;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount;
@@ -17,14 +16,13 @@ class Index extends Controller
 
     public function onRequest(?string $action): bool
     {
-        //$wechatConfig->setKey('5f01b266a82f6c449022aebcd0584b44');//沙箱环境一直调用不成功
         $wechatConfig = new Config();
-        $wechatConfig->setAppId('wxfb85fc4a4360b9e6');
-        $wechatConfig->setMchId('1490578112');
-        $wechatConfig->setKey('dYGtX5CT4fZR5cBUrdPdgVzs9u3WL4Lq');
-        $wechatConfig->setNotifyUrl('http://mypay.dddaozhen.com/index/notify');
-        $wechatConfig->setCertClient('/web/cert/174fuke/apiclient_cert.pem');
-        $wechatConfig->setCertKey('/web/cert/174fuke/apiclient_key.pem');
+        $wechatConfig->setAppId('');
+        $wechatConfig->setMchId('');
+        $wechatConfig->setKey('');
+        $wechatConfig->setNotifyUrl('');
+        $wechatConfig->setCertClient('');
+        $wechatConfig->setCertKey('');
         $this->wechatConfig = $wechatConfig;
         return true;
     }
@@ -35,10 +33,10 @@ class Index extends Controller
     function index()
     {
         $officialAccount = new OfficialAccount();
-        $officialAccount->setOpenid('o4bwBxP4NhPtBn_Naktc_pKw_z3U');
+        $officialAccount->setOpenid('xxxxx');
         $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
         $officialAccount->setOutTradeNo($outTradeNo);
-        $officialAccount->setBody('厦门鹭会健康科技-测试' . $outTradeNo);
+        $officialAccount->setBody('xxxxx-测试' . $outTradeNo);
         $officialAccount->setTotalFee(1);
         $officialAccount->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
         $pay = new \EasySwoole\Pay\Pay();
@@ -134,7 +132,7 @@ EOF;
         $wap = new \EasySwoole\Pay\WeChat\RequestBean\Wap();
         $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
         $wap->setOutTradeNo($outTradeNo);
-        $wap->setBody('厦门鹭会健康科技-WAP测试' . $outTradeNo);
+        $wap->setBody('xxxxx-WAP测试' . $outTradeNo);
         $wap->setTotalFee(1);
         $wap->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
         $pay = new \EasySwoole\Pay\Pay();

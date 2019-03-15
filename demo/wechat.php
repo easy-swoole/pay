@@ -11,23 +11,22 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 use EasySwoole\Pay\WeChat\Config;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount;
 
-//$wechatConfig->setKey('5f01b266a82f6c449022aebcd0584b44');
 $wechatConfig = new Config();
-$wechatConfig->setAppId('wxfb85fc4a4360b9e6');
-$wechatConfig->setMchId('1490578112');
-$wechatConfig->setKey('dYGtX5CT4fZR5cBUrdPdgVzs9u3WL4Lq');
-$wechatConfig->setNotifyUrl('http://mypay.dddaozhen.com/index/notify');
-$wechatConfig->setCertClient('/web/cert/174fuke/apiclient_cert.pem');
-$wechatConfig->setCertKey('/web/cert/174fuke/apiclient_key.pem');
+$wechatConfig->setAppId('');
+$wechatConfig->setMchId('');
+$wechatConfig->setKey('');
+$wechatConfig->setNotifyUrl('');
+$wechatConfig->setCertClient('');
+$wechatConfig->setCertKey('');
 /**
  * 公众号支付测试
  */
 //go(function () use ($wechatConfig) {
 //    $officialAccount = new OfficialAccount();
-//    $officialAccount->setOpenid('o4bwBxP4NhPtBn_Naktc_pKw_z3U');
+//    $officialAccount->setOpenid('');
 //    $ourTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
 //    $officialAccount->setOutTradeNo($ourTradeNo);
-//    $officialAccount->setBody('鹭会嘀嘀导诊-测试');
+//    $officialAccount->setBody('xxxxx-测试');
 //    $officialAccount->setTotalFee(1);
 //    $officialAccount->setSpbillCreateIp('47.98.131.103');
 //    $pay = new \EasySwoole\Pay\Pay();
@@ -67,7 +66,7 @@ $wechatConfig->setCertKey('/web/cert/174fuke/apiclient_key.pem');
 //    $refund->setOutRefundNo('TK' . date('YmdHis') . rand(1000, 9999));
 //    $refund->setTotalFee(1);
 //    $refund->setRefundFee(1);
-//    $refund->setNotifyUrl('http://mypay.dddaozhen.com/index/refund_notify');
+//    $refund->setNotifyUrl('');
 //    $pay = new \EasySwoole\Pay\Pay();
 //    $info = $pay->weChat($wechatConfig)->refund($refund);
 //    print_r($info);
@@ -106,7 +105,7 @@ go(function () use ($wechatConfig) {
 //go(function () use ($wechatConfig) {
 //    $download = new \EasySwoole\Pay\WeChat\RequestBean\DownloadFundFlow();
 //    $download->setBillDate('20190312');
-//    $download->setAccountType('Basic');//坑爹的微信文档，这个参数必传
+//    $download->setAccountType('Basic');
 //    $pay = new \EasySwoole\Pay\Pay();
 //    $info = $pay->weChat($wechatConfig)->downloadFundFlow($download);
 //    echo htmlspecialchars($info, ENT_QUOTES);
@@ -136,7 +135,7 @@ go(function () use ($wechatConfig) {
 //    $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
 //    $wap = new \EasySwoole\Pay\WeChat\RequestBean\Wap();
 //    $wap->setOutTradeNo($outTradeNo);
-//    $wap->setBody('厦门鹭会健康科技-WAP测试' . $outTradeNo);
+//    $wap->setBody('xxxxx-WAP测试' . $outTradeNo);
 //    $wap->setTotalFee(1);
 //    $wap->setSpbillCreateIp('47.98.131.103');
 //    $params = $pay->weChat($wechatConfig)->wap($wap);
