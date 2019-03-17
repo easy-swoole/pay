@@ -18,6 +18,7 @@ class OfficialAccount extends AbstractPayBase
 
     public function pay(Base $bean): OfficiaAccountResponse
     {
+        /** @var \EasySwoole\Pay\WeChat\RequestBean\OfficialAccount $bean */
         $utility = new Utility($this->config);
         $bean->setNotifyUrl($this->config->getNotifyUrl());
         $result = $utility->requestApi($this->getRequestUrl(), $bean);
