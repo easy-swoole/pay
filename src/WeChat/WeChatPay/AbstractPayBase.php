@@ -10,11 +10,10 @@ namespace EasySwoole\Pay\WeChat\WeChatPay;
 
 
 use EasySwoole\Pay\WeChat\Config;
+use EasySwoole\Pay\WeChat\RequestBean\Base;
 
 abstract class AbstractPayBase
 {
-    const REQUEST_URL = '/pay/unifiedorder';
-
     protected $config;
 
     public function __construct(Config $config)
@@ -24,6 +23,9 @@ abstract class AbstractPayBase
 
     public function getRequestUrl()
     {
-        return $this->config->getGateWay() . static::REQUEST_URL;
+        return $this->config->getGateWay() . $this->requestPath();
     }
+
+    abstract protected function requestPath():string ;
+    abstract function pay(Base $bean);
 }

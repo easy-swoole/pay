@@ -8,15 +8,15 @@
 
 namespace EasySwoole\Pay\WeChat\WeChatPay;
 
-use EasySwoole\Pay\WeChat\AbstractInterface\WeChatPay;
+use EasySwoole\Pay\WeChat\RequestBean\Base;
 use EasySwoole\Pay\WeChat\RequestBean\PayBase as PayBaseBean;
 use \EasySwoole\Pay\WeChat\ResponseBean\OfficialAccount as OfficiaAccountResponse;
 use EasySwoole\Pay\WeChat\Utility;
 
-class OfficialAccount extends AbstractPayBase implements WeChatPay
+class OfficialAccount extends AbstractPayBase
 {
 
-    public function pay(PayBaseBean $bean): OfficiaAccountResponse
+    public function pay(Base $bean): OfficiaAccountResponse
     {
         $utility = new Utility($this->config);
         $bean->setNotifyUrl($this->config->getNotifyUrl());
@@ -31,4 +31,9 @@ class OfficialAccount extends AbstractPayBase implements WeChatPay
         return $response;
     }
 
+    protected function requestPath(): string
+    {
+        // TODO: Implement requestPath() method.
+        return '/pay/unifiedorder';
+    }
 }
