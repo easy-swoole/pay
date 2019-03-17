@@ -13,8 +13,6 @@ use EasySwoole\Pay\Exceptions\InvalidGatewayException;
 use EasySwoole\Pay\Exceptions\InvalidSignException;
 
 use EasySwoole\Pay\WeChat\AbstractInterface\WeChatPay;
-use EasySwoole\Pay\WeChat\WeChatPay\OfficialAccount;
-use EasySwoole\Pay\WeChat\WeChatPay\Wap;
 
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount as OfficialAccountRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Wap as WapRequest;
@@ -30,13 +28,14 @@ use EasySwoole\Pay\WeChat\RequestBean\Comment as CommentRequest;
 
 use EasySwoole\Pay\WeChat\ResponseBean\OfficialAccount as OfficialAccountResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Wap as WapResponse;
+use EasySwoole\Pay\WeChat\WeChatPay\OfficialAccount;
 use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\Str;
 
 /**
  * Class WeChat
  * @package EasySwoole\Pay\WeChat
- * @method OfficialAccountResponse officialAccount(OfficialAccountRequest $bean) 公众号支付
+// * @method OfficialAccountResponse officialAccount(OfficialAccountRequest $bean) 公众号支付
  * @method WapResponse wap(WapRequest $bean) H5 支付
  *
  */
@@ -49,25 +48,32 @@ class WeChat
         $this->config = $config;
     }
 
-    /**
-     * 支付
-     * @param $gateway
-     * @param $arguments
-     * @return mixed
-     * @throws InvalidGatewayException
-     */
-    public function __call($gateway, $arguments)
+
+    function officialAccount(OfficialAccountRequest $bean)
     {
-        $gateway = get_class($this) . 'Pay\\' . Str::studly($gateway);
-        if (class_exists($gateway)) {
-            $app = new $gateway($this->config);
-            if ($app instanceof WeChatPay) {
-                return call_user_func_array([$app, 'pay'], $arguments);
-            }
-            throw new InvalidGatewayException("Pay Gateway [{$gateway}] Must Be An Instance Of WeChatPayInterface");
-        }
-        throw new InvalidGatewayException("Pay Gateway [{$gateway}] Not Exists");
+        return (new OfficialAccount($this->config))->pay($bean);
     }
+
+    //不要用这种做法，开发的时候没有ide提示，容易出错。
+//    /**
+//     * 支付
+//     * @param $gateway
+//     * @param $arguments
+//     * @return mixed
+//     * @throws InvalidGatewayException
+//     */
+//    public function __call($gateway, $arguments)
+//    {
+//        $gateway = get_class($this) . 'Pay\\' . Str::studly($gateway);
+//        if (class_exists($gateway)) {
+//            $app = new $gateway($this->config);
+//            if ($app instanceof WeChatPay) {
+//                return call_user_func_array([$app, 'pay'], $arguments);
+//            }
+//            throw new InvalidGatewayException("Pay Gateway [{$gateway}] Must Be An Instance Of WeChatPayInterface");
+//        }
+//        throw new InvalidGatewayException("Pay Gateway [{$gateway}] Not Exists");
+//    }
 
 
     /**
@@ -93,7 +99,7 @@ class WeChat
      */
     public function refundFind(RefundFindRequest $bean): SplArray
     {
-        return $this->config->requestApi($this->config->getGateWay() . '/pay/refundquery', $bean);
+        return (new Utility($this->config))->requestApi( '/pay/refundquery',$bean);
     }
 
     /**
@@ -106,7 +112,7 @@ class WeChat
      */
     public function close(CloseRequest $bean): SplArray
     {
-        return $this->config->requestApi($this->config->getGateWay() . '/pay/closeorder', $bean);
+        return (new Utility($this->config))->requestApi( '/pay/closeorder',$bean);
     }
 
     /**
@@ -119,7 +125,7 @@ class WeChat
      */
     public function refund(RefundRequest $bean): SplArray
     {
-        return $this->config->requestApi($this->config->getGateWay() . '/secapi/pay/refund', $bean, true);
+        return (new Utility($this->config))->requestApi( '/pay/pay/refund',$bean,true);
     }
 
     /**
@@ -130,7 +136,7 @@ class WeChat
      */
     public function download(DownloadRequest $bean): string
     {
-        return $this->config->request($this->config->getGateWay() . '/pay/downloadbill', $bean);
+        return (new Utility($this->config))->requestApi( '/pay/downloadbill',$bean);
     }
 
     /**
@@ -141,7 +147,7 @@ class WeChat
      */
     public function downloadFundFlow(DownloadFundFlowRequest $bean): string
     {
-        return $this->config->request($this->config->getGateWay() . '/pay/downloadfundflow', $bean, true);
+        return (new Utility($this->config))->requestApi( '/pay/downloadfundflow',$bean);
     }
 
     /**
@@ -152,7 +158,7 @@ class WeChat
      */
     public function comment(CommentRequest $bean): string
     {
-        return $this->config->request($this->config->getGateWay() . '/billcommentsp/batchquerycomment', $bean, true);
+        return (new Utility($this->config))->requestApi( '/billcommentsp/batchquerycomment',$bean,true);
     }
 
     /**
@@ -174,16 +180,15 @@ class WeChat
      */
     public function verify($content = null, $refund = false): SplArray
     {
-        $data = $this->config->fromXML($content);
+        $utility = new Utility($this->config);
+        $data = $utility->fromXML($content);
         if ($refund) {
-            $decrypt_data = $this->config->fromXML($this->config->decryptRefundContents($data['req_info']));
+            $decrypt_data = $utility->fromXML($utility->decryptRefundContents($data['req_info']));
             $data = array_merge($decrypt_data, $data);
         }
-        if ($refund || $this->config->generateSign($data) === $data['sign']) {
+        if ($refund || $utility->generateSign($data) === $data['sign']) {
             return new SplArray($data);
         }
         throw new InvalidSignException('Wechat Sign Verify FAILED', $data->__toString());
     }
-
-
 }

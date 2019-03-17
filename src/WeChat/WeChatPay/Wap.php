@@ -12,7 +12,7 @@ use EasySwoole\Pay\WeChat\AbstractInterface\WeChatPay;
 use EasySwoole\Pay\WeChat\ResponseBean\Wap as WapResponse;
 use EasySwoole\Pay\WeChat\RequestBean\PayBase as PayBaseBean;
 
-class Wap extends PayBase implements WeChatPay
+class Wap extends AbstractPayBase implements WeChatPay
 {
     /**
      * H5支付
