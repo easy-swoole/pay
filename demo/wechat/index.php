@@ -2,12 +2,17 @@
 
 namespace App\HttpController;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\Config;
+use EasySwoole\Pay\WeChat\RequestBean\Biz;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount;
+use EasySwoole\Pay\WeChat\Utility;
+use EasySwoole\Pay\WeChat\WeChatPay\Scan;
+use EasySwoole\Spl\SplArray;
+use Swoole\Buffer;
 
 
 class Index extends Controller
@@ -24,6 +29,7 @@ class Index extends Controller
         $wechatConfig->setNotifyUrl('');
         $wechatConfig->setCertClient('');
         $wechatConfig->setCertKey('');
+
         $this->wechatConfig = $wechatConfig;
         return true;
     }
@@ -36,6 +42,7 @@ class Index extends Controller
         $officialAccount = new OfficialAccount();
         $officialAccount->setOpenid('xxxxx');
         $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
+        echo "MP--- " . $outTradeNo . "\r\n";
         $officialAccount->setOutTradeNo($outTradeNo);
         $officialAccount->setBody('xxxxx-测试' . $outTradeNo);
         $officialAccount->setTotalFee(1);
@@ -106,7 +113,7 @@ EOF;
         $pay = new Pay();
         $data = $pay->weChat($this->wechatConfig)->verify($content);
         $msg = "[" . date('Y-m-d H:i:s') . "]" . $data->__toString() . "\r\n";
-        file_put_contents(dirname(__DIR__) . '/Temp/notify-' . date('Y-m-d') . '.log', $msg, FILE_APPEND);
+        file_put_contents(dirname(dirname(__DIR__)) . '/Temp/notify-' . date('Y-m-d') . '.log', $msg, FILE_APPEND);
         $this->response()->write($pay->weChat($this->wechatConfig)->success());
     }
 
@@ -121,25 +128,26 @@ EOF;
         $pay = new Pay();
         $data = $pay->weChat($this->wechatConfig)->verify($content, true);
         $msg = "[" . date('Y-m-d H:i:s') . "]" . $data->__toString() . "\r\n";
-        file_put_contents(dirname(__DIR__) . '/Temp/refund_notify-' . date('Y-m-d') . '.log', $msg, FILE_APPEND);
+        file_put_contents(dirname(dirname(__DIR__)) . '/Temp/refund_notify-' . date('Y-m-d') . '.log', $msg, FILE_APPEND);
         $this->response()->write($pay->weChat($this->wechatConfig)->success());
     }
 
     /**
-     * 网页支付
+     * H5支付
      */
     function wap()
     {
         $wap = new \EasySwoole\Pay\WeChat\RequestBean\Wap();
         $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
+        echo "WAP--- " . $outTradeNo . "\r\n";
         $wap->setOutTradeNo($outTradeNo);
         $wap->setBody('xxxxx-WAP测试' . $outTradeNo);
         $wap->setTotalFee(1);
         $wap->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
         $pay = new \EasySwoole\Pay\Pay();
         try {
-            $params = $pay->weChat($this->wechatConfig)->Wap($wap);
-            $params=$params->toArray();
+            $params = $pay->weChat($this->wechatConfig)->wap($wap);
+            $params = $params->toArray();
             $str = '<html>
 <head></head>
 <body>
@@ -152,6 +160,120 @@ EOF;
         }
     }
 
+    public function scan()
+    {
+        $xml = $this->request()->getBody()->__toString();
+        $pay = new Pay();
+        $data = $pay->weChat($this->wechatConfig)->verify($xml);
+        $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
+        echo "NATIVE--- " . $outTradeNo . "\r\n";
+        $bean = new \EasySwoole\Pay\WeChat\RequestBean\Scan();
+        $bean->setOutTradeNo($outTradeNo);
+        $bean->setOpenid('xxxxxx');
+        $bean->setProductId($data['product_id']);
+        $bean->setBody('xxxxxx-SCAN测试' . $outTradeNo);
+        $bean->setTotalFee(1);
+        $bean->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
+
+        $response = $pay->weChat($this->wechatConfig)->scan($bean);
+        $result = [
+            'appid' => $this->wechatConfig->getAppId(),
+            'mch_id' => $this->wechatConfig->getMchId(),
+            'prepay_id' => $response->getPrepayId(),
+            'nonce_str' => $response->getNonceStr(),
+            'result_code' => 'SUCCESS',
+            'return_msg' => 'ok',
+            'return_code' => 'SUCCESS',
+            'err_code_des' => 'ok'
+        ];
+        $u = new Utility($this->wechatConfig);
+        $result['sign'] = $u->generateSign($result);
+        $arr = new SplArray($result);
+        $xml = $arr->toXML();
+        $this->response()->write($xml);
+    }
+
+    function scanindex()
+    {
+        $biz = new Biz();
+        $biz->setProductId('123456789');
+        $biz->setTimeStamp(time());
+        $biz->setAppId($this->wechatConfig->getAppId());
+        $biz->setMchId($this->wechatConfig->getMchid());
+        $data = $biz->toArray();
+        $u = new Utility($this->wechatConfig);
+        $sign = $u->generateSign($data);
+        $biz->setSign($sign);
+        $url1 = "weixin://wxpay/bizpayurl?" . $this->ToUrlParams($biz->toArray());
+
+
+        $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
+        echo "WAP--- " . $outTradeNo . "\r\n";
+        $bean = new \EasySwoole\Pay\WeChat\RequestBean\Scan();
+        $bean->setOutTradeNo($outTradeNo);
+
+        $bean->setProductId('123456789');
+        $bean->setBody('厦门鹭会-SCAN2测试' . $outTradeNo);
+        $bean->setTotalFee(1);
+        $bean->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
+
+        $pay = new Pay();
+        $data = $pay->weChat($this->wechatConfig)->scan($bean);
+        $url2 = $data->getCodeUrl();
+        $str = '
+        <html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+    <title>微信支付样例-扫码支付</title>
+</head>
+<body>
+	<div style="margin-left: 10px;color:#556B2F;font-size:30px;font-weight: bolder;">扫描支付模式一</div><br/>
+	<img alt="模式一扫码支付" src="/index/qrcode?data=' . urlencode($url1) . '" style="width:150px;height:150px;"/>
+	<br/><br/><br/>
+	<div style="margin-left: 10px;color:#556B2F;font-size:30px;font-weight: bolder;">扫描支付模式二</div><br/>
+	<img alt="模式二扫码支付" src="/index/qrcode?data=' . urlencode($url2) . '" style="width:150px;height:150px;"/>
+	<div style="color:#ff0000"><b>微信支付样例程序，仅做参考</b></div>
+	
+</body>
+</html>
+        ';
+        $this->response()->write($str);
+    }
+
+    /**
+     * 生成二维码
+     */
+    function qrcode()
+    {
+        require_once dirname(__DIR__) . '/phpqrcode/phpqrcode.php';
+        $url = urldecode($this->request()->getQueryParam("data"));
+        if (substr($url, 0, 6) == "weixin") {
+            ob_start();
+            \QRcode::png($url);
+            $content = ob_get_contents();
+            ob_end_clean();
+            $this->response()->write($content);
+        } else {
+//            header('HTTP/1.1 404 Not Found');
+        }
+    }
+
+    /**
+     * 参数数组转换为url参数
+     * @param $urlObj
+     * @return string
+     */
+    private function ToUrlParams($urlObj)
+    {
+        $buff = "";
+        foreach ($urlObj as $k => $v) {
+            $buff .= $k . "=" . $v . "&";
+        }
+
+        $buff = trim($buff, "&");
+        return $buff;
+    }
 
     protected function onException(\Throwable $throwable): void
     {

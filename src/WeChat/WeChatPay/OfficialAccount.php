@@ -9,8 +9,7 @@
 namespace EasySwoole\Pay\WeChat\WeChatPay;
 
 use EasySwoole\Pay\WeChat\RequestBean\Base;
-use EasySwoole\Pay\WeChat\RequestBean\PayBase as PayBaseBean;
-use \EasySwoole\Pay\WeChat\ResponseBean\OfficialAccount as OfficiaAccountResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\OfficialAccount as OfficiaAccountResponse;
 use EasySwoole\Pay\WeChat\Utility;
 
 class OfficialAccount extends AbstractPayBase
@@ -21,11 +20,11 @@ class OfficialAccount extends AbstractPayBase
         /** @var \EasySwoole\Pay\WeChat\RequestBean\OfficialAccount $bean */
         $utility = new Utility($this->config);
         $bean->setNotifyUrl($this->config->getNotifyUrl());
-        $result = $utility->requestApi($this->getRequestUrl(), $bean);
+        $result = $utility->requestApi($this->requestPath(), $bean);
         $result = [
             'appId' => $this->config->getAppId(),
             'package' => 'prepay_id=' . $result['prepay_id'],
-            'signType' => $bean->getSignType()
+            'signType' => empty($bean->getSignType()) ? 'MD5' : $bean->getSignType()
         ];
         $response = new OfficiaAccountResponse($result);
         $response->setPaySign($utility->generateSign($response->toArray()));
@@ -34,7 +33,6 @@ class OfficialAccount extends AbstractPayBase
 
     protected function requestPath(): string
     {
-        // TODO: Implement requestPath() method.
         return '/pay/unifiedorder';
     }
 }

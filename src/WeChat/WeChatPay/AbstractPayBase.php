@@ -21,11 +21,6 @@ abstract class AbstractPayBase
         $this->config = $config;
     }
 
-    public function getRequestUrl()
-    {
-        return $this->config->getGateWay() . $this->requestPath();
-    }
-
     abstract protected function requestPath():string ;
     abstract function pay(Base $bean);
 }

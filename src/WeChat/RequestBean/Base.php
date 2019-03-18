@@ -19,7 +19,7 @@ abstract class Base extends SplBean
     protected $mch_id;           //是
     protected $nonce_str;        //是
     protected $sign;             //是
-    protected $sign_type = 'MD5';//否，默认为md5
+    protected $sign_type;        //否，默认为md5
 
 
     public function getAppId(): string
