@@ -19,6 +19,7 @@ use EasySwoole\Spl\SplArray;
 class Utility
 {
     private $config;
+
     public function __construct(Config $config)
     {
         $this->config = $config;
@@ -93,14 +94,14 @@ class Utility
         $bean->setAppId($this->config->getAppId());
         $bean->setMchId($this->config->getMchId());
         $bean->setSign($this->generateSign($bean->toArray()));
-        $response = NewWork::postXML($this->config->getGateWay().$endpoint, (new SplArray($bean->toArray()))->toXML(), $useCert ? [
+        $response = NewWork::postXML($this->config->getGateWay() . $endpoint, (new SplArray($bean->toArray()))->toXML(), $useCert ? [
             'ssl_cert_file' => $this->config->getCertClient(),
             'ssl_key_file' => $this->config->getCertKey()]
             : []);
         if ($response->getStatusCode() == 200) {
             return $response->getBody();
         }
-        throw new GatewayException('Get Wechat API Error url:' . $endpoint . ' params:' . $bean->__toString(), 20000);
+        throw new GatewayException('Get Wechat API Error url:' . $this->config->getGateWay() . $endpoint . ' params:' . $bean->__toString(), 20000);
     }
 
     /**

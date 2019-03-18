@@ -6,7 +6,7 @@
  * Time: 9:27
  */
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use EasySwoole\Pay\WeChat\Config;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount;
@@ -39,10 +39,10 @@ $wechatConfig->setCertKey('');
  */
 //go(function () use ($wechatConfig) {
 //    $orderFind = new \EasySwoole\Pay\WeChat\RequestBean\OrderFind();
-//    $orderFind->setOutTradeNo('CN201903151343107239');
+//    $orderFind->setOutTradeNo('CN201903181044383609');
 //    $pay = new \EasySwoole\Pay\Pay();
 //    $info = $pay->weChat($wechatConfig)->orderFind($orderFind);
-//    print_r($info);
+//    print_r((array)$info);
 //});
 
 /**
@@ -62,11 +62,11 @@ $wechatConfig->setCertKey('');
  */
 //go(function () use ($wechatConfig) {
 //    $refund = new \EasySwoole\Pay\WeChat\RequestBean\Refund();
-//    $refund->setOutTradeNo('CN201903151503449597');
+//    $refund->setOutTradeNo('CN201903181111275823');
 //    $refund->setOutRefundNo('TK' . date('YmdHis') . rand(1000, 9999));
 //    $refund->setTotalFee(1);
 //    $refund->setRefundFee(1);
-//    $refund->setNotifyUrl('');
+//    $refund->setNotifyUrl('http://mypay.dddaozhen.com/index/refund_notify');
 //    $pay = new \EasySwoole\Pay\Pay();
 //    $info = $pay->weChat($wechatConfig)->refund($refund);
 //    print_r($info);
@@ -76,14 +76,14 @@ $wechatConfig->setCertKey('');
 /**
  * 退款查询
  */
-go(function () use ($wechatConfig) {
-    $refundFind = new \EasySwoole\Pay\WeChat\RequestBean\RefundFind();
-    $refundFind->setOutTradeNo('CN201903151503449597');
-    $pay = new \EasySwoole\Pay\Pay();
-    $info = $pay->weChat($wechatConfig)->refundFind($refundFind);
-    print_r($info);
-    echo json_encode($info);
-});
+//go(function () use ($wechatConfig) {
+//    $refundFind = new \EasySwoole\Pay\WeChat\RequestBean\RefundFind();
+//    $refundFind->setOutTradeNo('CN201903181044383609');
+//    $pay = new \EasySwoole\Pay\Pay();
+//    $info = $pay->weChat($wechatConfig)->refundFind($refundFind);
+//    print_r($info);
+////    echo json_encode($info);
+//});
 
 
 /**
