@@ -5,3 +5,4 @@ composer.lock
 .idea
 docker-compose.yml
 /tests/test.html
+/Temp

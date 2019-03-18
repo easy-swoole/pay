@@ -6,7 +6,7 @@
  * Time: 19:20
  */
 
-namespace EasySwoole\Pay\Wechat\ResponseBean;
+namespace EasySwoole\Pay\WeChat\ResponseBean;
 
 
 class App extends Base
