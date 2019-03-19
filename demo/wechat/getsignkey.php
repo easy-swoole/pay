@@ -5,6 +5,7 @@
  * Date: 2019/3/11
  * Time: 13:52
  */
+//生成沙箱key
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 $url = 'https://api.mch.weixin.qq.com/sandboxnew/pay/getsignkey';
 $mch_id = '';
