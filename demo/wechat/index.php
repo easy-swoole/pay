@@ -9,6 +9,7 @@ use EasySwoole\Pay\Pay;
 use EasySwoole\Pay\WeChat\Config;
 use EasySwoole\Pay\WeChat\RequestBean\Biz;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount;
+use EasySwoole\Pay\WeChat\ResponseBean\NativeResponse;
 use EasySwoole\Pay\WeChat\Utility;
 use EasySwoole\Pay\WeChat\WeChatPay\Scan;
 use EasySwoole\Spl\SplArray;
@@ -29,18 +30,17 @@ class Index extends Controller
         $wechatConfig->setNotifyUrl('');
         $wechatConfig->setCertClient('');
         $wechatConfig->setCertKey('');
-
         $this->wechatConfig = $wechatConfig;
         return true;
     }
 
     /**
-     * 公众号测试
+     * 公众号支付测试
      */
     function index()
     {
         $officialAccount = new OfficialAccount();
-        $officialAccount->setOpenid('xxxxx');
+        $officialAccount->setOpenid('xxxxxx');
         $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
         echo "MP--- " . $outTradeNo . "\r\n";
         $officialAccount->setOutTradeNo($outTradeNo);
@@ -160,6 +160,11 @@ EOF;
         }
     }
 
+    /**
+     * 扫码模式一 回调地址（公众号管理后台设置）
+     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
+     * @throws \EasySwoole\Pay\Exceptions\InvalidSignException
+     */
     public function scan()
     {
         $xml = $this->request()->getBody()->__toString();
@@ -169,30 +174,26 @@ EOF;
         echo "NATIVE--- " . $outTradeNo . "\r\n";
         $bean = new \EasySwoole\Pay\WeChat\RequestBean\Scan();
         $bean->setOutTradeNo($outTradeNo);
-        $bean->setOpenid('xxxxxx');
+        $bean->setOpenid('xxxxx');
         $bean->setProductId($data['product_id']);
-        $bean->setBody('xxxxxx-SCAN测试' . $outTradeNo);
+        $bean->setBody('xxxxxx-SCAN1测试' . $outTradeNo);
         $bean->setTotalFee(1);
         $bean->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
 
         $response = $pay->weChat($this->wechatConfig)->scan($bean);
-        $result = [
-            'appid' => $this->wechatConfig->getAppId(),
+        $nativeResponse = new NativeResponse(['appid' => $this->wechatConfig->getAppId(),
             'mch_id' => $this->wechatConfig->getMchId(),
             'prepay_id' => $response->getPrepayId(),
-            'nonce_str' => $response->getNonceStr(),
-            'result_code' => 'SUCCESS',
-            'return_msg' => 'ok',
-            'return_code' => 'SUCCESS',
-            'err_code_des' => 'ok'
-        ];
+            'nonce_str' => $response->getNonceStr()]);
         $u = new Utility($this->wechatConfig);
-        $result['sign'] = $u->generateSign($result);
-        $arr = new SplArray($result);
-        $xml = $arr->toXML();
+        $nativeResponse->setSign($u->generateSign($nativeResponse->toArray()));
+        $xml = (new SplArray($nativeResponse->toArray()))->toXML();
         $this->response()->write($xml);
     }
 
+    /**
+     * 扫码支付
+     */
     function scanindex()
     {
         $biz = new Biz();
@@ -213,7 +214,7 @@ EOF;
         $bean->setOutTradeNo($outTradeNo);
 
         $bean->setProductId('123456789');
-        $bean->setBody('厦门鹭会-SCAN2测试' . $outTradeNo);
+        $bean->setBody('xxxx-SCAN2测试' . $outTradeNo);
         $bean->setTotalFee(1);
         $bean->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
 
@@ -255,7 +256,7 @@ EOF;
             ob_end_clean();
             $this->response()->write($content);
         } else {
-//            header('HTTP/1.1 404 Not Found');
+            $this->response()->withStatus(404);
         }
     }
 
