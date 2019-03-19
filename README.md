@@ -423,8 +423,8 @@ $wechatConfig->setAppId('xxxxxx');
 $wechatConfig->setMchId('xxxxxx');
 $wechatConfig->setKey('xxxxxx');
 $wechatConfig->setNotifyUrl('xxxxx');
-$wechatConfig->setCertClient('xxxxx');
-$wechatConfig->setCertKey('xxxxxx');
+$wechatConfig->setApiClientCert('xxxxxxx');//客户端证书
+$wechatConfig->setApiClientKey('xxxxxxx'); //客户端证书秘钥
 ```
 
 ## 公众号支付
@@ -501,7 +501,7 @@ $this->response()->write($xml);
 $bean = new \EasySwoole\Pay\WeChat\RequestBean\Scan();
 $bean->setOutTradeNo($outTradeNo);
 $bean->setProductId('123456789');
-$bean->setBody('厦门鹭会-SCAN2测试' . $outTradeNo);
+$bean->setBody('xxxx-SCAN2测试' . $outTradeNo);
 $bean->setTotalFee(1);
 $bean->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
 $pay = new Pay();
