@@ -36,11 +36,11 @@ class Config extends SplBean
     /**
      * @var string
      */
-    protected $certClient; // optional，退款等情况时用到
+    protected $apiClientCert; //api客户端证书
     /**
      * @var string
      */
-    protected $certKey; // optional，退款等情况时用到
+    protected $apiClientKey; // api客户端证书秘钥
 
     protected $signType;//签名方式
 
@@ -130,33 +130,33 @@ class Config extends SplBean
     /**
      * @return string
      */
-    public function getCertClient(): string
+    public function getApiClientCert(): string
     {
-        return $this->certClient;
+        return $this->apiClientCert;
     }
 
     /**
-     * @param string $certClient
+     * @param string $apiClientCert
      */
-    public function setCertClient(string $certClient): void
+    public function setApiClientCert(string $apiClientCert): void
     {
-        $this->certClient = $certClient;
+        $this->apiClientCert = $apiClientCert;
     }
 
     /**
      * @return string
      */
-    public function getCertKey(): string
+    public function getApiClientKey(): string
     {
-        return $this->certKey;
+        return $this->apiClientKey;
     }
 
     /**
-     * @param string $certKey
+     * @param string $apiClientKey
      */
-    public function setCertKey(string $certKey): void
+    public function setApiClientKey(string $apiClientKey): void
     {
-        $this->certKey = $certKey;
+        $this->apiClientKey = $apiClientKey;
     }
 
     /**

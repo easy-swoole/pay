@@ -14,7 +14,7 @@ $wechatConfig->setAppId('');
 $wechatConfig->setMchId('');
 $wechatConfig->setKey('');
 $wechatConfig->setNotifyUrl('');
-$wechatConfig->setCertClient('');
-$wechatConfig->setCertKey('');
+$wechatConfig->setApiClientCert('');
+$wechatConfig->setApiClientKey('');
 
 return $wechatConfig;

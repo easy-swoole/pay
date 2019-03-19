@@ -28,8 +28,8 @@ class Index extends Controller
         $wechatConfig->setMchId('');
         $wechatConfig->setKey('');
         $wechatConfig->setNotifyUrl('');
-        $wechatConfig->setCertClient('');
-        $wechatConfig->setCertKey('');
+        $wechatConfig->setApiClientCert('');
+        $wechatConfig->setApiClientKey('');
         $this->wechatConfig = $wechatConfig;
         return true;
     }

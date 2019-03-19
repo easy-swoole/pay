@@ -95,8 +95,8 @@ class Utility
         $bean->setMchId($this->config->getMchId());
         $bean->setSign($this->generateSign($bean->toArray()));
         $response = NewWork::postXML($this->config->getGateWay() . $endpoint, (new SplArray($bean->toArray()))->toXML(), $useCert ? [
-            'ssl_cert_file' => $this->config->getCertClient(),
-            'ssl_key_file' => $this->config->getCertKey()]
+            'ssl_cert_file' => $this->config->getApiClientCert(),
+            'ssl_key_file' => $this->config->getApiClientKey()]
             : []);
         if ($response->getStatusCode() == 200) {
             return $response->getBody();
