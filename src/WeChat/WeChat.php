@@ -77,7 +77,7 @@ class WeChat
      * @param ScanRequest $bean
      * @return ResponseBean\Scan
      */
-    public function scan(ScanRequest $bean):ScanResponse
+    public function scan(ScanRequest $bean): ScanResponse
     {
         return (new Scan($this->config))->pay($bean);
     }
@@ -195,6 +195,6 @@ class WeChat
         if ($refund || $utility->generateSign($data) === $data['sign']) {
             return new SplArray($data);
         }
-        throw new InvalidSignException('Wechat Sign Verify FAILED', $data->__toString());
+        throw new InvalidSignException('Wechat Sign Verify FAILED', json_encode($data));
     }
 }
