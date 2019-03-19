@@ -404,7 +404,7 @@ var_dump($result);
 \EasySwoole\Pay\AliPay::success()
 ```
 
-#微信支付
+# 微信支付
 
 
 微信支付目前支持 3 种支付方法，对应的支付 method 如下：
@@ -415,7 +415,7 @@ var_dump($result);
 | officialAccount| 公众号支付   | Request | Response |
 | scan           | 扫码支付     | Request | Response |
 
-####微信参数配置
+#### 微信参数配置
 
 ```php
 $wechatConfig = new Config();
@@ -427,7 +427,7 @@ $wechatConfig->setCertClient('xxxxx');
 $wechatConfig->setCertKey('xxxxxx');
 ```
 
-##公众号支付
+## 公众号支付
 
 ```php
 $officialAccount = new OfficialAccount();
@@ -441,7 +441,7 @@ $params = $pay->weChat($wechatConfig)->officialAccount($officialAccount);
 ```
 可以参考demo/wechat/index.php 
 
-##H5支付
+## H5支付
 
 ```php
 $wap = new \EasySwoole\Pay\WeChat\RequestBean\Wap();
@@ -452,9 +452,9 @@ $wap->setSpbillCreateIp('xxxxx');
 $pay = new \EasySwoole\Pay\Pay();
 $params = $pay->weChat($wechatConfig)->wap($wap);
 ```
-##扫码支付 
+## 扫码支付 
 
-####模式一  
+#### 模式一  
 
 生成扫码链接 然后生成二维码 具体请查看demo/wechat/index.php
 
@@ -495,7 +495,7 @@ $nativeResponse->setSign($u->generateSign($nativeResponse->toArray()));
 $xml = (new SplArray($nativeResponse->toArray()))->toXML();
 $this->response()->write($xml);
 ```
-####模式二
+#### 模式二
 
 ```php
 $bean = new \EasySwoole\Pay\WeChat\RequestBean\Scan();
@@ -509,7 +509,7 @@ $data = $pay->weChat($this->wechatConfig)->scan($bean);
 $url2 = $data->getCodeUrl();
 ```
 
-##订单查询
+## 订单查询
 
 ```php
 go(function () use ($wechatConfig) {
@@ -521,7 +521,7 @@ go(function () use ($wechatConfig) {
 });
 ```
 
-##申请退款
+## 申请退款
 
 ```php
 go(function () use ($wechatConfig) {
@@ -537,7 +537,7 @@ go(function () use ($wechatConfig) {
 });
 ```
 
-##退款查询
+## 退款查询
 
 ```php
 go(function () use ($wechatConfig) {
@@ -549,7 +549,7 @@ go(function () use ($wechatConfig) {
 });
 ```
 
-##关闭订单
+## 关闭订单
 
 ```php
 go(function () use ($wechatConfig) {
@@ -561,7 +561,7 @@ go(function () use ($wechatConfig) {
 });
 ```
 
-##下载对账单
+## 下载对账单
 
 ```php
 go(function () use ($wechatConfig) {
@@ -574,7 +574,7 @@ go(function () use ($wechatConfig) {
 });
 ```
 
-##下载资金对账单
+## 下载资金对账单
 
 ```php
 go(function () use ($wechatConfig) {
@@ -587,7 +587,7 @@ go(function () use ($wechatConfig) {
 });
 ```
 
-##验证签名
+## 验证签名
 
 ```php
 $pay = new \EasySwoole\Pay\Pay();
