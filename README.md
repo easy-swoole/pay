@@ -404,8 +404,8 @@ var_dump($result);
 \EasySwoole\Pay\AliPay::success()
 ```
 
+#微信支付
 
-##微信支付
 
 微信支付目前支持 3 种支付方法，对应的支付 method 如下：
 
@@ -414,7 +414,9 @@ var_dump($result);
 | wap            | 手机网站支付 | Request | Response |
 | officialAccount| 公众号支付   | Request | Response |
 | scan           | 扫码支付     | Request | Response |
+
 ####微信参数配置
+
 ```php
 $wechatConfig = new Config();
 $wechatConfig->setAppId('xxxxxx');
@@ -426,6 +428,7 @@ $wechatConfig->setCertKey('xxxxxx');
 ```
 
 ##公众号支付
+
 ```php
 $officialAccount = new OfficialAccount();
 $officialAccount->setOpenid('xxxxxxx');
@@ -439,6 +442,7 @@ $params = $pay->weChat($wechatConfig)->officialAccount($officialAccount);
 可以参考demo/wechat/index.php 
 
 ##H5支付
+
 ```php
 $wap = new \EasySwoole\Pay\WeChat\RequestBean\Wap();
 $wap->setOutTradeNo('CN' . date('YmdHis') . rand(1000, 9999));
@@ -449,8 +453,11 @@ $pay = new \EasySwoole\Pay\Pay();
 $params = $pay->weChat($wechatConfig)->wap($wap);
 ```
 ##扫码支付 
-##模式一
+
+####模式一  
+
 生成扫码链接 然后生成二维码 具体请查看demo/wechat/index.php
+
 ```php
 $biz = new Biz();
 $biz->setProductId('123456789');
@@ -463,7 +470,9 @@ $sign = $u->generateSign($data);
 $biz->setSign($sign);
 $url1 = "weixin://wxpay/bizpayurl?" . $this->ToUrlParams($biz->toArray());
 ```
+
 扫码回调地址（ps:公众号平台设置）
+
 ```php
  $xml = $this->request()->getBody()->__toString();
 $pay = new Pay();
@@ -486,7 +495,8 @@ $nativeResponse->setSign($u->generateSign($nativeResponse->toArray()));
 $xml = (new SplArray($nativeResponse->toArray()))->toXML();
 $this->response()->write($xml);
 ```
-##模式二
+####模式二
+
 ```php
 $bean = new \EasySwoole\Pay\WeChat\RequestBean\Scan();
 $bean->setOutTradeNo($outTradeNo);
@@ -498,7 +508,9 @@ $pay = new Pay();
 $data = $pay->weChat($this->wechatConfig)->scan($bean);
 $url2 = $data->getCodeUrl();
 ```
+
 ##订单查询
+
 ```php
 go(function () use ($wechatConfig) {
     $orderFind = new \EasySwoole\Pay\WeChat\RequestBean\OrderFind();
@@ -508,7 +520,9 @@ go(function () use ($wechatConfig) {
     print_r((array)$info);
 });
 ```
+
 ##申请退款
+
 ```php
 go(function () use ($wechatConfig) {
     $refund = new \EasySwoole\Pay\WeChat\RequestBean\Refund();
@@ -522,7 +536,9 @@ go(function () use ($wechatConfig) {
     print_r($info);
 });
 ```
+
 ##退款查询
+
 ```php
 go(function () use ($wechatConfig) {
     $refundFind = new \EasySwoole\Pay\WeChat\RequestBean\RefundFind();
@@ -532,7 +548,9 @@ go(function () use ($wechatConfig) {
     print_r((array)$info);
 });
 ```
+
 ##关闭订单
+
 ```php
 go(function () use ($wechatConfig) {
     $close = new \EasySwoole\Pay\WeChat\RequestBean\Close();
@@ -542,7 +560,9 @@ go(function () use ($wechatConfig) {
     print_r((array)$info);
 });
 ```
+
 ##下载对账单
+
 ```php
 go(function () use ($wechatConfig) {
     $download = new \EasySwoole\Pay\WeChat\RequestBean\Download();
@@ -553,7 +573,9 @@ go(function () use ($wechatConfig) {
     echo htmlspecialchars($info, ENT_QUOTES);
 });
 ```
+
 ##下载资金对账单
+
 ```php
 go(function () use ($wechatConfig) {
     $download = new \EasySwoole\Pay\WeChat\RequestBean\DownloadFundFlow();
@@ -564,7 +586,9 @@ go(function () use ($wechatConfig) {
     echo htmlspecialchars($info, ENT_QUOTES);
 });
 ```
+
 ##验证签名
+
 ```php
 $pay = new \EasySwoole\Pay\Pay();
 $data = $pay->weChat($this->wechatConfig)->verify($content);
