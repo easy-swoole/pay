@@ -16,8 +16,8 @@ $wechatConfig->setAppId('');
 $wechatConfig->setMchId('');
 $wechatConfig->setKey('');
 $wechatConfig->setNotifyUrl('');
-$wechatConfig->setCertClient('');
-$wechatConfig->setCertKey('');
+$wechatConfig->setApiClientCert('');
+$wechatConfig->setApiClientKey('');
 /**
  * 公众号支付测试
  */
