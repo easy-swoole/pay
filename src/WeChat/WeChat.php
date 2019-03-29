@@ -13,6 +13,7 @@ use EasySwoole\Pay\Exceptions\InvalidGatewayException;
 use EasySwoole\Pay\Exceptions\InvalidSignException;
 
 
+use EasySwoole\Pay\WeChat\RequestBean\MiniProgram as MiniProgramRequest;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount as OfficialAccountRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Scan as ScanRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Wap as WapRequest;
@@ -29,7 +30,9 @@ use EasySwoole\Pay\WeChat\RequestBean\Comment as CommentRequest;
 use EasySwoole\Pay\WeChat\ResponseBean\OfficialAccount as OfficialAccountResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Wap as WapResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Scan as ScanResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\MiniProgram  as MiniProgramResponse;
 
+use EasySwoole\Pay\WeChat\WeChatPay\MiniProgram;
 use EasySwoole\Pay\WeChat\WeChatPay\OfficialAccount;
 use EasySwoole\Pay\WeChat\WeChatPay\Scan;
 use EasySwoole\Pay\WeChat\WeChatPay\Wap;
@@ -71,6 +74,17 @@ class WeChat
     {
         return (new Wap($this->config))->pay($bean);
     }
+
+    /**
+     * 小程序支付
+     * @param MiniProgramRequest $bean
+     * @return MiniProgramResponse
+     */
+    public function miniProgram(MiniProgramRequest $bean): MiniProgramResponse
+    {
+        return (new MiniProgram($this->config))->pay($bean);
+    }
+
 
     /**
      * 扫码支付
