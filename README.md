@@ -452,6 +452,19 @@ $wap->setSpbillCreateIp('xxxxx');
 $pay = new \EasySwoole\Pay\Pay();
 $params = $pay->weChat($wechatConfig)->wap($wap);
 ```
+## 小程序支付
+```php
+$bean = new \EasySwoole\Pay\WeChat\RequestBean\MiniProgram();
+$bean->setOpenid('xxxxxxxxx');
+$bean->setOutTradeNo('CN' . date('YmdHis') . rand(1000, 9999));
+$bean->setBody('xxxx-测试' . $outTradeNo);
+$bean->setTotalFee(1);
+$bean->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
+$pay = new \EasySwoole\Pay\Pay();
+$params = $pay->weChat($this->wechatConfig)->miniProgram($bean);
+ $this->response()->write($params->__toString());
+```
+
 ## 扫码支付 
 
 #### 模式一  

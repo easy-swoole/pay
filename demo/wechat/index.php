@@ -27,7 +27,7 @@ class Index extends Controller
         $wechatConfig = new Config();
         $wechatConfig->setAppId('');
         $wechatConfig->setMchId('');
-        $wechatConfig->setKey(''); 
+        $wechatConfig->setKey('');
         $wechatConfig->setNotifyUrl('');
         $wechatConfig->setApiClientCert('');
         $wechatConfig->setApiClientKey('');
@@ -166,7 +166,7 @@ EOF;
     {
         $this->response()->withHeader('content-type','application/json;charset=utf-8');
         $bean = new \EasySwoole\Pay\WeChat\RequestBean\MiniProgram();
-        $bean->setOpenid('oX3Qk0e_4OoGaIQ10pMUPZKMXVoY');
+        $bean->setOpenid('xxxxxxxxx');
         $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
         echo "MP--- " . $outTradeNo . "\r\n";
         $bean->setOutTradeNo($outTradeNo);
