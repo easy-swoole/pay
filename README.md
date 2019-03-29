@@ -414,6 +414,7 @@ var_dump($result);
 | wap            | 手机网站支付 | Request | Response |
 | officialAccount| 公众号支付   | Request | Response |
 | scan           | 扫码支付     | Request | Response |
+| miniProgram    | 小程序支付   | Request | Response |
 
 #### 微信参数配置
 
@@ -462,7 +463,6 @@ $bean->setTotalFee(1);
 $bean->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
 $pay = new \EasySwoole\Pay\Pay();
 $params = $pay->weChat($this->wechatConfig)->miniProgram($bean);
- $this->response()->write($params->__toString());
 ```
 
 ## 扫码支付 
