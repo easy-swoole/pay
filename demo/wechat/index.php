@@ -11,6 +11,7 @@ use EasySwoole\Pay\WeChat\RequestBean\Biz;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount;
 use EasySwoole\Pay\WeChat\ResponseBean\NativeResponse;
 use EasySwoole\Pay\WeChat\Utility;
+use EasySwoole\Pay\WeChat\WeChatPay\MiniProgram;
 use EasySwoole\Pay\WeChat\WeChatPay\Scan;
 use EasySwoole\Spl\SplArray;
 use Swoole\Buffer;
@@ -159,6 +160,24 @@ EOF;
             echo $e->getMessage();
         }
     }
+
+
+    function miniProgram()
+    {
+        $this->response()->withHeader('content-type','application/json;charset=utf-8');
+        $bean = new \EasySwoole\Pay\WeChat\RequestBean\MiniProgram();
+        $bean->setOpenid('xxxxxxxxx');
+        $outTradeNo = 'CN' . date('YmdHis') . rand(1000, 9999);
+        echo "MP--- " . $outTradeNo . "\r\n";
+        $bean->setOutTradeNo($outTradeNo);
+        $bean->setBody('xxxx-测试' . $outTradeNo);
+        $bean->setTotalFee(1);
+        $bean->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
+        $pay = new \EasySwoole\Pay\Pay();
+        $params = $pay->weChat($this->wechatConfig)->miniProgram($bean);
+        $this->response()->write($params->__toString());
+    }
+
 
     /**
      * 扫码模式一 回调地址（公众号管理后台设置）

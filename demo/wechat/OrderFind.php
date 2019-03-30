@@ -11,7 +11,7 @@ $wechatConfig = require_once 'Config.php';
 
 go(function () use ($wechatConfig) {
     $orderFind = new \EasySwoole\Pay\WeChat\RequestBean\OrderFind();
-    $orderFind->setOutTradeNo('CN201903181044383609');
+    $orderFind->setOutTradeNo('CN201903291438423064');
     $pay = new \EasySwoole\Pay\Pay();
     $info = $pay->weChat($wechatConfig)->orderFind($orderFind);
     print_r((array)$info);
