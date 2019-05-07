@@ -350,7 +350,7 @@ class AliPay
 	 * @throws \EasySwoole\Pay\Exceptions\GatewayException
 	 * @throws \EasySwoole\Pay\Exceptions\InvalidSignException
 	 */
-	private function preQuest( array $data ) : SplArray
+	public function preQuest( array $data ) : SplArray
 	{
 		$response = NewWork::post( $this->config->getGateWay(), $data );
 		$result = json_decode( mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ), true );
