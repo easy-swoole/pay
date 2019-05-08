@@ -264,7 +264,7 @@ class AliPay
 		$stringToBeSigned = "";
 		$i                = 0;
 		foreach( $params as $k => $v ){
-		    if ($k=='sign'||$k=='sign_type'){
+		    if ($k=='sign'){
 		        continue;
             }
 			if( false === $this->checkEmpty( $v ) && "@" != substr( $v, 0, 1 ) ){
