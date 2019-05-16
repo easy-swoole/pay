@@ -185,9 +185,18 @@ class WeChat
      * 结果返回给微信服务器
      * @return string
      */
-    public function success(): string
+    public static function success(): string
     {
         return (new SplArray(['return_code' => 'SUCCESS', 'return_msg' => 'OK']))->toXML();
+    }
+
+    /**
+     * 结果返回给微信服务器
+     * @return string
+     */
+    public static function fail(): string
+    {
+        return (new SplArray(['return_code' => 'FAIL', 'return_msg' => 'FAIL']))->toXML();
     }
 
     /**
