@@ -41,7 +41,7 @@ class NewWork
     {
         $client = new HttpClient();
         $client->setUrl($endpoint)->post($data, "application/json");
-        return $client->exec();
+        return $client->exec(self::$TIMEOUT);
     }
 
     /**
@@ -63,7 +63,7 @@ class NewWork
                 $client->setClientSetting($key, $value);
             }
         }
-        return $client->exec();
+        return $client->exec(self::$TIMEOUT);
     }
 
 }
