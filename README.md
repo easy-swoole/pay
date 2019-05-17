@@ -391,11 +391,9 @@ $aliConfig->setPublicKey('阿里公钥');
 $aliConfig->setPrivateKey('阿里私钥');
 $pay = new \EasySwoole\Pay\Pay();
 
-if (isset($param['sign_type'])) {
-    unset($param['sign_type']);
-}
-$param = [];//param为post的数据
-$order = new \EasySwoole\Pay\AliPay\RequestBean\NotifyRequest($param, true);
+$param = [];//伪代码,post数据
+unset($param['sign_type']);//需要忽略sign_type组装
+$order = new \EasySwoole\Pay\AliPay\RequestBean\NotifyRequest($param,true);
 $aliPay = $pay->aliPay($aliConfig);
 $result = $aliPay->verify($order);
 var_dump($result);
