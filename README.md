@@ -390,6 +390,7 @@ $aliConfig->setAppId('2016091800538339');
 $aliConfig->setPublicKey('阿里公钥');
 $aliConfig->setPrivateKey('阿里私钥');
 $pay = new \EasySwoole\Pay\Pay();
+
 $param = [];//伪代码,post数据
 unset($param['sign_type']);//需要忽略sign_type组装
 $order = new \EasySwoole\Pay\AliPay\RequestBean\NotifyRequest($param,true);
@@ -403,7 +404,8 @@ var_dump($result);
 ## 服务器确认收到异步通知字符串获取
 
 ```php
-\EasySwoole\Pay\AliPay::success()
+\EasySwoole\Pay\AliPay::success();//成功响应
+\EasySwoole\Pay\AliPay::fail();//失败响应
 ```
 
 # 微信支付
@@ -606,9 +608,16 @@ go(function () use ($wechatConfig) {
 
 ```php
 $pay = new \EasySwoole\Pay\Pay();
-$data = $pay->weChat($this->wechatConfig)->verify($content);
+$content = '';//content为xml原始数据,在easyswoole中可通过$this->request()->getBody()->__toString()取出
+$data = $pay->weChat($wechatConfig)->verify($content  )
 ```
 
+## 服务器确认收到异步通知字符串获取
+
+```php
+\EasySwoole\Pay\WeChat\WeChat::success();//成功响应
+\EasySwoole\Pay\WeChat\WeChat::fail();//失败响应
+```
 
 
 
