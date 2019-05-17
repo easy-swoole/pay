@@ -252,6 +252,15 @@ class AliPay
 		return 'success';
 	}
 	/**
+	 * fail string to alipay.
+	 *
+	 * @return string
+	 */
+	public static function fail(): string
+	{
+		return 'failure';
+	}
+	/**
 	 * Get signContent that is to be signed.
 	 *
 	 *
