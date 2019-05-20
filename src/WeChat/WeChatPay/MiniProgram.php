@@ -26,7 +26,7 @@ class MiniProgram extends AbstractPayBase
         $bean->setNotifyUrl($this->config->getNotifyUrl());
         $result = $utility->requestApi($this->requestPath(), $bean);
         $result = [
-            'appId' => $this->config->getAppId(),
+            'appId' => $this->config->getMiniAppId(),
             'package' => 'prepay_id=' . $result['prepay_id'],
             'signType' => empty($bean->getSignType()) ? 'MD5' : $bean->getSignType()
         ];

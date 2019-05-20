@@ -91,7 +91,7 @@ class Utility
      */
     public function request(string $endpoint, Base $bean, bool $useCert = false): string
     {
-        $bean->setAppId($this->config->getAppId());
+        $bean->setAppId($bean instanceof \EasySwoole\Pay\WeChat\RequestBean\MiniProgram ? $this->config->getMiniAppId() : $this->config->getAppId());
         $bean->setMchId($this->config->getMchId());
         $bean->setSign($this->generateSign($bean->toArray()));
         $response = NewWork::postXML($this->config->getGateWay() . $endpoint, (new SplArray($bean->toArray()))->toXML(), $useCert ? [
