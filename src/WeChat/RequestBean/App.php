@@ -12,27 +12,4 @@ namespace EasySwoole\Pay\WeChat\RequestBean;
 class App extends PayBase
 {
 	protected $trade_type = 'APP';
-
-	/**
-	 * @var string
-	 */
-	protected $openid;
-
-	/**
-	 * @return string
-	 */
-	public function getOpenid() : string
-	{
-		return $this->openid;
-	}
-
-	/**
-	 * @param string $openid
-	 */
-	public function setOpenid( string $openid ) : void
-	{
-		$this->openid = $openid;
-	}
-
-
 }
