@@ -17,6 +17,7 @@ use EasySwoole\Pay\WeChat\RequestBean\MiniProgram as MiniProgramRequest;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount as OfficialAccountRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Scan as ScanRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Wap as WapRequest;
+use EasySwoole\Pay\WeChat\RequestBean\App as AppRequest;
 
 use EasySwoole\Pay\WeChat\RequestBean\OrderFind as OrderFindRequest;
 use EasySwoole\Pay\WeChat\RequestBean\RefundFind as RefundFindRequest;
@@ -31,11 +32,13 @@ use EasySwoole\Pay\WeChat\ResponseBean\OfficialAccount as OfficialAccountRespons
 use EasySwoole\Pay\WeChat\ResponseBean\Wap as WapResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Scan as ScanResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\MiniProgram  as MiniProgramResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\App  as AppResponse;
 
 use EasySwoole\Pay\WeChat\WeChatPay\MiniProgram;
 use EasySwoole\Pay\WeChat\WeChatPay\OfficialAccount;
 use EasySwoole\Pay\WeChat\WeChatPay\Scan;
 use EasySwoole\Pay\WeChat\WeChatPay\Wap;
+use EasySwoole\Pay\WeChat\WeChatPay\App;
 use EasySwoole\Spl\SplArray;
 
 /**
@@ -86,7 +89,17 @@ class WeChat
     }
 
 
-    /**
+	/**
+	 * app支付
+	 * @param AppRequest $bean
+	 * @return AppResponse
+	 */
+	public function app(AppRequest $bean): AppResponse
+	{
+		return (new App($this->config))->pay($bean);
+	}
+
+	/**
      * 扫码支付
      * @param ScanRequest $bean
      * @return ResponseBean\Scan
