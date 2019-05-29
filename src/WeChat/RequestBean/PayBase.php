@@ -199,14 +199,6 @@ abstract class PayBase extends Base
     }
 
     /**
-     * @param mixed $notify_url
-     */
-    public function setNotifyUrl($notify_url): void
-    {
-        $this->notify_url = $notify_url;
-    }
-
-    /**
      * @return mixed
      */
     public function getReceipt()
