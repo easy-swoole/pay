@@ -36,9 +36,7 @@ abstract class Base extends SplBean
      */
     public function initialize(): void
     {
-        if (empty($this->nonce_str)) {
-            $this->nonce_str = Random::character(32);
-        }
+
     }
 
     /**

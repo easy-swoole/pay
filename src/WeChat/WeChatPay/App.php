@@ -16,11 +16,10 @@ use EasySwoole\Utility\Random;
 
 class App extends AbstractPayBase
 {
-	public function requestPath() : string
-	{
-		return '/pay/unifiedorder';
-	}
-
+    public function requestPath(): string
+    {
+        return '/pay/unifiedorder';
+    }
 
 	public function pay(Base $bean)
 	{
