@@ -19,7 +19,12 @@ class OfficialAccount extends AbstractPayBase
     {
         /** @var \EasySwoole\Pay\WeChat\RequestBean\OfficialAccount $bean */
         $utility = new Utility($this->config);
-        $bean->setNotifyUrl($this->config->getNotifyUrl());
+
+        // 如果没有定义回调 使用全局回调
+        if (empty($bean->getNotifyUrl())) {
+            $bean->setNotifyUrl($this->config->getNotifyUrl());
+        }
+
         $result = $utility->requestApi($this->requestPath(), $bean);
         $result = [
             'appId' => $this->config->getAppId(),

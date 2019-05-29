@@ -10,92 +10,51 @@
 
 namespace EasySwoole\Pay\WeChat\RequestBean;
 
-
-class Pos extends Base
+/**
+ * 付款码支付
+ * Class Pos
+ * @package EasySwoole\Pay\WeChat\RequestBean
+ */
+class Pos extends PayBase
 {
-	protected $trade_type = 'MICROPAY';
+    protected $trade_type = 'MICROPAY';
 
-	/**
-	 * @var string
-	 */
-	protected $out_trade_no;
-	/**
-	 * @var string
-	 */
-	protected $total_fee;
-	/**
-	 * @var string
-	 */
-	protected $body;
-	/**
-	 * @var string
-	 */
-	protected $auth_code;
+    protected $auth_code;  // 授权码
+    protected $scene_info; // + 场景信息
+    // protected $id;            // - 门店id
+    // protected $name;          // - 门店名称
+    // protected $area_code;     // - 门店行政区划码
+    // protected $address;       // - 门店详细地址
 
-	/**
-	 * @return string
-	 */
-	public function getOutTradeNo() : string
-	{
-		return $this->out_trade_no;
-	}
+    /**
+     * @return mixed
+     */
+    public function getAuthCode()
+    {
+        return $this->auth_code;
+    }
 
-	/**
-	 * @param string $out_trade_no
-	 */
-	public function setOutTradeNo( string $out_trade_no ) : void
-	{
-		$this->out_trade_no = $out_trade_no;
-	}
+    /**
+     * @param mixed $auth_code
+     */
+    public function setAuthCode($auth_code): void
+    {
+        $this->auth_code = $auth_code;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getTotalFee() : string
-	{
-		return $this->total_fee;
-	}
+    /**
+     * @return mixed
+     */
+    public function getSceneInfo()
+    {
+        return $this->scene_info;
+    }
 
-	/**
-	 * @param string $total_fee
-	 */
-	public function setTotalFee( string $total_fee ) : void
-	{
-		$this->total_fee = $total_fee;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getBody() : string
-	{
-		return $this->body;
-	}
-
-	/**
-	 * @param string $body
-	 */
-	public function setBody( string $body ) : void
-	{
-		$this->body = $body;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getAuthCode() : string
-	{
-		return $this->auth_code;
-	}
-
-	/**
-	 * @param string $auth_code
-	 */
-	public function setAuthCode( string $auth_code ) : void
-	{
-		$this->auth_code = $auth_code;
-	}
-
-
+    /**
+     * @param mixed $scene_info
+     */
+    public function setSceneInfo($scene_info): void
+    {
+        $this->scene_info = $scene_info;
+    }
 }

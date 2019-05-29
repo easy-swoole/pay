@@ -10,20 +10,59 @@
 
 namespace EasySwoole\Pay\WeChat\RequestBean;
 
-
+/**
+ * 原生扫码支付
+ * Class Scan
+ * @package EasySwoole\Pay\WeChat\RequestBean
+ */
 class Scan extends PayBase
 {
-    protected $trade_type = 'NATIVE';//
+    protected $trade_type = 'NATIVE';  // 交易类型
 
-    protected $notify_url;
-    protected $product_id;
-    protected $openid;
-    protected $scene_info;
+    protected $product_id;  // 商品ID
+    protected $openid;      // 用户标识
+    protected $scene_info;  // + 场景信息
+    protected $id;             // - 门店id
+    protected $name;           // - 门店名称
+    protected $area_code;      // - 门店行政区划码
+    protected $address;        // - 门店详细地址
+
+    /**
+     * @return string
+     */
+    public function getTradeType(): string
+    {
+        return $this->trade_type;
+    }
+
+    /**
+     * @param string $trade_type
+     */
+    public function setTradeType(string $trade_type): void
+    {
+        $this->trade_type = $trade_type;
+    }
 
     /**
      * @return mixed
      */
-    public function getOpenid(): string
+    public function getProductId()
+    {
+        return $this->product_id;
+    }
+
+    /**
+     * @param mixed $product_id
+     */
+    public function setProductId($product_id): void
+    {
+        $this->product_id = $product_id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOpenid()
     {
         return $this->openid;
     }
@@ -31,38 +70,89 @@ class Scan extends PayBase
     /**
      * @param mixed $openid
      */
-    public function setOpenid(string $openid): void
+    public function setOpenid($openid): void
     {
         $this->openid = $openid;
     }
 
-    public function setSceneInfo(string $sceneInfo): void
-    {
-        $this->scene_info = $sceneInfo;
-    }
-
-    public function getSceneInfo(): ?string
+    /**
+     * @return mixed
+     */
+    public function getSceneInfo()
     {
         return $this->scene_info;
     }
 
-    public function setProductId(string $productId): void
+    /**
+     * @param mixed $scene_info
+     */
+    public function setSceneInfo($scene_info): void
     {
-        $this->product_id = $productId;
+        $this->scene_info = $scene_info;
     }
 
-    public function getProductId(): ?string
+    /**
+     * @return mixed
+     */
+    public function getId()
     {
-        return $this->product_id;
+        return $this->id;
     }
 
-    public function setNotifyUrl(string $notify_url): void
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
     {
-        $this->notify_url = $notify_url;
+        $this->id = $id;
     }
 
-    public function getNotifyUrl(): string
+    /**
+     * @return mixed
+     */
+    public function getName()
     {
-        return $this->notify_url;
+        return $this->name;
     }
+
+    /**
+     * @param mixed $name
+     */
+    public function setName($name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAreaCode()
+    {
+        return $this->area_code;
+    }
+
+    /**
+     * @param mixed $area_code
+     */
+    public function setAreaCode($area_code): void
+    {
+        $this->area_code = $area_code;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param mixed $address
+     */
+    public function setAddress($address): void
+    {
+        $this->address = $address;
+    }
+
 }
