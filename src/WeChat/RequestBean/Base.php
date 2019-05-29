@@ -18,165 +18,165 @@ use EasySwoole\Utility\Random;
  */
 abstract class Base extends SplBean
 {
-    // 基础支付参数
-    protected $appid;
-    protected $mch_id;
-    protected $nonce_str;
-    protected $sign;
-    protected $sign_type;
+	// 基础支付参数
+	protected $appid;
+	protected $mch_id;
+	protected $nonce_str;
+	protected $sign;
+	protected $sign_type;
 
-    // 服务商支付参数
-    protected $sub_appid;
-    protected $sub_mch_id;
-    protected $sub_openid;
+	// 服务商支付参数
+	protected $sub_appid;
+	protected $sub_mch_id;
+	protected $sub_openid;
 
-    /**
-     * 初始化一个随机字符串供签名用
-     * @return void
-     */
-    public function initialize(): void
-    {
-        if (empty($this->nonce_str)) {
-            $this->nonce_str = Random::character(32);
-        }
-    }
+	/**
+	 * 初始化一个随机字符串供签名用
+	 * @return void
+	 */
+	public function initialize(): void
+	{
+		if (empty($this->nonce_str)) {
+			$this->nonce_str = Random::character(32);
+		}
+	}
 
-    /**
-     * 转为数组时过滤空值
-     * @param array|null $columns
-     * @param null $filter
-     * @return array
-     */
-    public function toArray(array $columns = null, $filter = null): array
-    {
-        return parent::toArray(null, self::FILTER_NOT_NULL);
-    }
+	/**
+	 * 转为数组时过滤空值
+	 * @param array|null $columns
+	 * @param null $filter
+	 * @return array
+	 */
+	public function toArray(array $columns = null, $filter = null): array
+	{
+		return parent::toArray(null, self::FILTER_NOT_NULL);
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getAppid()
-    {
-        return $this->appid;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getAppid()
+	{
+		return $this->appid;
+	}
 
-    /**
-     * @param mixed $appid
-     */
-    public function setAppid($appid): void
-    {
-        $this->appid = $appid;
-    }
+	/**
+	 * @param mixed $appid
+	 */
+	public function setAppid($appid): void
+	{
+		$this->appid = $appid;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getMchId()
-    {
-        return $this->mch_id;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getMchId()
+	{
+		return $this->mch_id;
+	}
 
-    /**
-     * @param mixed $mch_id
-     */
-    public function setMchId($mch_id): void
-    {
-        $this->mch_id = $mch_id;
-    }
+	/**
+	 * @param mixed $mch_id
+	 */
+	public function setMchId($mch_id): void
+	{
+		$this->mch_id = $mch_id;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getNonceStr()
-    {
-        return $this->nonce_str;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getNonceStr()
+	{
+		return $this->nonce_str;
+	}
 
-    /**
-     * @param mixed $nonce_str
-     */
-    public function setNonceStr($nonce_str): void
-    {
-        $this->nonce_str = $nonce_str;
-    }
+	/**
+	 * @param mixed $nonce_str
+	 */
+	public function setNonceStr($nonce_str): void
+	{
+		$this->nonce_str = $nonce_str;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getSign()
-    {
-        return $this->sign;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getSign()
+	{
+		return $this->sign;
+	}
 
-    /**
-     * @param mixed $sign
-     */
-    public function setSign($sign): void
-    {
-        $this->sign = $sign;
-    }
+	/**
+	 * @param mixed $sign
+	 */
+	public function setSign($sign): void
+	{
+		$this->sign = $sign;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getSignType()
-    {
-        return $this->sign_type;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getSignType()
+	{
+		return $this->sign_type;
+	}
 
-    /**
-     * @param mixed $sign_type
-     */
-    public function setSignType($sign_type): void
-    {
-        $this->sign_type = $sign_type;
-    }
+	/**
+	 * @param mixed $sign_type
+	 */
+	public function setSignType($sign_type): void
+	{
+		$this->sign_type = $sign_type;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getSubAppid()
-    {
-        return $this->sub_appid;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getSubAppid()
+	{
+		return $this->sub_appid;
+	}
 
-    /**
-     * @param mixed $sub_appid
-     */
-    public function setSubAppid($sub_appid): void
-    {
-        $this->sub_appid = $sub_appid;
-    }
+	/**
+	 * @param mixed $sub_appid
+	 */
+	public function setSubAppid($sub_appid): void
+	{
+		$this->sub_appid = $sub_appid;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getSubMchId()
-    {
-        return $this->sub_mch_id;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getSubMchId()
+	{
+		return $this->sub_mch_id;
+	}
 
-    /**
-     * @param mixed $sub_mch_id
-     */
-    public function setSubMchId($sub_mch_id): void
-    {
-        $this->sub_mch_id = $sub_mch_id;
-    }
+	/**
+	 * @param mixed $sub_mch_id
+	 */
+	public function setSubMchId($sub_mch_id): void
+	{
+		$this->sub_mch_id = $sub_mch_id;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function getSubOpenid()
-    {
-        return $this->sub_openid;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getSubOpenid()
+	{
+		return $this->sub_openid;
+	}
 
-    /**
-     * @param mixed $sub_openid
-     */
-    public function setSubOpenid($sub_openid): void
-    {
-        $this->sub_openid = $sub_openid;
-    }
+	/**
+	 * @param mixed $sub_openid
+	 */
+	public function setSubOpenid($sub_openid): void
+	{
+		$this->sub_openid = $sub_openid;
+	}
 }
