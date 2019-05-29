@@ -8,217 +8,216 @@
 
 namespace EasySwoole\Pay\WeChat;
 
-use EasySwoole\Pay\Wechat\RequestBean\App;
-use EasySwoole\Pay\Wechat\RequestBean\GroupRedPack;
-use EasySwoole\Pay\Wechat\RequestBean\MiniProgram;
-use EasySwoole\Pay\Wechat\RequestBean\OfficialAccount;
-use EasySwoole\Pay\Wechat\RequestBean\Pos;
-use EasySwoole\Pay\Wechat\RequestBean\RedPack;
-use EasySwoole\Pay\Wechat\RequestBean\Scan;
-use EasySwoole\Pay\Wechat\RequestBean\Transfer;
-use EasySwoole\Pay\Wechat\RequestBean\Wap;
+use EasySwoole\Pay\Exceptions\GatewayException;
+use EasySwoole\Pay\Exceptions\InvalidGatewayException;
+use EasySwoole\Pay\Exceptions\InvalidSignException;
 
-use EasySwoole\Pay\Wechat\ResponseBean\App as AppResponse;
-use EasySwoole\Pay\Wechat\ResponseBean\GroupRedPack as GroupRedPackResponse;
-use EasySwoole\Pay\Wechat\ResponseBean\MiniProgram as MiniProgramResponse;
-use EasySwoole\Pay\Wechat\ResponseBean\OfficialAccount as OfficialAccountResponse;
-use EasySwoole\Pay\Wechat\ResponseBean\Pos as PosResponse;
-use EasySwoole\Pay\Wechat\ResponseBean\RedPack as RedPackResponse;
-use EasySwoole\Pay\Wechat\ResponseBean\Scan as ScanResponse;
-use EasySwoole\Pay\Wechat\ResponseBean\Transfer as TransferResponse;
-use EasySwoole\Pay\Wechat\ResponseBean\Wap as WapResponse;
 
-use EasySwoole\Pay\Exceptions\InvalidConfigException;
+use EasySwoole\Pay\WeChat\RequestBean\MiniProgram as MiniProgramRequest;
+use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount as OfficialAccountRequest;
+use EasySwoole\Pay\WeChat\RequestBean\Scan as ScanRequest;
+use EasySwoole\Pay\WeChat\RequestBean\Wap as WapRequest;
 
+use EasySwoole\Pay\WeChat\RequestBean\OrderFind as OrderFindRequest;
+use EasySwoole\Pay\WeChat\RequestBean\RefundFind as RefundFindRequest;
+use EasySwoole\Pay\WeChat\RequestBean\Close as CloseRequest;
+use EasySwoole\Pay\WeChat\RequestBean\Refund as RefundRequest;
+use EasySwoole\Pay\WeChat\RequestBean\Download as DownloadRequest;
+use EasySwoole\Pay\WeChat\RequestBean\DownloadFundFlow as DownloadFundFlowRequest;
+use EasySwoole\Pay\WeChat\RequestBean\Comment as CommentRequest;
+
+
+use EasySwoole\Pay\WeChat\ResponseBean\OfficialAccount as OfficialAccountResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\Wap as WapResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\Scan as ScanResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\MiniProgram  as MiniProgramResponse;
+
+use EasySwoole\Pay\WeChat\WeChatPay\MiniProgram;
+use EasySwoole\Pay\WeChat\WeChatPay\OfficialAccount;
+use EasySwoole\Pay\WeChat\WeChatPay\Scan;
+use EasySwoole\Pay\WeChat\WeChatPay\Wap;
+use EasySwoole\Spl\SplArray;
+
+/**
+ * Class WeChat
+ * @package EasySwoole\Pay\WeChat
+ *
+ */
 class WeChat
 {
-	private $config;
+    private $config;
 
-	function __construct( Config $config )
-	{
-		$this->config = $config;
-	}
+    function __construct(Config $config)
+    {
+        $this->config = $config;
+    }
 
-	/*
-	 * 公众号支付
-	 */
-	public function officialAccount( OfficialAccount $officialAccount ) : OfficialAccountResponse
-	{
-		$pay_request            = [
-			'appId'     => !$this->payRequestUseSubAppId ? $array['appid'] : $array['sub_appid'],
-			'timeStamp' => strval( time() ),
-			'nonceStr'  => Str::random(),
-			'package'   => 'prepay_id='.$this->preOrder( $array )->get( 'prepay_id' ),
-			'signType'  => 'MD5',
-		];
-		$pay_request['paySign'] = Support::generateSign( $pay_request );
-	}
+    /**
+     * 公众号支付
+     * @param OfficialAccountRequest $bean
+     * @return OfficialAccountResponse
+     */
+    public function officialAccount(OfficialAccountRequest $bean): OfficialAccountResponse
+    {
+        return (new OfficialAccount($this->config))->pay($bean);
+    }
 
-	/*
-	 * 小程序支付
-	 */
-	public function miniProgram( MiniProgram $miniProgram ) : MiniProgramResponse
-	{
+    /**
+     * H5支付
+     * @param WapRequest $bean
+     * @return WapResponse
+     * @throws GatewayException
+     * @throws InvalidSignException
+     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
+     */
+    public function wap(WapRequest $bean): WapResponse
+    {
+        return (new Wap($this->config))->pay($bean);
+    }
 
-	}
-
-	/*
-	 * H5 支付
-	 */
-	public function wap( Wap $wap ) : WapResponse
-	{
-
-	}
-
-	/*
-	 * 扫码支付
-	 */
-	public function scan( Scan $scan ) : ScanResponse
-	{
-
-	}
-
-	/*
-	 * 刷卡支付
-	 */
-	public function pos( Pos $pos ) : PosResponse
-	{
-
-	}
-
-	/*
-	 * APP 支付
-	 */
-	public function app( App $app ) : AppResponse
-	{
-		$array                = $app->toArray() + $this->getSysParams();
-
-		if( $this->mode === Wechat::MODE_SERVICE ){
-			$array['sub_appid'] = Support::getInstance()->sub_appid;
-		}
-
-		$pay_request         = [
-			'appid'     => $this->mode === Wechat::MODE_SERVICE ? $array['sub_appid'] : $array['appid'],
-			'partnerid' => $this->mode === Wechat::MODE_SERVICE ? $array['sub_mch_id'] : $array['mch_id'],
-			'prepayid'  => $this->preOrder( $array )->get( 'prepay_id' ),
-			'timestamp' => strval( time() ),
-			'noncestr'  => Str::random(),
-			'package'   => 'Sign=WXPay',
-		];
-		$pay_request['sign'] = $this->generateSign( $pay_request );
-
-	}
-
-	/*
-	 * 企业付款
-	 */
-	public function transfer( Transfer $transfer ) : TransferResponse
-	{
-
-	}
-
-	/*
-	 * 普通红包
-	 */
-	public function redPack( RedPack $redPack ) : RedPackResponse
-	{
-
-	}
-
-	/*
-	 * 分裂红包
-	 */
-	public function groupRedPack( GroupRedPack $groupRedPack ) : GroupRedPackResponse
-	{
-		$array['wxappid']  = $array['appid'];
-		$array['amt_type'] = 'ALL_RAND';
-
-		if( $this->mode === Wechat::MODE_SERVICE ){
-			$array['msgappid'] = $array['appid'];
-		}
-
-		unset( $array['appid'], $array['trade_type'], $array['notify_url'], $array['spbill_create_ip'] );
-
-		$array['sign'] = Support::generateSign( $array );
-
-		Events::dispatch( Events::PAY_STARTED, new Events\PayStarted( 'Wechat', 'Group Redpack', $endpoint, $array ) );
-
-		return Support::requestApi( 'mmpaymkttransfers/sendgroupredpack', $array, true );
-	}
+    /**
+     * 小程序支付
+     * @param MiniProgramRequest $bean
+     * @return MiniProgramResponse
+     */
+    public function miniProgram(MiniProgramRequest $bean): MiniProgramResponse
+    {
+        return (new MiniProgram($this->config))->pay($bean);
+    }
 
 
-	/**
-	 * @param mixed $request
-	 * @return array
-	 * @throws InvalidConfigException
-	 */
-	private function getRequestParams( $request ) : array
-	{
-		$array                = $request->toArray() + $this->getSysParams();
-		$array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
-		$array['sign']        = $this->generateSign( $array );
-		return $array;
-	}
+    /**
+     * 扫码支付
+     * @param ScanRequest $bean
+     * @return ResponseBean\Scan
+     */
+    public function scan(ScanRequest $bean): ScanResponse
+    {
+        return (new Scan($this->config))->pay($bean);
+    }
 
-	private function getSysParams() : array
-	{
-		$sysParams                   = [];
-		$sysParams["app_id"]         = $this->config->getAppId();
-		$sysParams["version"]        = $this->config->getApiVersion();
-		$sysParams["format"]         = $this->config->getFormat();
-		$sysParams["sign_type"]      = $this->config->getSignType();
-		$sysParams["timestamp"]      = date( "Y-m-d H:i:s" );
-		$sysParams["return_url"]     = $this->config->getReturnUrl();
-		$sysParams["notify_url"]     = $this->config->getNotifyUrl();
-		$sysParams["charset"]        = $this->config->getCharset();
-		$sysParams["app_auth_token"] = $this->config->getAppAuthToken();
-		return (new Base( $sysParams ))->toArray();
-	}
+    /**
+     * 订单查询
+     * @param OrderFindRequest $bean
+     * @return SplArray
+     * @throws GatewayException
+     * @throws InvalidSignException
+     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
+     */
+    public function orderFind(OrderFindRequest $bean): SplArray
+    {
+        return (new Utility($this->config))->requestApi('/pay/orderquery', $bean);
+    }
 
-	private function checkEmpty( $value )
-	{
-		if( !isset( $value ) )
-			return true;
-		if( $value === null )
-			return true;
-		if( trim( $value ) === "" )
-			return true;
-		return false;
-	}
+    /**
+     * 退款查询
+     * @param RefundFindRequest $bean
+     * @return SplArray
+     * @throws GatewayException
+     * @throws InvalidSignException
+     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
+     */
+    public function refundFind(RefundFindRequest $bean): SplArray
+    {
+        return (new Utility($this->config))->requestApi('/pay/refundquery', $bean);
+    }
 
-	/**
-	 * Generate wechat sign.
-	 * @param array $data
-	 * @return string
-	 */
-	public function generateSign( array $data ) : string
-	{
-		ksort( $data );
-		$string = md5( $this->getSignContent( $data ).'&key='.$this->config->getKey() );
-		return strtoupper( $string );
-	}
+    /**
+     * 关闭订单
+     * @param CloseRequest $bean
+     * @return SplArray
+     * @throws GatewayException
+     * @throws InvalidSignException
+     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
+     */
+    public function close(CloseRequest $bean): SplArray
+    {
+        return (new Utility($this->config))->requestApi('/pay/closeorder', $bean);
+    }
 
-	/**
-	 * Generate sign content.
-	 * @param array $data
-	 * @return string
-	 */
-	public function getSignContent( array $data ) : string
-	{
-		$buff = '';
-		foreach( $data as $k => $v ){
-			$buff .= ($k != 'sign' && $v != '' && !is_array( $v )) ? $k.'='.$v.'&' : '';
-		}
-		return trim( $buff, '&' );
-	}
+    /**
+     * 申请退款
+     * @param RefundRequest $bean
+     * @return SplArray
+     * @throws GatewayException
+     * @throws InvalidSignException
+     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
+     */
+    public function refund(RefundRequest $bean): SplArray
+    {
+        return (new Utility($this->config))->requestApi('/secapi/pay/refund', $bean, true);
+    }
 
-	/**
-	 * Decrypt refund contents.
-	 * @param string $contents
-	 * @return string
-	 */
-	public function decryptRefundContents( string $contents ) : string
-	{
-		return openssl_decrypt( base64_decode( $contents ), 'AES-256-ECB', md5( $this->config->getKey() ), OPENSSL_RAW_DATA );
-	}
+    /**
+     * 下载对账单
+     * @param DownloadRequest $bean
+     * @return string
+     * @throws GatewayException
+     */
+    public function download(DownloadRequest $bean): string
+    {
+        return (new Utility($this->config))->request('/pay/downloadbill', $bean);
+    }
+
+    /**
+     * 下载资金对账单
+     * @param DownloadFundFlowRequest $bean
+     * @return string
+     * @throws GatewayException
+     */
+    public function downloadFundFlow(DownloadFundFlowRequest $bean): string
+    {
+        return (new Utility($this->config))->request('/pay/downloadfundflow', $bean, true);
+    }
+
+    /**
+     * 拉取订单评价数据(ps:测试未成功)
+     * @param CommentRequest $bean
+     * @return string
+     * @throws GatewayException
+     */
+    public function comment(CommentRequest $bean): string
+    {
+        return (new Utility($this->config))->request('/billcommentsp/batchquerycomment', $bean, true);
+    }
+
+    /**
+     * 结果返回给微信服务器
+     * @return string
+     */
+    public static function success(): string
+    {
+        return (new SplArray(['return_code' => 'SUCCESS', 'return_msg' => 'OK']))->toXML();
+    }
+
+    /**
+     * 结果返回给微信服务器
+     * @return string
+     */
+    public static function fail(): string
+    {
+        return (new SplArray(['return_code' => 'FAIL', 'return_msg' => 'FAIL']))->toXML();
+    }
+
+    /**
+     * 支付或退款异步通知签名校验
+     * @param null $content
+     * @param bool $refund
+     * @return SplArray
+     * @throws InvalidSignException
+     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
+     */
+    public function verify($content = null, $refund = false): SplArray
+    {
+        $utility = new Utility($this->config);
+        $data = $utility->fromXML($content);
+        if ($refund) {
+            $decrypt_data = $utility->fromXML($utility->decryptRefundContents($data['req_info']));
+            $data = array_merge($decrypt_data, $data);
+        }
+        if ($refund || $utility->generateSign($data) === $data['sign']) {
+            return new SplArray($data);
+        }
+        throw new InvalidSignException('Wechat Sign Verify FAILED', json_encode($data));
+    }
 }

@@ -18,4 +18,5 @@ class GateWay extends SplEnum
     const SERVICE = 'https://api.mch.weixin.qq.com';
     const US = 'https://apius.mch.weixin.qq.com';
     const HK = 'https://apihk.mch.weixin.qq.com';
+
 }

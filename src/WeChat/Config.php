@@ -8,169 +8,170 @@
 
 namespace EasySwoole\Pay\WeChat;
 
-
 use EasySwoole\Spl\SplBean;
 
 class Config extends SplBean
 {
-	/**
-	 * @var string
-	 */
-	protected $appid; // APP APPID
-	/**
-	 * @var string
-	 */
-	protected $appId; // 公众号 APPID
-	/**
-	 * @var string
-	 */
-	protected $miniAppId;  // 小程序 APPID
-	/**
-	 * @var string
-	 */
-	protected $mchId;
-	/**
-	 * @var string
-	 */
-	protected $key;
-	/**
-	 * @var string
-	 */
-	protected $notifyUrl;
-	/**
-	 * @var string
-	 */
-	protected $certClient; // optional，退款等情况时用到
-	/**
-	 * @var string
-	 */
-	protected $certKey; // optional，退款等情况时用到
+    /**
+     * @var string
+     */
+    protected $appid; // APP APPID 公众号 APPID 或者小程序ID
 
-	protected $gateWay = GateWay::SANDBOX;
-	/**
-	 * @return string
-	 */
-	public function getAppid() : string
-	{
-		return $this->appid;
-	}
+    /**
+     * @var string
+     */
+    protected $miniAppId;  // 小程序 APPID
+    /**
+     * @var string
+     */
+    protected $mchId;
+    /**
+     * @var string
+     */
+    protected $key;
+    /**
+     * @var string
+     */
+    protected $notifyUrl;
+    /**
+     * @var string
+     */
+    protected $apiClientCert; //api客户端证书
+    /**
+     * @var string
+     */
+    protected $apiClientKey; // api客户端证书秘钥
 
-	/**
-	 * @param string $appid
-	 */
-	public function setAppid( string $appid ) : void
-	{
-		$this->appid = $appid;
-	}
+    protected $signType;//签名方式
 
-	/**
-	 * @return string
-	 */
-	public function getMiniAppId() : string
-	{
-		return $this->miniAppId;
-	}
+    protected $gateWay = GateWay::NORMAL;//SANDBOX
 
-	/**
-	 * @param string $miniAppId
-	 */
-	public function setMiniAppId( string $miniAppId ) : void
-	{
-		$this->miniAppId = $miniAppId;
-	}
+    /**
+     * @return string
+     */
+    public function getAppId(): string
+    {
+        return $this->appid;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getMchId() : string
-	{
-		return $this->mchId;
-	}
+    /**
+     * @param string $appid
+     */
+    public function setAppId(string $appid): void
+    {
+        $this->appid = $appid;
+    }
 
-	/**
-	 * @param string $mchId
-	 */
-	public function setMchId( string $mchId ) : void
-	{
-		$this->mchId = $mchId;
-	}
 
-	/**
-	 * @return string
-	 */
-	public function getKey() : string
-	{
-		return $this->key;
-	}
+    /**
+     * @return string
+     */
+    public function getMiniAppId(): string
+    {
+        return $this->miniAppId;
+    }
 
-	/**
-	 * @param string $key
-	 */
-	public function setKey( string $key ) : void
-	{
-		$this->key = $key;
-	}
+    /**
+     * @param string $miniAppId
+     */
+    public function setMiniAppId(string $miniAppId): void
+    {
+        $this->miniAppId = $miniAppId;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getNotifyUrl() : string
-	{
-		return $this->notifyUrl;
-	}
+    /**
+     * @return string
+     */
+    public function getMchId(): string
+    {
+        return $this->mchId;
+    }
 
-	/**
-	 * @param string $notifyUrl
-	 */
-	public function setNotifyUrl( string $notifyUrl ) : void
-	{
-		$this->notifyUrl = $notifyUrl;
-	}
+    /**
+     * @param string $mchId
+     */
+    public function setMchId(string $mchId): void
+    {
+        $this->mchId = $mchId;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getCertClient() : string
-	{
-		return $this->certClient;
-	}
+    /**
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return $this->key;
+    }
 
-	/**
-	 * @param string $certClient
-	 */
-	public function setCertClient( string $certClient ) : void
-	{
-		$this->certClient = $certClient;
-	}
+    /**
+     * @param string $key
+     */
+    public function setKey(string $key): void
+    {
+        $this->key = $key;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getCertKey() : string
-	{
-		return $this->certKey;
-	}
+    /**
+     * @return string
+     */
+    public function getNotifyUrl(): string
+    {
+        return $this->notifyUrl;
+    }
 
-	/**
-	 * @param string $certKey
-	 */
-	public function setCertKey( string $certKey ) : void
-	{
-		$this->certKey = $certKey;
-	}
-	/**
-	 * @return string
-	 */
-	public function getGateWay() : string
-	{
-		return $this->gateWay;
-	}
+    /**
+     * @param string $notifyUrl
+     */
+    public function setNotifyUrl(string $notifyUrl): void
+    {
+        $this->notifyUrl = $notifyUrl;
+    }
 
-	/**
-	 * @param string $gateWay
-	 */
-	public function setGateWay( string $gateWay ) : void
-	{
-		$this->gateWay = $gateWay;
-	}
+    /**
+     * @return string
+     */
+    public function getApiClientCert(): string
+    {
+        return $this->apiClientCert;
+    }
+
+    /**
+     * @param string $apiClientCert
+     */
+    public function setApiClientCert(string $apiClientCert): void
+    {
+        $this->apiClientCert = $apiClientCert;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApiClientKey(): string
+    {
+        return $this->apiClientKey;
+    }
+
+    /**
+     * @param string $apiClientKey
+     */
+    public function setApiClientKey(string $apiClientKey): void
+    {
+        $this->apiClientKey = $apiClientKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGateWay(): string
+    {
+        return $this->gateWay;
+    }
+
+    /**
+     * @param string $gateWay
+     */
+    public function setGateWay(string $gateWay): void
+    {
+        $this->gateWay = $gateWay;
+    }
 }

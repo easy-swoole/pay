@@ -252,6 +252,15 @@ class AliPay
 		return 'success';
 	}
 	/**
+	 * fail string to alipay.
+	 *
+	 * @return string
+	 */
+	public static function fail(): string
+	{
+		return 'failure';
+	}
+	/**
 	 * Get signContent that is to be signed.
 	 *
 	 *
@@ -264,6 +273,9 @@ class AliPay
 		$stringToBeSigned = "";
 		$i                = 0;
 		foreach( $params as $k => $v ){
+		    if ($k=='sign'){
+		        continue;
+            }
 			if( false === $this->checkEmpty( $v ) && "@" != substr( $v, 0, 1 ) ){
 				if( $i == 0 ){
 					$stringToBeSigned .= "$k"."="."$v";
@@ -350,7 +362,7 @@ class AliPay
 	 * @throws \EasySwoole\Pay\Exceptions\GatewayException
 	 * @throws \EasySwoole\Pay\Exceptions\InvalidSignException
 	 */
-	private function preQuest( array $data ) : SplArray
+	public function preQuest( array $data ) : SplArray
 	{
 		$response = NewWork::post( $this->config->getGateWay(), $data );
 		$result = json_decode( mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ), true );
