@@ -9,7 +9,16 @@
 namespace EasySwoole\Pay\WeChat\ResponseBean;
 
 
-class App extends Base
+use EasySwoole\Spl\SplBean;
+
+class App extends SplBean
 {
+	protected $appid;
+	protected $partnerid;
+	protected $prepayid;
+	protected $package;
+	protected $noncestr;
+	protected $timestamp;
+	protected $sign;
 
 }

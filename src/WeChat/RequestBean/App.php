@@ -8,29 +8,31 @@
 
 namespace EasySwoole\Pay\WeChat\RequestBean;
 
-/**
- * APP支付
- * Class App
- * @package EasySwoole\Pay\WeChat\RequestBean
- */
+
 class App extends PayBase
 {
-    protected $trade_type = 'APP'; // 交易类型
+	protected $trade_type = 'APP';
 
-    /**
-     * @return string
-     */
-    public function getTradeType(): string
-    {
-        return $this->trade_type;
-    }
+	/**
+	 * @var string
+	 */
+	protected $openid;
 
-    /**
-     * @param string $trade_type
-     */
-    public function setTradeType(string $trade_type): void
-    {
-        $this->trade_type = $trade_type;
-    }
+	/**
+	 * @return string
+	 */
+	public function getOpenid() : string
+	{
+		return $this->openid;
+	}
+
+	/**
+	 * @param string $openid
+	 */
+	public function setOpenid( string $openid ) : void
+	{
+		$this->openid = $openid;
+	}
+
 
 }
