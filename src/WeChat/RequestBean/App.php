@@ -17,6 +17,10 @@ class App extends PayBase
 	 * @var string
 	 */
 	protected $openid;
+	/**
+	 * @var string
+	 */
+	protected $notify_url;
 
 	/**
 	 * @return string
@@ -33,4 +37,21 @@ class App extends PayBase
 	{
 		$this->openid = $openid;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getNotifyUrl() : string
+	{
+		return $this->notify_url;
+	}
+
+	/**
+	 * @param string $notify_url
+	 */
+	public function setNotifyUrl( string $notify_url ) : void
+	{
+		$this->notify_url = $notify_url;
+	}
+
 }
