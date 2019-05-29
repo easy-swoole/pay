@@ -114,7 +114,7 @@ class Config extends SplBean
     /**
      * @return string
      */
-    public function getNotifyUrl(): string
+    public function getNotifyUrl(): ?string
     {
         return $this->notifyUrl;
     }
