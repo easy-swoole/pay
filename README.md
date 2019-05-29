@@ -424,13 +424,16 @@ var_dump($result);
 
 ```php
 $wechatConfig = new Config();
-$wechatConfig->setAppId('xxxxxx');
+$wechatConfig->setAppId('xxxxxx');      // 除了小程序以外使用该APPID
+$wechatConfig->setMiniAppId('xxxxxx');  // 小程序使用该APPID
 $wechatConfig->setMchId('xxxxxx');
 $wechatConfig->setKey('xxxxxx');
 $wechatConfig->setNotifyUrl('xxxxx');
 $wechatConfig->setApiClientCert('xxxxxxx');//客户端证书
 $wechatConfig->setApiClientKey('xxxxxxx'); //客户端证书秘钥
 ```
+
+> 由于小程序拥有独立的APPID，只需要在配置里同时配置上AppId和MiniAppId两个配置项，在支付的时候会自动选择对应的APPID来发起支付
 
 ## 公众号支付
 

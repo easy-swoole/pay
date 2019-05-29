@@ -130,7 +130,7 @@ class Config extends SplBean
     /**
      * @return string
      */
-    public function getApiClientCert(): string
+    public function getApiClientCert(): ?string
     {
         return $this->apiClientCert;
     }
@@ -146,7 +146,7 @@ class Config extends SplBean
     /**
      * @return string
      */
-    public function getApiClientKey(): string
+    public function getApiClientKey(): ?string
     {
         return $this->apiClientKey;
     }
