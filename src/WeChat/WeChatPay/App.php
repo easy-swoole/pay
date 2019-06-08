@@ -8,7 +8,6 @@
 
 namespace EasySwoole\Pay\WeChat\WeChatPay;
 
-
 use EasySwoole\Pay\WeChat\RequestBean\Base;
 use EasySwoole\Pay\WeChat\ResponseBean\App as AppResponse;
 use EasySwoole\Pay\WeChat\Utility;
@@ -23,12 +22,8 @@ class App extends AbstractPayBase
 
 	public function pay( Base $bean )
 	{
-		/** @var \EasySwoole\Pay\WeChat\RequestBean\App $bean */
-		$utility = new Utility( $this->config );
-		// 如果没有定义回调 使用全局回调
-		if( empty( $bean->getNotifyUrl() ) ){
-			$bean->setNotifyUrl( $this->config->getNotifyUrl() );
-		}
+		$bean->setNotifyUrl( $this->config->getNotifyUrl() );
+		$utility      = new Utility( $this->config );
 		$result       = $utility->requestApi( $this->requestPath(), $bean );
 		$data         = [
 			'appid'     => $result['appid'],
