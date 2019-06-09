@@ -11,5 +11,5 @@ namespace EasySwoole\Pay\AliPay\ResponseBean;
 
 class App extends Base
 {
-
+	protected $passback_params;
 }
