@@ -17,7 +17,7 @@ class Refund extends Base
 	protected $trade_no;
 
 	/**
-	 * @var float 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
+	 * @var string 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
 	 */
 	protected $refund_amount;
 	/**
@@ -76,17 +76,17 @@ class Refund extends Base
 	}
 
 	/**
-	 * @return float
+	 * @return string
 	 */
-	public function getRefundAmount() : float
+	public function getRefundAmount() : string
 	{
 		return $this->refund_amount;
 	}
 
 	/**
-	 * @param float $refund_amount
+	 * @param string $refund_amount
 	 */
-	public function setRefundAmount( float $refund_amount ) : void
+	public function setRefundAmount( string $refund_amount ) : void
 	{
 		$this->refund_amount = $refund_amount;
 	}

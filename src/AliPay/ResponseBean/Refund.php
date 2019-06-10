@@ -16,7 +16,7 @@ class Refund extends Base
 	protected $trade_no;
 
 	/**
-	 * @var float 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
+	 * @var string 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
 	 */
 	protected $refund_amount;
 	/**
