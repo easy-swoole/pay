@@ -242,24 +242,27 @@ class AliPay
 
 		return $this->verifySign( $data );
 	}
+
 	/**
 	 * success string to alipay.
 	 *
 	 * @return string
 	 */
-	public static function success(): string
+	public static function success() : string
 	{
 		return 'success';
 	}
+
 	/**
 	 * fail string to alipay.
 	 *
 	 * @return string
 	 */
-	public static function fail(): string
+	public static function fail() : string
 	{
 		return 'failure';
 	}
+
 	/**
 	 * Get signContent that is to be signed.
 	 *
@@ -273,9 +276,9 @@ class AliPay
 		$stringToBeSigned = "";
 		$i                = 0;
 		foreach( $params as $k => $v ){
-		    if ($k=='sign'){
-		        continue;
-            }
+			if( $k == 'sign' ){
+				continue;
+			}
 			if( false === $this->checkEmpty( $v ) && "@" != substr( $v, 0, 1 ) ){
 				if( $i == 0 ){
 					$stringToBeSigned .= "$k"."="."$v";
@@ -365,10 +368,10 @@ class AliPay
 	public function preQuest( array $data ) : SplArray
 	{
 		$response = NewWork::post( $this->config->getGateWay(), $data );
-		$result = json_decode( mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ), true );
-		$method = str_replace( '.', '_', $data['method'] ).'_response';
+		$result   = json_decode( mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ), true );
+		$method   = str_replace( '.', '_', $data['method'] ).'_response';
 		if( !isset( $result['sign'] ) || $result[$method]['code'] != '10000' ){
-			throw new GatewayException( 'Get Alipay API Error:'.$result[$method]['msg'].($result[$method]['sub_code'] ?? ''), $result, $result[$method]['code'] );
+			throw new GatewayException( 'Get Alipay API Error:'.$result[$method]['msg'].($result[$method]['sub_msg'] ?? '').($result[$method]['sub_code'] ?? ''), $result, $result[$method]['code'] );
 		}
 
 		if( $this->verifySign( $result[$method], true, $result['sign'] ) ){
