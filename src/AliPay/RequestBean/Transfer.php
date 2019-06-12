@@ -11,7 +11,7 @@ namespace EasySwoole\Pay\AliPay\RequestBean;
 
 class Transfer extends Base
 {
-	protected $product_code = '';
+	protected $product_code;
 	protected $method = 'alipay.fund.trans.toaccount.transfer';
 	/**
 	 * @var string
