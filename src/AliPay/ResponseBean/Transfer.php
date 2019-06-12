@@ -11,5 +11,18 @@ namespace EasySwoole\Pay\AliPay\ResponseBean;
 
 class Transfer extends Base
 {
+	/**
+	 * @var string
+	 */
+	protected $out_biz_no;
+
+	/**
+	 * @var string
+	 */
+	protected $order_id;
+	/**
+	 * @var string
+	 */
+	protected $pay_date;
 
 }
