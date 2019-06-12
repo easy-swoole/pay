@@ -235,5 +235,12 @@ class Refund extends Base
 		$this->org_pid = $org_pid;
 	}
 
+	protected function initialize(): void
+    {
+        if(!empty($this->refund_reason)){
+            $this->refund_reason = urlencode($this->refund_reason);
+        }
+    }
+
 
 }
