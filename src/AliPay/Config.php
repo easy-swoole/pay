@@ -19,8 +19,8 @@ class Config extends SplBean
 	protected $publicKey;
 	protected $privateKey;
 	protected $gateWay = GateWay::SANDBOX;
-	protected $charset = "UTF-8";
-	protected $format = "json";
+	protected $charset = "utf-8";
+	protected $format = "JSON";
 	protected $signType = "RSA2";
     protected $apiVersion = "1.0";
     protected $appAuthToken;
