@@ -46,6 +46,7 @@ use EasySwoole\Pay\Exceptions\InvalidConfigException;
 use EasySwoole\Pay\Exceptions\InvalidSignException;
 use EasySwoole\Pay\Utility\NewWork;
 use EasySwoole\Spl\SplArray;
+use EasySwoole\Spl\SplBean;
 use EasySwoole\Spl\SplString;
 
 class AliPay
@@ -114,7 +115,7 @@ class AliPay
 	 */
 	public function transfer( Transfer $transfer ) : TransferResponse
 	{
-		return new TransferResponse( $this->getRequestParams( $transfer ) );
+		return new TransferResponse($this->getRequestParams($transfer));
 	}
 
 	/**
@@ -351,10 +352,16 @@ class AliPay
 	 */
 	private function getRequestParams( $request ) : array
 	{
-		$array                = $request->toArray() + $this->getSysParams();
-		$array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
-		$array['sign']        = $this->generateSign( $array );
-		return $array;
+//		$array                = $request->toArray() + $this->getSysParams();
+//		$array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
+//		$array['sign']        = $this->generateSign( $array );
+//		return $array;
+        $params               =  $request->toArray();
+        $array                =  $this->getSysParams();
+        $array                =  array_merge($array, ['method'=>$params['method']]);
+        $array['biz_content'] = json_encode( $params, JSON_UNESCAPED_UNICODE );
+        $array['sign']        = $this->generateSign( $array );
+        return $array;
 	}
 
 	/**
