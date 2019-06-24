@@ -31,17 +31,15 @@ class NewWork
         $client = new HttpClient();
     }
 
-    /**
-     * @param       $endpoint
-     * @param       $data
-     * @return \EasySwoole\HttpClient\Bean\Response
-     * @throws \EasySwoole\HttpClient\Exception\InvalidUrl
-     */
+	/**
+	 * @param $endpoint
+	 * @param $data
+	 * @return HttpClient
+	 */
     public static function post($endpoint, $data)
     {
         $client = new HttpClient();
-        $client->setUrl($endpoint)->post($data, "application/json");
-        return $client->exec(self::$TIMEOUT);
+        return $client->setTimeout(self::$TIMEOUT)->postJson($data);
     }
 
     /**
@@ -57,13 +55,13 @@ class NewWork
     public static function postXML($endpoint, $data, $options = [])
     {
         $client = new HttpClient();
-        $client->setUrl($endpoint)->postXML($data);
+
         if (!empty($options)) {
             foreach ($options as $key => $value) {
                 $client->setClientSetting($key, $value);
             }
         }
-        return $client->exec(self::$TIMEOUT);
+        return $client->setTimeout(self::$TIMEOUT)->postXML($data);
     }
 
 }
