@@ -14,54 +14,54 @@ use EasySwoole\Pay\Exceptions\InvalidArgumentException;
 
 class NewWork
 {
-    public static $TIMEOUT = 15;
+	public static $TIMEOUT = 15;
 
-    /**
-     * Send a POST request.
-     *
-     *
-     * @param string $endpoint
-     * @param string|array $data
-     * @param array $options
-     *
-     * @return array|string
-     */
-    public static function get($endpoint, $data, $options = [])
-    {
-        $client = new HttpClient();
-    }
+	/**
+	 * Send a POST request.
+	 *
+	 *
+	 * @param string $endpoint
+	 * @param string|array $data
+	 * @param array $options
+	 *
+	 * @return array|string
+	 */
+	public static function get($endpoint, $data, $options = [])
+	{
+		$client = new HttpClient();
+	}
 
 	/**
 	 * @param $endpoint
 	 * @param $data
 	 * @return HttpClient
 	 */
-    public static function post($endpoint, $data)
-    {
-        $client = new HttpClient();
-        return $client->setTimeout(self::$TIMEOUT)->postJson($data);
-    }
+	public static function post($endpoint, $data)
+	{
+		$client = new HttpClient($endpoint);
+		return $client->setTimeout(self::$TIMEOUT)->postJson($data);
+	}
 
-    /**
-     * @param       $endpoint
-     * @param       $data
-     * @param array $options
-     */
-    public static function postJson(string $endpoint, array $data, $options = [])
-    {
+	/**
+	 * @param       $endpoint
+	 * @param       $data
+	 * @param array $options
+	 */
+	public static function postJson(string $endpoint, array $data, $options = [])
+	{
 
-    }
+	}
 
-    public static function postXML($endpoint, $data, $options = [])
-    {
-        $client = new HttpClient();
+	public static function postXML($endpoint, $data, $options = [])
+	{
+		$client = new HttpClient($endpoint);
 
-        if (!empty($options)) {
-            foreach ($options as $key => $value) {
-                $client->setClientSetting($key, $value);
-            }
-        }
-        return $client->setTimeout(self::$TIMEOUT)->postXML($data);
-    }
+		if (!empty($options)) {
+			foreach ($options as $key => $value) {
+				$client->setClientSetting($key, $value);
+			}
+		}
+		return $client->setTimeout(self::$TIMEOUT)->postXML($data);
+	}
 
 }
