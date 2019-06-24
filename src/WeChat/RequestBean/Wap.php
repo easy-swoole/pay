@@ -17,7 +17,7 @@ namespace EasySwoole\Pay\WeChat\RequestBean;
  */
 class Wap extends PayBase
 {
-    protected $trade_type = 'WAP'; // 交易类型
+    protected $trade_type = 'MWEB'; // 交易类型
 
     protected $product_id;  // 商品ID
     protected $openid;      // 用户标识
