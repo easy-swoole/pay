@@ -10,60 +10,56 @@ namespace EasySwoole\Pay\Utility;
 
 
 use EasySwoole\HttpClient\HttpClient;
-use EasySwoole\Pay\Exceptions\InvalidArgumentException;
 
 class NewWork
 {
     public static $TIMEOUT = 15;
 
-    /**
-     * Send a POST request.
-     *
-     *
-     * @param string $endpoint
-     * @param string|array $data
-     * @param array $options
-     *
-     * @return array|string
-     */
     public static function get($endpoint, $data, $options = [])
     {
-        $client = new HttpClient();
-    }
-
-    /**
-     * @param       $endpoint
-     * @param       $data
-     * @return \EasySwoole\HttpClient\Bean\Response
-     * @throws \EasySwoole\HttpClient\Exception\InvalidUrl
-     */
-    public static function post($endpoint, $data)
-    {
-        $client = new HttpClient();
-        $client->setUrl($endpoint)->post($data, "application/json");
-        return $client->exec(self::$TIMEOUT);
-    }
-
-    /**
-     * @param       $endpoint
-     * @param       $data
-     * @param array $options
-     */
-    public static function postJson(string $endpoint, array $data, $options = [])
-    {
-
-    }
-
-    public static function postXML($endpoint, $data, $options = [])
-    {
-        $client = new HttpClient();
-        $client->setUrl($endpoint)->postXML($data);
+        $client = new HttpClient($endpoint);
         if (!empty($options)) {
             foreach ($options as $key => $value) {
                 $client->setClientSetting($key, $value);
             }
         }
-        return $client->exec(self::$TIMEOUT);
+        $client->setQuery($data);
+        return $client->get();
+    }
+
+    public static function post($endpoint, $data, $options = [])
+    {
+        $client = new HttpClient($endpoint);
+        if (!empty($options)) {
+            foreach ($options as $key => $value) {
+                $client->setClientSetting($key, $value);
+            }
+        }
+        return $client->setTimeout(self::$TIMEOUT)->post($data);
+    }
+
+    public static function postJson(string $endpoint, array $data, $options = [])
+    {
+        $client = new HttpClient($endpoint);
+        $client->setTimeout(self::$TIMEOUT);
+        if (!empty($options)) {
+            foreach ($options as $key => $value) {
+                $client->setClientSetting($key, $value);
+            }
+        }
+        return $client->postJson($data);
+    }
+
+    public static function postXML($endpoint, $data, $options = [])
+    {
+        $client = new HttpClient($endpoint);
+        $client->setTimeout(self::$TIMEOUT);
+        if (!empty($options)) {
+            foreach ($options as $key => $value) {
+                $client->setClientSetting($key, $value);
+            }
+        }
+        return $client->postXml($data);
     }
 
 }
