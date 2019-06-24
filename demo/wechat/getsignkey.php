@@ -31,6 +31,6 @@ function generateSign(array $data, string $key): string
 
 $data['sign'] = generateSign($data, $key);
 go(function () use ($url, $data) {
-    $response = \EasySwoole\Pay\Utility\NewWork::post($url, \EasySwoole\Pay\Utility\Arr::toXml($data));
+    $response = \EasySwoole\Pay\Utility\NewWork::postJson($url, \EasySwoole\Pay\Utility\Arr::toXml($data));
     var_dump($response->getBody());
 });
