@@ -10,7 +10,7 @@
     },
     "require": {
         "easyswoole/spl": "^1.1",
-        "easyswoole/http-client": "^1.0",
+        "easyswoole/http-client": "^1.2.5",
         "ext-openssl":">=1.0",
         "ext-json":">=1.0",
         "easyswoole/utility": "^1.0",
