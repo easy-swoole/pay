@@ -360,14 +360,13 @@ class AliPay
 	/**
 	 * @param array $data
 	 * @return SplArray
+	 * @throws GatewayException
 	 * @throws InvalidConfigException
-	 * @throws \EasySwoole\HttpClient\Exception\InvalidUrl
-	 * @throws \EasySwoole\Pay\Exceptions\GatewayException
-	 * @throws \EasySwoole\Pay\Exceptions\InvalidSignException
+	 * @throws InvalidSignException
 	 */
 	public function preQuest( array $data ) : SplArray
 	{
-		$response = NewWork::postJson( $this->config->getGateWay(), $data );
+		$response = NewWork::post( $this->config->getGateWay(), $data );
 		$result   = json_decode( mb_convert_encoding( $response->getBody(), 'utf-8', 'gb2312' ), true );
 		$method   = str_replace( '.', '_', $data['method'] ).'_response';
 		if( !isset( $result['sign'] ) || $result[$method]['code'] != '10000' ){
