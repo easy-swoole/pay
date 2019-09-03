@@ -51,11 +51,14 @@ class Utility
      */
     private function getSignContent(array $data): string
     {
+       return  urldecode(http_build_query($data));
+       /*
         $buff = '';
         foreach ($data as $k => $v) {
             $buff .= ($k != 'sign' && $v != '' && !is_array($v)) ? $k . '=' . $v . '&' : '';
         }
         return trim($buff, '&');
+       */
     }
 
     /**
@@ -94,7 +97,7 @@ class Utility
         $bean->setAppId($this->config->getAppId());
         $bean->setMchId($this->config->getMchId());
         $bean->setSign($this->generateSign($bean->toArray()));
-        $response = NewWork::postXML($this->config->getGateWay() . $endpoint, (new SplArray($bean->toArray()))->toXML(), $useCert ? [
+        $response = NewWork::postXML($this->config->getGateWay() . $endpoint, (new SplArray($bean->toArray()))->toXML(true), $useCert ? [
             'ssl_cert_file' => $this->config->getApiClientCert(),
             'ssl_key_file' => $this->config->getApiClientKey()]
             : []);
