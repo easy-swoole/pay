@@ -51,6 +51,7 @@ class Utility
      */
     private function getSignContent(array $data): string
     {
+    	unset($data['sign']);
        return  urldecode(http_build_query($data));
        /*
         $buff = '';
