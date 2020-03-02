@@ -51,15 +51,15 @@ class Utility
      */
     private function getSignContent(array $data): string
     {
-    	unset($data['sign']);
-       return  urldecode(http_build_query($data));
-       /*
-        $buff = '';
-        foreach ($data as $k => $v) {
-            $buff .= ($k != 'sign' && $v != '' && !is_array($v)) ? $k . '=' . $v . '&' : '';
-        }
-        return trim($buff, '&');
-       */
+        unset($data['sign']);
+        return  urldecode(http_build_query($data));
+        /*
+         $buff = '';
+         foreach ($data as $k => $v) {
+             $buff .= ($k != 'sign' && $v != '' && !is_array($v)) ? $k . '=' . $v . '&' : '';
+         }
+         return trim($buff, '&');
+        */
     }
 
     /**
@@ -75,7 +75,9 @@ class Utility
     public function requestApi(string $endpoint, Base $bean, bool $useCert = false): SplArray
     {
         $result = $this->request($endpoint, $bean, $useCert);
+
         $result = is_array($result) ? $result : $this->fromXML($result);
+
         if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
             throw new GatewayException('Get Wechat API Error:' . ($result['return_msg'] ?? $result['retmsg']) . ($result['err_code_des'] ?? ''), 20000);
         }
@@ -95,10 +97,16 @@ class Utility
      */
     public function request(string $endpoint, Base $bean, bool $useCert = false): string
     {
-        $bean->setAppId($bean instanceof \EasySwoole\Pay\WeChat\RequestBean\MiniProgram ? $this->config->getMiniAppId() : $this->config->getAppId());
-        $bean->setMchId($this->config->getMchId());
+        if($endpoint==='/mmpaymkttransfers/promotion/transfers'){ //企业付款需要商家号mch_appid
+            $bean->setMchAppId($this->config->getMchAppId());// 商家appid mch_appid
+            $bean->setTransferMchId($this->config->getMchId());      // 商家号mchid
+        }else{  //非企业付款
+            $bean->setAppId($bean instanceof \EasySwoole\Pay\WeChat\RequestBean\MiniProgram ? $this->config->getMiniAppId() : $this->config->getAppId());
+            $bean->setMchId($this->config->getMchId()); // 商家号mch_id
+        }
         $bean->setSign($this->generateSign($bean->toArray()));
-        $response = NewWork::postXML($this->config->getGateWay() . $endpoint, (new SplArray($bean->toArray()))->toXML(true), $useCert ? [
+        $xml = (new SplArray($bean->toArray()))->toXML(true);
+        $response = NewWork::postXML($this->config->getGateWay() . $endpoint,$xml , $useCert ? [
             'ssl_cert_file' => $this->config->getApiClientCert(),
             'ssl_key_file' => $this->config->getApiClientKey()]
             : []);
