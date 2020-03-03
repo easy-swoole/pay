@@ -245,7 +245,7 @@ $pay = new \EasySwoole\Pay\Pay();
 $order = new \EasySwoole\Pay\AliPay\RequestBean\MiniProgram();
 $order->setSubject('测试');
 $order->setOutTradeNo(time().'123456');
-$order->setTotalAmount('0.01');
+$order->setAmount('0.01');
 $order->setBuyerId('hcihsn8174@sandbox.com');
 
 $aliPay = $pay->aliPay($aliConfig);

@@ -352,14 +352,10 @@ class AliPay
 	 */
 	private function getRequestParams( $request ) : array
 	{
-//		$array                = $request->toArray() + $this->getSysParams();
-//		$array['biz_content'] = json_encode( $array, JSON_UNESCAPED_UNICODE );
-//		$array['sign']        = $this->generateSign( $array );
-//		return $array;
         $params               =  $request->toArray();
         $array                =  $this->getSysParams();
         $array                =  array_merge($array, ['method'=>$params['method']]);
-        $array['biz_content'] = json_encode( $params, JSON_UNESCAPED_UNICODE );
+        $array['biz_content'] = json_encode( $params );
         $array['sign']        = $this->generateSign( $array );
         return $array;
 	}
