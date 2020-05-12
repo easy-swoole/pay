@@ -7,7 +7,7 @@ namespace EasySwoole\Pay\WeChat\WeChatPay;
 use EasySwoole\Pay\WeChat\RequestBean\Base;
 use EasySwoole\Pay\WeChat\ResponseBean\MicroPay as MicroPayResponse;
 
-class MicroPay
+class MicroPay extends AbstractPayBase
 {
     protected function requestPath(): string
     {
