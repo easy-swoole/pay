@@ -9,15 +9,16 @@
 namespace EasySwoole\Pay\WeChat;
 
 use EasySwoole\Pay\Exceptions\GatewayException;
-use EasySwoole\Pay\Exceptions\InvalidGatewayException;
 use EasySwoole\Pay\Exceptions\InvalidSignException;
 
 
+use EasySwoole\Pay\WeChat\RequestBean\MicroPay as MicroPayRequest;
 use EasySwoole\Pay\WeChat\RequestBean\MiniProgram as MiniProgramRequest;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount as OfficialAccountRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Scan as ScanRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Wap as WapRequest;
 use EasySwoole\Pay\WeChat\RequestBean\App as AppRequest;
+
 
 use EasySwoole\Pay\WeChat\RequestBean\OrderFind as OrderFindRequest;
 use EasySwoole\Pay\WeChat\RequestBean\RefundFind as RefundFindRequest;
@@ -34,7 +35,9 @@ use EasySwoole\Pay\WeChat\ResponseBean\Wap as WapResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Scan as ScanResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\MiniProgram  as MiniProgramResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\App  as AppResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\MicroPay as MicroPayResponse;
 
+use EasySwoole\Pay\WeChat\WeChatPay\MicroPay;
 use EasySwoole\Pay\WeChat\WeChatPay\MiniProgram;
 use EasySwoole\Pay\WeChat\WeChatPay\OfficialAccount;
 use EasySwoole\Pay\WeChat\WeChatPay\Scan;
@@ -64,6 +67,11 @@ class WeChat
     public function officialAccount(OfficialAccountRequest $bean): OfficialAccountResponse
     {
         return (new OfficialAccount($this->config))->pay($bean);
+    }
+
+    function microPay(MicroPayRequest $bean):MicroPayResponse
+    {
+        return (new MicroPay($this->config))->pay($bean);
     }
 
     /**
