@@ -9,6 +9,7 @@
 namespace EasySwoole\Pay\AliPay;
 
 use EasySwoole\Pay\AliPay\RequestBean\App;
+use EasySwoole\Pay\AliPay\RequestBean\BarCode;
 use EasySwoole\Pay\AliPay\RequestBean\MiniProgram;
 use EasySwoole\Pay\AliPay\RequestBean\NotifyRequest;
 use EasySwoole\Pay\AliPay\RequestBean\Pos;
@@ -24,6 +25,7 @@ use EasySwoole\Pay\AliPay\RequestBean\Close;
 use EasySwoole\Pay\AliPay\RequestBean\Cancel;
 use EasySwoole\Pay\AliPay\RequestBean\Download;
 
+use EasySwoole\Pay\AliPay\ResponseBean\BarCode as BarCodeResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Base;
 use EasySwoole\Pay\AliPay\ResponseBean\Web as WebResponse;
 use EasySwoole\Pay\AliPay\ResponseBean\Wap as WapResponse;
@@ -67,6 +69,11 @@ class AliPay
 	{
 		return new WebResponse( $this->getRequestParams( $web ) );
 	}
+
+    public function barCode(BarCode $barCode):BarCodeResponse
+    {
+        return new BarCodeResponse($this->getRequestParams( $barCode ));
+    }
 
 	/**
 	 * @param Wap $wap
