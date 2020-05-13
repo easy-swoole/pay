@@ -4,7 +4,7 @@
 namespace EasySwoole\Pay\WeChat\RequestBean;
 
 
-class MicroPay extends PayBase
+class BarCode extends PayBase
 {
     protected $auth_code;
 

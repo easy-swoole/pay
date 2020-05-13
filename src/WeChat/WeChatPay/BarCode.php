@@ -5,10 +5,10 @@ namespace EasySwoole\Pay\WeChat\WeChatPay;
 
 
 use EasySwoole\Pay\WeChat\RequestBean\Base;
-use EasySwoole\Pay\WeChat\ResponseBean\MicroPay as MicroPayResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\BarCode as MicroPayResponse;
 use EasySwoole\Pay\WeChat\Utility;
 
-class MicroPay extends AbstractPayBase
+class BarCode extends AbstractPayBase
 {
     protected function requestPath(): string
     {

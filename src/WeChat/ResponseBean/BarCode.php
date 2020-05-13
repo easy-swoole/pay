@@ -6,7 +6,7 @@ namespace EasySwoole\Pay\WeChat\ResponseBean;
 
 use EasySwoole\Spl\SplBean;
 
-class MicroPay extends SplBean
+class BarCode extends SplBean
 {
 
 }
