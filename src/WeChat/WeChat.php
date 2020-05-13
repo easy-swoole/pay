@@ -12,7 +12,7 @@ use EasySwoole\Pay\Exceptions\GatewayException;
 use EasySwoole\Pay\Exceptions\InvalidSignException;
 
 
-use EasySwoole\Pay\WeChat\RequestBean\BarCode as MicroPayRequest;
+use EasySwoole\Pay\WeChat\RequestBean\BarCode as BarCodeRequest;
 use EasySwoole\Pay\WeChat\RequestBean\MiniProgram as MiniProgramRequest;
 use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount as OfficialAccountRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Scan as ScanRequest;
@@ -35,7 +35,7 @@ use EasySwoole\Pay\WeChat\ResponseBean\Wap as WapResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Scan as ScanResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\MiniProgram  as MiniProgramResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\App  as AppResponse;
-use EasySwoole\Pay\WeChat\ResponseBean\BarCode as MicroPayResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\BarCode as BarCodeResponse;
 
 use EasySwoole\Pay\WeChat\WeChatPay\BarCode;
 use EasySwoole\Pay\WeChat\WeChatPay\MiniProgram;
@@ -69,7 +69,7 @@ class WeChat
         return (new OfficialAccount($this->config))->pay($bean);
     }
 
-    function barCode(MicroPayRequest $bean):MicroPayResponse
+    function barCode(BarCodeRequest $bean):BarCodeResponse
     {
         return (new BarCode($this->config))->pay($bean);
     }
