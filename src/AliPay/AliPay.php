@@ -216,6 +216,7 @@ class AliPay
      */
     public function verifySign( array $data, $sync = false, $sign = null ) : bool
     {
+        unset($data['sign_type']);
         $publicKey = $this->config->getPublicKey();
 
         if( is_null( $publicKey ) ){
