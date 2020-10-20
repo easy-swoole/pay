@@ -38,7 +38,7 @@ class NewWork
         return $client->setTimeout(self::$TIMEOUT)->post($data);
     }
 
-    public static function postJson(string $endpoint, array $data, $options = [])
+    public static function postJson(string $endpoint, string $data, $options = [])
     {
         $client = new HttpClient($endpoint);
         $client->setTimeout(self::$TIMEOUT);
