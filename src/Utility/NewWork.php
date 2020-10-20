@@ -50,7 +50,7 @@ class NewWork
         return $client->postJson($data);
     }
 
-    public static function postXML($endpoint, $data, $options = [])
+    public static function postXML(string $endpoint, string $data, $options = [])
     {
         $client = new HttpClient($endpoint);
         $client->setTimeout(self::$TIMEOUT);
