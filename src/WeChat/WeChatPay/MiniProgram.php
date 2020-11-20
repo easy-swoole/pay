@@ -10,6 +10,7 @@ namespace EasySwoole\Pay\WeChat\WeChatPay;
 
 use EasySwoole\Pay\Exceptions\GatewayException;
 use EasySwoole\Pay\Exceptions\InvalidArgumentException;
+use EasySwoole\Pay\Exceptions\InvalidConfigException;
 use EasySwoole\Pay\Exceptions\InvalidSignException;
 use EasySwoole\Pay\WeChat\RequestBean\Base;
 use EasySwoole\Pay\WeChat\RequestBean\PayBase;
@@ -28,6 +29,11 @@ class MiniProgram extends AbstractPayBase
      */
     public function pay(Base $bean): MiniProgramResponse
     {
+        $appId = $bean->getSubAppid() ? $this->config->getMiniAppId() : null;
+        if ($appId === null) {
+            throw new InvalidConfigException('appId not exist');
+        }
+
         $utility = new Utility($this->config);
 
         // 如果没有定义回调 使用全局回调
@@ -37,7 +43,7 @@ class MiniProgram extends AbstractPayBase
 
         $result = $utility->requestApi($this->requestPath(), $bean);
         $result = [
-            'appId' => $this->config->getMiniAppId(),
+            'appId' => $appId,
             'package' => 'prepay_id=' . $result['prepay_id'],
             'signType' => empty($bean->getSignType()) ? 'MD5' : $bean->getSignType()
         ];
