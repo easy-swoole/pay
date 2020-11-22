@@ -23,6 +23,7 @@ use EasySwoole\Pay\WeChat\RequestBean\App as AppRequest;
 use EasySwoole\Pay\WeChat\RequestBean\OrderFind as OrderFindRequest;
 use EasySwoole\Pay\WeChat\RequestBean\RefundFind as RefundFindRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Close as CloseRequest;
+use EasySwoole\Pay\WeChat\RequestBean\Reverse as ReverseRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Refund as RefundRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Transfer as TransferRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Download as DownloadRequest;
@@ -155,6 +156,19 @@ class WeChat
     public function close(CloseRequest $bean): SplArray
     {
         return (new Utility($this->config))->requestApi('/pay/closeorder', $bean);
+    }
+
+    /**
+     * 撤销订单
+     * @param ReverseRequest $bean
+     * @return SplArray
+     * @throws GatewayException
+     * @throws InvalidSignException
+     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
+     */
+    public function reverse(ReverseRequest $bean): SplArray
+    {
+        return (new Utility($this->config))->requestApi('/secapi/pay/reverse', $bean);
     }
 
     /**
