@@ -29,8 +29,8 @@ class MiniProgram extends AbstractPayBase
      */
     public function pay(Base $bean): MiniProgramResponse
     {
-        $appId = $bean->getSubAppid() ? $this->config->getMiniAppId() : null;
-        if ($appId === null) {
+        $appId = $bean->getSubAppid() ? $bean->getSubAppid() : $this->config->getMiniAppId();
+        if (!$appId) {
             throw new InvalidConfigException('appId not exist');
         }
 
