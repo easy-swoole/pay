@@ -52,6 +52,11 @@ class Utility
     private function getSignContent(array $data): string
     {
         unset($data['sign']);
+        foreach ($data as $key => $value) {
+            if ($value === null || $value === '') {
+                unset($data[$key]);
+            }
+        }
         return  urldecode(http_build_query($data));
         /*
          $buff = '';
@@ -80,6 +85,11 @@ class Utility
 
         if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
             throw new GatewayException('Get Wechat API Error:' . ($result['return_msg'] ?? $result['retmsg']) . ($result['err_code_des'] ?? ''),$result,$result['return_code']);
+        }
+
+        // 这里为了兼容微信的一个BUG，用请求的sign_type代替响应值里的sign_type
+        if (!isset($result['sign_type']) && $bean->getSignType() != null) {
+            $result['sign_type'] = $bean->getSignType();
         }
         if (strpos($endpoint, 'mmpaymkttransfers') !== false || $this->generateSign($result) === $result['sign']) {
             return new SplArray($result);
