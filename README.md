@@ -14,6 +14,20 @@
 | transfer | 账户转账     | Request | Response |
 | mini     | 小程序支付   | Request | Response |
 
+#### 配置
+
+> 组件支持支付宝两种签名方式,默认为公钥,如果使用证书模式,按如下设置. 
+
+```php
+// 写绝对路径,不要写相对路径.
+$config = new \EasySwoole\Pay\AliPay\Config();
+$config->setCertMode(true);
+$config->setPrivateKey('MIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCkrsvF56q/wNDC3brY7Sa5pIN/Pw8hUw7gpQVh2Z/V4fG/BHixqYntrFu+EnGsZJanAKCNCIwA2+zu0oMxQ1QsPHG1Jhhs1ADaIFIYamrejOzuvnUrXxjows3uKaOKesVs1dau504kuZximHnc6tQZ3p7esNCIY//2MGaqHRtieojSmFXdaPrH0PLYyQMx1zYCt65UMkNJ24QuBD48tgnMGrk3FYygRbQFtoREhH06DM83ZdgkG7yBPntvOoxzLKsK9GcT0ICQUCPM9qQzMe9A9On5YMnXJ/u1J3SQ0s5xSF7P2RoM1WRa7yoVyW/D+txJzzEXaycBjYtec3ddouXhAgMBAAECggEAR5AJzutYINGqJjPyYRfVDzD1T5NYgNO2EFrFlvrZ4Ti5M5e+1v1kiZqvl04uhYqEiPfVzNOc+zaWpEVoazzl0/9ELkLqtEgAQsluw1tjK2i0AR9UjU9a5LLaiBciESg+qIfYLdMn+v+JfLLjqeOF3eQGx6CwTcSe0x2/T0cswkLoeALFVjtKAgrwfBCOf3QBlX0o76HJW+3hVAlj8sZr6s2rJF77sb+jDu1ZM7wSMhp9MNjPxFNnjvO1wahhsu1J/I5PvGIjAmUTZCmkgPMc2WzpXjgE6Ymu6KED8KWNz5SMqZ6pHOnFOIW0X0pnRMRQTtlUcCGfOPMne86Y+CszAQKBgQDZkTDRoS+69jfmAJMfK604YVPCojJOZ2U+9oAi+EmgbPBKT37rY0KlGMAcobz5OKih78rwm8zuywNOkwHe0AQd1fP0vlwE3+yBah8JjIRbq6Wi/j5SrtOfxwmeQ/Yp02q76UvnDxZlOYu0RdpEfqd9l2DtMziHdlPSVxGc9xKC0QKBgQDBxhJw1jgK5/H3JRf/OZYFa2Us4tAif21Z1F54KLBYSA79c/8nfh3rXmarFIZT1NXVB+iQhqJik6ggIN6ojkSUj75rUOqrBU7qmitwc3YyU1dJ1FD5SZVx7HH83c5tXA2wlJhgANt7VsHh5+2ZkwNW5umHpZ2ADMpqhMCQZ5ZWEQKBgFXIWWdOFnOxAPk+4MM5hWLlfREQwqUHP3RD3OHs45rNWTDzhydoS66sw5KGcuwQ2ux+j5Wu2G6OvQ8OB37CpdzdrwKgy8dgQvAD15j8PnOmifhqJkiThf1JjRFJ2pVDNqJAqhzAZiQjPGIn6Jd5GLD8LstXlsJSdVpJ2jf5cuMBAoGBAIAhwb/rZ1OO3GlYle2m3pTm1xg/QvIM4Pote+povXMi8waV1Xr/4jjpS2qFP+3fJyae/CHVZTtZ+CqGkbVTnfW+t2OvNf2wnOZ025SYROgyQ94GDyVIixGyEA3tfbrCzCqfl8Kjzn5YeAwxmOOcWvDz8ChKU0OBMbgN4Gecl8SBAn8gDTQYvevciQzRlu5DaH5oBHi1b1u1UaknTY2Vlnd0wIhDvaHDAFq8i16RHMj12G01BvxKWbdVuI6ze0oct9hweK/9WAIPLVEqH0dXGxcg6pFz7NCeH59MBLTUVb/GMX0W6hWZiz85pmsfV3FF1VVOQaVlHvRG75Q2UHCDeVvT');
+$config->setCertPath(__DIR__ . '/cert/alipayCertPublicKey_RSA2.crt');
+$config->setRootCertPath(__DIR__ . '/cert/alipayRootCert.crt');
+$config->setMerchantCertPath(__DIR__ . '/cert/appCertPublicKey_2016091800538780.crt');
+```
+
 ## 电脑支付
 
 >  统一收单下单并支付页面接口
