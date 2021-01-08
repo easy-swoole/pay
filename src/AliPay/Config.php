@@ -24,6 +24,18 @@ class Config extends SplBean
 	protected $signType = "RSA2";
     protected $apiVersion = "1.0";
     protected $appAuthToken;
+
+    // 支付宝 证书方式
+
+    /** @var bool $certMode */
+    protected $certMode = false;
+    /** @var string $certPath */
+    protected $certPath; // 支付宝公钥文件路径
+    /** @var string $rootCertPath */
+    protected $rootCertPath; // 支付宝根证书文件路径
+    /** @var string $merchantCertPath */
+    protected $merchantCertPath; // 应用公钥证书文件路径
+
 	/**
 	 * @return mixed
 	 */
@@ -198,5 +210,69 @@ class Config extends SplBean
     public function setAppAuthToken($appAuthToken): void
     {
         $this->appAuthToken = $appAuthToken;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCertMode(): bool
+    {
+        return $this->certMode;
+    }
+
+    /**
+     * @param bool $certMode
+     */
+    public function setCertMode(bool $certMode): void
+    {
+        $this->certMode = $certMode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCertPath(): ?string
+    {
+        return $this->certPath;
+    }
+
+    /**
+     * @param string $certPath
+     */
+    public function setCertPath(string $certPath): void
+    {
+        $this->certPath = $certPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRootCertPath(): ?string
+    {
+        return $this->rootCertPath;
+    }
+
+    /**
+     * @param string $rootCertPath
+     */
+    public function setRootCertPath(string $rootCertPath): void
+    {
+        $this->rootCertPath = $rootCertPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMerchantCertPath(): ?string
+    {
+        return $this->merchantCertPath;
+    }
+
+    /**
+     * @param string $merchantCertPath
+     */
+    public function setMerchantCertPath(string $merchantCertPath): void
+    {
+        $this->merchantCertPath = $merchantCertPath;
     }
 }

@@ -48,7 +48,7 @@ use EasySwoole\Pay\Exceptions\InvalidConfigException;
 use EasySwoole\Pay\Exceptions\InvalidSignException;
 use EasySwoole\Pay\Utility\NewWork;
 use EasySwoole\Spl\SplArray;
-use EasySwoole\Spl\SplBean;
+use EasySwoole\Spl\SplFileStream;
 use EasySwoole\Spl\SplString;
 
 class AliPay
@@ -70,6 +70,11 @@ class AliPay
         return new WebResponse( $this->getRequestParams( $web ) );
     }
 
+    /**
+     * @param BarCode $barCode
+     * @return BarCodeResponse
+     * @throws InvalidConfigException
+     */
     public function barCode(BarCode $barCode):BarCodeResponse
     {
         return new BarCodeResponse($this->getRequestParams( $barCode ));
@@ -206,28 +211,34 @@ class AliPay
     }
 
     /**
-     * Verify sign.
-     * @param array       $data
-     * @param bool        $sync
-     * @param string|null $sign
-     * @throws InvalidConfigException
-     *
+     * Verify Sign
+     * @param array $data
+     * @param false $sync
+     * @param null $sign
      * @return bool
+     * @throws InvalidConfigException
      */
     public function verifySign( array $data, $sync = false, $sign = null ) : bool
     {
         unset($data['sign_type']);
-        $publicKey = $this->config->getPublicKey();
 
-        if( is_null( $publicKey ) ){
-            throw new InvalidConfigException( 'Missing Alipay Config -- [ali_public_key]' );
-        }
+        $publicKey = null;
 
-        $string = new SplString( $publicKey );
-        if( $string->endsWith( '.pem' ) ){
-            $publicKey = openssl_pkey_get_public( $publicKey );
-        } else{
-            $publicKey = "-----BEGIN PUBLIC KEY-----\n".wordwrap( $publicKey, 64, "\n", true )."\n-----END PUBLIC KEY-----";
+        if ($this->config->isCertMode()) {
+            $this->checkCert();
+            $publicKey = $this->getPublicKey($this->config->getCertPath());
+        } else if ($this->config->getPublicKey()) {
+            $publicKey = $this->config->getPublicKey();
+            $string = new SplString( $publicKey );
+            if( $string->endsWith( '.pem' ) ){
+                $publicKey = openssl_pkey_get_public( $publicKey );
+            } else{
+                $publicKey = "-----BEGIN PUBLIC KEY-----\n".wordwrap( $publicKey, 64, "\n", true )."\n-----END PUBLIC KEY-----";
+            }
+
+            if( is_null( $publicKey ) ){
+                throw new InvalidConfigException( 'Missing Alipay Config -- [ali_public_key]' );
+            }
         }
 
         $sign = $sign ?? $data['sign'];
@@ -327,6 +338,10 @@ class AliPay
         return $sign;
     }
 
+    /**
+     * @return array
+     * @throws InvalidConfigException
+     */
     private function getSysParams() : array
     {
         $sysParams                   = [];
@@ -339,6 +354,13 @@ class AliPay
         $sysParams["notify_url"]     = $this->config->getNotifyUrl();
         $sysParams["charset"]        = $this->config->getCharset();
         $sysParams["app_auth_token"] = $this->config->getAppAuthToken();
+
+        if ($this->config->isCertMode()) {
+            $this->checkCert();
+            $sysParams["app_cert_sn"]    = $this->getCertSN($this->config->getMerchantCertPath());
+            $sysParams["alipay_root_cert_sn"] = $this->getRootCertSN($this->config->getRootCertPath());
+        }
+
         return (new Base( $sysParams ))->toArray();
     }
 
@@ -395,5 +417,96 @@ class AliPay
         }
 
         throw new InvalidSignException( 'Alipay Sign Verify FAILED', $result );
+    }
+
+    /**
+     * 从证书提取公钥
+     * @param $certPath
+     * @return string
+     */
+    protected function getPublicKey($certPath)
+    {
+        $string = new SplFileStream($certPath);
+        $cert = $string->__toString();
+        $pkey = openssl_pkey_get_public($cert);
+        $keyData = openssl_pkey_get_details($pkey);
+//        $public_key = str_replace('-----BEGIN PUBLIC KEY-----', '', $keyData['key']);
+//        $public_key = trim(str_replace('-----END PUBLIC KEY-----', '', $public_key));
+        return trim($keyData['key']);
+    }
+
+    protected function getCertSN($certPath){
+        $string = new SplFileStream($certPath);
+        $cert = $string->__toString();
+        $ssl = openssl_x509_parse($cert);
+        return md5($this->array2string(array_reverse($ssl['issuer'])) . $ssl['serialNumber']);
+    }
+
+    protected function getRootCertSN($certPath)
+    {
+        $string = new SplFileStream($certPath);
+        $cert = $string->__toString();
+        $array = explode("-----END CERTIFICATE-----", $cert);
+        $SN = null;
+        for ($i = 0; $i < count($array) - 1; $i++) {
+            $ssl[$i] = openssl_x509_parse($array[$i] . "-----END CERTIFICATE-----");
+            if (strpos($ssl[$i]['serialNumber'], '0x') === 0) {
+                $ssl[$i]['serialNumber'] = $this->hex2dec($ssl[$i]['serialNumberHex']);
+            }
+            if ($ssl[$i]['signatureTypeLN'] == "sha1WithRSAEncryption" || $ssl[$i]['signatureTypeLN'] == "sha256WithRSAEncryption") {
+                if ($SN == null) {
+                    $SN = md5($this->array2string(array_reverse($ssl[$i]['issuer'])) . $ssl[$i]['serialNumber']);
+                } else {
+
+                    $SN = $SN . "_" . md5($this->array2string(array_reverse($ssl[$i]['issuer'])) . $ssl[$i]['serialNumber']);
+                }
+            }
+        }
+        return $SN;
+    }
+
+
+    /**
+     * 0x转高精度数字
+     * @param $hex
+     * @return int|string
+     */
+    protected function hex2dec($hex)
+    {
+        $dec = 0;
+        $len = strlen($hex);
+        for ($i = 1; $i <= $len; $i++) {
+            $dec = bcadd($dec, bcmul(strval(hexdec($hex[$i - 1])), bcpow('16', strval($len - $i))));
+        }
+        return $dec;
+    }
+
+
+    protected function array2string($array)
+    {
+        $string = [];
+        if ($array && is_array($array)) {
+            foreach ($array as $key => $value) {
+                $string[] = $key . '=' . $value;
+            }
+        }
+        return implode(',', $string);
+    }
+
+    /**
+     * @throws InvalidConfigException
+     */
+    protected function checkCert()
+    {
+        $merchantCertPath = $this->config->getMerchantCertPath();
+        $rootCertPath = $this->config->getRootCertPath();
+        $certPath = $this->config->getCertPath();
+        if (!$merchantCertPath || !$rootCertPath || !$certPath) {
+            throw new InvalidConfigException("证书参数merchantCertPath、certPath或rootCertPath设置不完整。");
+        }
+
+        if (!file_exists($merchantCertPath) || !file_exists($rootCertPath) || !file_exists($certPath)) {
+            throw new InvalidConfigException(sprintf("%s || %s || %s not exists", $merchantCertPath, $rootCertPath, $certPath));
+        }
     }
 }

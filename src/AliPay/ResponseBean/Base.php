@@ -31,6 +31,8 @@ class Base extends SplBean
     protected $product_code;
     protected $method;
     protected $body;
+    protected $app_cert_sn;
+    protected $alipay_root_cert_sn;
 
     public function toArray(array $columns = null, $filter = null): array
     {
