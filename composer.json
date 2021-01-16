@@ -16,9 +16,9 @@
     "require": {
         "easyswoole/spl": "^1.1",
         "easyswoole/http-client": "^1.2.5",
-        "ext-bcmath": ">=1.0",
-        "ext-openssl":">=1.0",
-        "ext-json":">=1.0",
+        "ext-bcmath": "*",
+        "ext-openssl":"*",
+        "ext-json":"*",
         "easyswoole/utility": "^1.0",
         "easyswoole/http": "^1.2"
     },
