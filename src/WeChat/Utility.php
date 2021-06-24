@@ -12,6 +12,7 @@ use EasySwoole\Pay\Exceptions\GatewayException;
 use EasySwoole\Pay\Exceptions\InvalidArgumentException;
 use EasySwoole\Pay\Exceptions\InvalidSignException;
 use EasySwoole\Pay\Utility\NewWork;
+use EasySwoole\Pay\WeChat\RequestBean\BarCode;
 use EasySwoole\Pay\WeChat\RequestBean\Base;
 use EasySwoole\Spl\SplArray;
 
@@ -107,6 +108,9 @@ class Utility
      */
     public function request(string $endpoint, Base $bean, bool $useCert = false): string
     {
+        if ($bean instanceof BarCode){
+            $bean->setNotifyUrl(null);
+        }
         if($endpoint==='/mmpaymkttransfers/promotion/transfers'){ //企业付款需要商家号mch_appid
             $bean->setMchAppId($this->config->getMchAppId());// 商家appid mch_appid
             $bean->setTransferMchId($this->config->getMchId());      // 商家号mchid
@@ -115,7 +119,7 @@ class Utility
             $bean->setMchId($this->config->getMchId()); // 商家号mch_id
         }
         $bean->setSign($this->generateSign($bean->toArray()));
-        $xml = (new SplArray($bean->toArray()))->toXML(true);
+        $xml = (new SplArray($bean->toArray(null,$bean::FILTER_NOT_NULL)))->toXML(true);
         $response = NewWork::postXML($this->config->getGateWay() . $endpoint,$xml , $useCert ? [
             'ssl_cert_file' => $this->config->getApiClientCert(),
             'ssl_key_file' => $this->config->getApiClientKey()]

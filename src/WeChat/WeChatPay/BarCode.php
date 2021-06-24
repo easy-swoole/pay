@@ -16,7 +16,9 @@ class BarCode extends AbstractPayBase
     }
     function pay(Base $bean)
     {
-        $bean->setNotifyUrl( $this->config->getNotifyUrl() );
+        if ($bean->getNotifyUrl()===null){
+            $bean->setNotifyUrl( $this->config->getNotifyUrl() );
+        }
         $utility      = new Utility( $this->config );
         $result       = $utility->requestApi( $this->requestPath(), $bean );
         return new MicroPayResponse($result->getArrayCopy());
