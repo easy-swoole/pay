@@ -20,9 +20,19 @@ class Transfer extends Base
 	 * @var string
 	 */
 	protected $order_id;
+
+    /**
+     * @var string
+     */
+    protected $pay_fund_order_id;
+
+    /**
+     * @var string
+     */
+    protected $status;
+
 	/**
 	 * @var string
 	 */
-	protected $pay_date;
-
+	protected $trans_date;
 }
