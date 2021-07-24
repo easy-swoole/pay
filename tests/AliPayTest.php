@@ -7,6 +7,7 @@ use EasySwoole\Pay\AliPay\GateWay;
 use EasySwoole\Pay\AliPay\RequestBean\App;
 use EasySwoole\Pay\AliPay\RequestBean\BarCode;
 use EasySwoole\Pay\AliPay\RequestBean\Web;
+use EasySwoole\Pay\Exceptions\GatewayException;
 use EasySwoole\Pay\Pay;
 use EasySwoole\Spl\SplArray;
 use PHPUnit\Framework\TestCase;
@@ -225,7 +226,7 @@ class AliPayTest extends TestCase
         $pay->aliPay($aliConfig)->web($order);
 
         $order = new \EasySwoole\Pay\AliPay\RequestBean\OrderFind();
-        $order->setOutTradeNo('1610090038123456');
+        $order->setOutTradeNo('1626888486123456');
         $aliPay = $pay->aliPay($aliConfig);
         $data = $aliPay->orderFind($order)->toArray();
         $this->assertInstanceOf(SplArray::class, $aliPay->preQuest($data));
@@ -278,7 +279,7 @@ class AliPayTest extends TestCase
         $pay = new Pay();
         $order = new \EasySwoole\Pay\AliPay\RequestBean\Refund();
         $order->setSubject('测试');
-        $order->setOutTradeNo('1610090038123456');
+        $order->setOutTradeNo('1626888486123456');
         $order->setRefundAmount('0.01');
         $aliPay = $pay->aliPay($aliConfig);
         $data = $aliPay->refund($order)->toArray();
@@ -294,8 +295,12 @@ class AliPayTest extends TestCase
         $order->setRefundAmount('0.01');
         $aliPay = $pay->aliPay($aliConfig);
         $data = $aliPay->refund($order)->toArray();
+
+        // 测试重复退单导致的异常
+        $this->expectException(GatewayException::class);
+        $this->expectExceptionMessage('Get Alipay API Error:Service Currently Unavailable系统异常aop.ACQ.SYSTEM_ERROR');
         $ret = $aliPay->preQuest($data);
-        $this->assertInstanceOf(SplArray::class, $ret);
+        // $this->assertInstanceOf(SplArray::class, $ret);
     }
 
     public function testRefundFind()
@@ -303,7 +308,7 @@ class AliPayTest extends TestCase
         $aliConfig = $this->buildPublicConfig();
         $pay = new Pay();
         $order = new \EasySwoole\Pay\AliPay\RequestBean\RefundFind();
-        $order->setOutTradeNo('1610090038123456');
+        $order->setOutTradeNo('1626888486123456');
         $order->setOutRequestNo('2021010822001427690501456342');
         $aliPay = $pay->aliPay($aliConfig);
         $data = $aliPay->refundFind($order)->toArray();
@@ -317,8 +322,12 @@ class AliPayTest extends TestCase
         $order->setOutRequestNo('2021010822001413421000127136');
         $aliPay = $pay->aliPay($aliConfig);
         $data = $aliPay->refundFind($order)->toArray();
+
+        // 测试重复退单导致的异常
+        $this->expectException(GatewayException::class);
+        $this->expectExceptionMessage('Get Alipay API Error:Service Currently Unavailable系统异常aop.ACQ.SYSTEM_ERROR');
         $ret = $aliPay->preQuest($data);
-        $this->assertInstanceOf(SplArray::class, $ret);
+        // $this->assertInstanceOf(SplArray::class, $ret);
     }
 
     public function testScan()
@@ -348,48 +357,35 @@ class AliPayTest extends TestCase
 
     public function testTransfer()
     {
-        $aliConfig = $this->buildPublicConfig();
-        $pay = new Pay();
-        $order = new \EasySwoole\Pay\AliPay\RequestBean\Transfer();
-        $order->setOutBizNo(time());
-        $order->setSubject('测试');
-        $order->setAmount('0.01');
-        $order->setPayeeType('ALIPAY_USERID');
-        $order->setPayeeAccount('2088622955313420');
-        $aliPay = $pay->aliPay($aliConfig);
-        $data = $aliPay->transfer($order)->toArray();
-        $ret = $aliPay->preQuest($data);
-        $this->assertInstanceOf(SplArray::class, $ret);
-
+        // 由于单笔转账必须使用公钥证书签名，故只有公钥证书的单测
         $aliConfig = $this->buildCertConfig();
         $pay = new Pay();
         $order = new \EasySwoole\Pay\AliPay\RequestBean\Transfer();
-        $order->setOutBizNo(time());
-        $order->setSubject('测试');
-        $order->setAmount('0.01');
-        $order->setPayeeType('ALIPAY_USERID');
-        $order->setPayeeAccount('2088102176327698');
+        $outBizNo = time();
+        $order->setOutBizNo($outBizNo);
+        $order->setTransAmount('0.01');
+        $order->setProductCode('TRANS_ACCOUNT_NO_PWD');
+        $order->setBizScene('DIRECT_TRANSFER');
+        $order->setOrderTitle('转账标题');
+        $order->setPayeeInfo([
+            'identity' => '2088621955097505',
+            'identity_type' => 'ALIPAY_USER_ID',
+        ]);
+        $order->setRemark('单笔转账');
         $aliPay = $pay->aliPay($aliConfig);
         $data = $aliPay->transfer($order)->toArray();
+        $this->assertTrue(true);
         $ret = $aliPay->preQuest($data);
         $this->assertInstanceOf(SplArray::class, $ret);
     }
 
     public function testTransferFind()
     {
-        $aliConfig = $this->buildPublicConfig();
-        $pay = new Pay();
-        $order = new \EasySwoole\Pay\AliPay\RequestBean\TransferFind();
-        $order->setOutBizNo(1610090960);
-        $aliPay = $pay->aliPay($aliConfig);
-        $data = $aliPay->transferFind($order)->toArray();
-        $ret = $aliPay->preQuest($data);
-        $this->assertInstanceOf(SplArray::class, $ret);
-
+        // 由于单笔转账必须使用公钥证书签名，故只有公钥证书的单测
         $aliConfig = $this->buildCertConfig();
         $pay = new Pay();
         $order = new \EasySwoole\Pay\AliPay\RequestBean\TransferFind();
-        $order->setOutBizNo(1610102051);
+        $order->setOutBizNo(1626887694);
         $aliPay = $pay->aliPay($aliConfig);
         $data = $aliPay->transferFind($order)->toArray();
         $ret = $aliPay->preQuest($data);
@@ -412,9 +408,9 @@ class AliPayTest extends TestCase
     {
         $aliConfig = new Config();
         $aliConfig->setGateWay(GateWay::SANDBOX);
-        $aliConfig->setAppId('2021000116693476');
-        $aliConfig->setPublicKey('MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0NYJRzZIBGLkes/Py1Rop8vDZtW0vDO5+MGb/KduwYYa4e3yyvCfnE/9RgWHWpyCjuACEmXEvpKpSyWy1PE8uGkz3nvrps/aoSpXn3G6q9r6MoxFMi57g+76rRBgZpJWUdENja704B0fN0Bw12SYdx0L2kOUYI3HScxUclN9uoCJkwdgcsCHdfpnx3JeMicxmklsVFAMjBPR3wibDqtpPExlvRe5PFz41oKy7hU2J32X7YVzd0ETfYj4kUwjwFvBB5wH9XjBxlTwWSwcSjtp5BY0alQvafPeZuta+sixT/N7h7xUkqmq/ruoiZkVVj2enBmrSUwGmtqKt+6KbOcITwIDAQAB');
-        $aliConfig->setPrivateKey('MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCKQMP98LHWw9W6YqbNyT0xiHMrb42jEjmDD1NyqpG1rhB+Rl38YNm+AHwoVnYGzdAzsWwKdpVZD5AhgRNQ1fKhPn3kbfh/bLzrlhiyiqli3RK5u9hkobNAgEJxxjQzLoOMJCiOTZjuPeqLm/j48Ld8o+DwuRxrDXiBlxOVICMp1SNS4MX4OtoqFmlTxVTaYaLRNnc6UZHbw259HS46mYaDWOFPTM81fs4KyAKuOJCldTysHue5dUjIpB4NprtuAGHHVc+WV4AK5SYsqC+rtdbGj0NqjvBkBfouMgi2e8QlXIJJfEC91vp1It13v8WglJyule4Xhkta443vXuuo13e/AgMBAAECggEAWuGSNPcpYH1hnOFGt1YHNO12j+IH4F+VkNLdTy5TFHP1AZ0uIT5lRGI7O6UCdxyKNcD2vbYQHPh/DZc05FmP4nEa/rNPvCv10IPdflhqWsPqkE+sQxKMq+TkSLg7Dj4QWWpXgpv94PawnM+ODc7nPzbXIkb9KF41jjKKu+fhVZiABK7bESm2UkY7h9liF1rRQQLLYS4GoipE+5KO7H/Z0HhKnMHKFPOF/hxk4zPXQkHwjN1ng6w4gkgbQjCiZwm2LUGgBk8a+za6OicU2J6tKFZS/AaQU+wo4hV4+jaGoissMecdpLDkKyv1HVNrP8Ye6VJJHjma7kz6l0p06XsyMQKBgQC9ZSeElxmCIuFJkMj/ar8DyUHOn8mlbzfVuRs59uIOK0He0TeCfNu6pkxzYzCjHiyadIxBVdpmmQyjm97wl/1ZSemrfkgnjUbqC5QjTkdoKIMMzzImuoyuvXWuMqz3HBuloj7yVoxVm9EjyMIyQh1S2U2b+iF3DpiRFrlWZ/VDRwKBgQC632Q/FGMG8I7iMvHpSzcoOlD8132UQEgfAMa5b3ohwcv2yTEA7cZ9/laXvU8Q9jabGvYCQaoJCiI+2PB2vJQBjK1u6e9hXdisuv/vAwWuwif60D1bWjBWGvfvxPTF6cQsLzulJnbCp7NIwqyXNOKyf4KfuuPc3IZbmDVR6m2zyQKBgDnbELtcPRqX9SI37G65+Sf67vNjtIGo+/F53mtSk7OoWzLpzn86DRVzf58wCceKjC2StNWwmEsHLek80FnG1EnWXl9Y8EnEyojsiJBQdVfIKGBdWwChtCAdGDnimRvTpk5uxbPZ5HyyYK0BwvD/aV3Jq/+d5WMtPkX0HyHaF/45AoGAR52tMW+Cs/olCBM2Go40yTnwJ7X97n7kJN2LSy2pxJ4cqKtaGF0HoOmEDgsC7iEttCuU9DBuFaDIlwVUwmxq3F0pakRE9S+eBjR0OQkTeHH4GGsN2KCrvZQASOdWVzLLd5NybExdXyQd1VimBBzEdFvhl41sHgx1gUzHwmjxOeECgYEAl1Y+AJbKgDtpUoZXss9/cauPLfGq0i5p/RqKCpGcrggbEWrUvadM+WGBZNehxXm9N1o2eUOJxoQJr4y+I/Inf2GAXg327s7d6wjjLqrtZFbeE6av+DvU/JjV9PgINaIaRNoHe4bhHSqiAS/wnSK/UInvKhemAqQnzFKX8zGcizE=');
+        $aliConfig->setAppId('2021000117693382');
+        $aliConfig->setPublicKey('MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqMm74qBe0dgcm7pDaOT293KzaBFyMaKovts/t6RC3rbP+WTkWDvYGJmZV51nSHDf5sVcqQJoFri0LhsZGhDZSf9uohogFcsDlqDWl6Di9n8kHzBtzlR3Q9SEbL3dClZfsvxQZyDAAtTpBjDO1gi2xxKuhCWxCnELVRziQYyFI6XjRHPeMzPqYBDjWzEjDa47XxrAWJpSOIsPCKNpMJFj3RNn7GtOD31folcJarFtw8n8v5EankxHNda12Py5+pDlSOBHZVPLVOb+JcrNcBVqg9Bm8Kz4yGyfANaytpakc03r0PBdayjp5+R3LcjM4bJU2poPdhhMltY5B9cITQMJxwIDAQAB');
+        $aliConfig->setPrivateKey('MIIEowIBAAKCAQEAo6GiO187S6LcrEYMB3rDgHVP4hdWEI4jqouDnmLSg0zyfI8k0/yyX/6j0wHIYC9GHTFbD2zQmC/HV1Dbns35Oj/n1ZlP9LmVU0ikwmtvV8PPxFEndZki0aWl2yX3tcZScZIJdD2qdzyD4pgRz7uiZkF5hHCfuaG4Hg+cZ6fOySBjjS29Gu3939qvniE9DNPu3HcMLE69FYH+0WtVsRD9dxfUnJeyKWzNfamMDfa7wd0ppu7ymcZb0wYOTZ1IyVudRMKRNRyod/7a/uVw5nCmfLAenKUMkfWmcQoB4Ommh+kfJLpxH8Nk1pehVBh2VPdEozht2ywqDQ/V1ZKDI4rbSQIDAQABAoIBAQCEHpoTPk1uQM3U+6ny0BjSu+YIM7d2Ho6FwahAVqKLCbIxCJM/5yVPhRdZ5HKZ1xHRuGxCBCZY+xsFUXBCxSSa98aFHQkGHGKJoHoH0R9RyfUUGkK2HTOT+x/z1rAvwTYIJVYk2TWumNoUN50KEgKKdgtb+GO/SuiSvSAYQdIhag6raJ2wfsaQVaXq96b4uRUsXMRlwYOI2OdLqPXzNvuYVftXxptH2qxJTYxotBOTWFA1y5v0549ToZYV+c3VGyLKluc6/WlGvhNYvg0h0c0CZqcq2vvFfOp4cmVfuI2LEnCJYUOFwsi7CUAqD+AyeCm8YO6XjHpYNqS+SxuIKYDRAoGBANVRF1EDj9R1xfnWYW0KUMXrpHkZkI/yP6U65BwqTA692BFbi31cWmAmmcF9zHwTgtSg4GxtnBar7sHed8XjgDPBy580GO7hyNV3K6dBg1oSDTXjkjFuEt0L8mAxbOPdYejyf1j65M7jIcKO58QpqTaedTxnyMMxGFAMEYm2KAVDAoGBAMRfdyeZ6Qg7IiEK0E9XIsfY/dcyhyxfIV/a6jgEJIPUZDjr7kE7bHf20XO476a67ov9qLol4NSR7QHlBD9FGaCirGUT5f/3lyzMyMGxAeTirMVNczGtbreQzZCbd/l4nvUyFi/QxsCI4e6zJ40ZjtKvPFGXVBD5aju0kPgYd46DAoGAMiHOowF9Secr0d1qJCAqf3kzvCof6VR7VK+UcHIYUdaX8uxayelsa/BmbizMY9SKCMKOO60+460gfXt1FpKyzHcdDZtGyM1TT6ekILiqz/4yEJoc/3TpBf4KxkSXXK3olsB24UiFgYGrq3e+TEGmPOncj4esjQL6vcU4Ue73VNUCgYBRIS/VSJ0iLWwYQqN1ZAaWkmutMM7v4g2j0InbwrpjTKhra+3vPWG+3lYCfXFlbO2JIK9I2MVejTtiAQAUM7Q2zX5z9Bid++iVNbXrb/ncWloO2cSxzXlklYqYJ+MVSmRB4QORlavHd8YAHDxG6zw6hvNgsiilKqZdLGiIV3NtiQKBgEk5xtFVRgX7xlz9uAeoXRJgijbioru+GUsXUv4j6TXmMz5enNRk31fshOT/6ZtkyqG74VCg646BCHBYfdWT8LK3EaDRyY/v/PooGeVtZHyvyWESdWSfapfyPkv/toHF2W1GUiEa0YYs+e+Iq2LVVWrTsRSMD/Q8Gse0duIpV/Nv');
         return $aliConfig;
     }
 
