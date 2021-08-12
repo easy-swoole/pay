@@ -22,7 +22,7 @@
 // 写绝对路径,不要写相对路径.
 $config = new \EasySwoole\Pay\AliPay\Config();
 $config->setCertMode(true);
-$config->setPrivateKey('MIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCkrsvF56q/wNDC3brY7Sa5pIN/Pw8hUw7gpQVh2Z/V4fG/BHixqYntrFu+EnGsZJanAKCNCIwA2+zu0oMxQ1QsPHG1Jhhs1ADaIFIYamrejOzuvnUrXxjows3uKaOKesVs1dau504kuZximHnc6tQZ3p7esNCIY//2MGaqHRtieojSmFXdaPrH0PLYyQMx1zYCt65UMkNJ24QuBD48tgnMGrk3FYygRbQFtoREhH06DM83ZdgkG7yBPntvOoxzLKsK9GcT0ICQUCPM9qQzMe9A9On5YMnXJ/u1J3SQ0s5xSF7P2RoM1WRa7yoVyW/D+txJzzEXaycBjYtec3ddouXhAgMBAAECggEAR5AJzutYINGqJjPyYRfVDzD1T5NYgNO2EFrFlvrZ4Ti5M5e+1v1kiZqvl04uhYqEiPfVzNOc+zaWpEVoazzl0/9ELkLqtEgAQsluw1tjK2i0AR9UjU9a5LLaiBciESg+qIfYLdMn+v+JfLLjqeOF3eQGx6CwTcSe0x2/T0cswkLoeALFVjtKAgrwfBCOf3QBlX0o76HJW+3hVAlj8sZr6s2rJF77sb+jDu1ZM7wSMhp9MNjPxFNnjvO1wahhsu1J/I5PvGIjAmUTZCmkgPMc2WzpXjgE6Ymu6KED8KWNz5SMqZ6pHOnFOIW0X0pnRMRQTtlUcCGfOPMne86Y+CszAQKBgQDZkTDRoS+69jfmAJMfK604YVPCojJOZ2U+9oAi+EmgbPBKT37rY0KlGMAcobz5OKih78rwm8zuywNOkwHe0AQd1fP0vlwE3+yBah8JjIRbq6Wi/j5SrtOfxwmeQ/Yp02q76UvnDxZlOYu0RdpEfqd9l2DtMziHdlPSVxGc9xKC0QKBgQDBxhJw1jgK5/H3JRf/OZYFa2Us4tAif21Z1F54KLBYSA79c/8nfh3rXmarFIZT1NXVB+iQhqJik6ggIN6ojkSUj75rUOqrBU7qmitwc3YyU1dJ1FD5SZVx7HH83c5tXA2wlJhgANt7VsHh5+2ZkwNW5umHpZ2ADMpqhMCQZ5ZWEQKBgFXIWWdOFnOxAPk+4MM5hWLlfREQwqUHP3RD3OHs45rNWTDzhydoS66sw5KGcuwQ2ux+j5Wu2G6OvQ8OB37CpdzdrwKgy8dgQvAD15j8PnOmifhqJkiThf1JjRFJ2pVDNqJAqhzAZiQjPGIn6Jd5GLD8LstXlsJSdVpJ2jf5cuMBAoGBAIAhwb/rZ1OO3GlYle2m3pTm1xg/QvIM4Pote+povXMi8waV1Xr/4jjpS2qFP+3fJyae/CHVZTtZ+CqGkbVTnfW+t2OvNf2wnOZ025SYROgyQ94GDyVIixGyEA3tfbrCzCqfl8Kjzn5YeAwxmOOcWvDz8ChKU0OBMbgN4Gecl8SBAn8gDTQYvevciQzRlu5DaH5oBHi1b1u1UaknTY2Vlnd0wIhDvaHDAFq8i16RHMj12G01BvxKWbdVuI6ze0oct9hweK/9WAIPLVEqH0dXGxcg6pFz7NCeH59MBLTUVb/GMX0W6hWZiz85pmsfV3FF1VVOQaVlHvRG75Q2UHCDeVvT');
+$config->setPrivateKey('应用私钥');//注意不是文件路径
 $config->setCertPath(__DIR__ . '/cert/alipayCertPublicKey_RSA2.crt');
 $config->setRootCertPath(__DIR__ . '/cert/alipayRootCert.crt');
 $config->setMerchantCertPath(__DIR__ . '/cert/appCertPublicKey_2016091800538780.crt');
@@ -212,29 +212,39 @@ var_dump($response);
 
 参考参数：https://docs.open.alipay.com/api_1/alipay.trade.precreate
 
-
-
 ## 单笔转账到支付宝账户接口
 
 ```php
-$aliConfig = new \EasySwoole\Pay\AliPay\Config();
-$aliConfig->setGateWay(\EasySwoole\Pay\AliPay\GateWay::SANDBOX);
-$aliConfig->setAppId('2016091800538339');
-$aliConfig->setPublicKey('阿里公钥');
-$aliConfig->setPrivateKey('阿里私钥');
+//单笔转账必须使用公钥证书签名
+$aliConfig = new Config();
+$aliConfig->setCertMode(true);
+$aliConfig->setGateWay(GateWay::SANDBOX);
+$aliConfig->setAppId('2016091800538780'); //你自己的Appid
+$aliConfig->setPrivateKey('私钥文本'); //注意，不是文件路径
 
-$pay = new \EasySwoole\Pay\Pay();
+//申请的证书文件
+$aliConfig->setCertPath(__DIR__ . '/cert/alipayCertPublicKey_RSA2.crt');
+$aliConfig->setRootCertPath(__DIR__ . '/cert/alipayRootCert.crt');
+$aliConfig->setMerchantCertPath(__DIR__ . '/cert/appCertPublicKey_2016091800538780.crt');
 
+$pay = new Pay();
 $order = new \EasySwoole\Pay\AliPay\RequestBean\Transfer();
-$order->setSubject('测试');
-$order->setTotalAmount('0.01');
-$order->setPayeeType('ALIPAY_LOGONID');
-$order->setPayeeAccount('hcihsn8174@sandbox.com');
-
+$outBizNo = time();
+$order->setOutBizNo($outBizNo);
+$order->setTransAmount('0.01');
+$order->setProductCode('TRANS_ACCOUNT_NO_PWD');
+$order->setBizScene('DIRECT_TRANSFER');
+$order->setOrderTitle('转账标题');
+$order->setPayeeInfo([
+    'identity' => '2088621955097505',
+    'identity_type' => 'ALIPAY_USER_ID',
+]);
+$order->setRemark('单笔转账');
 $aliPay = $pay->aliPay($aliConfig);
 $data = $aliPay->transfer($order)->toArray();
 $aliPay->preQuest($data);
 var_dump($data);
+
 ```
 
 #### 订单配置参数
@@ -413,8 +423,6 @@ $result = $aliPay->verify($order);
 var_dump($result);
 ```
 
-
-
 ## 服务器确认收到异步通知字符串获取
 
 ```php
@@ -424,7 +432,6 @@ var_dump($result);
 
 # 微信支付
 
-
 微信支付目前支持 3 种支付方法，对应的支付 method 如下：
 
 | method         | 说明         | 参数    | 返回值   |
@@ -433,6 +440,8 @@ var_dump($result);
 | officialAccount| 公众号支付   | Request | Response |
 | scan           | 扫码支付     | Request | Response |
 | miniProgram    | 小程序支付   | Request | Response |
+| transfer       | 单笔转账     | Request | Response |
+| sendRedPack    | 现金红包     | Request | Response |
 
 #### 微信参数配置
 
@@ -636,9 +645,42 @@ $data = $pay->weChat($wechatConfig)->verify($content  )
 \EasySwoole\Pay\WeChat\WeChat::fail();//失败响应
 ```
 
+## 单笔转账到个人用户
+```php
+$pay = new \EasySwoole\Pay\Pay();
+$req = new \EasySwoole\Pay\WeChat\RequestBean\Transfer();
 
+$req->setAmount($amount);
+$req->setOpenid($openId);
+$req->setCheckName('NO_CHECK');
+$req->setPartnerTradeNo($tradeNo); //商户订单号
+$req->setDesc($desc); //备注
+$req->setNonceStr(time()); //随机字符串
 
+$ret = $pay->weChat($this->wechatConfig)->transfer($req);
 
+var_dump($ret);
+```
 
+## 发送现金红包
+```php
 
+$pay = new \EasySwoole\Pay\Pay();
+$req = new \EasySwoole\Pay\WeChat\RequestBean\RedPack();
 
+$req->setNonceStr(time()); //随机字符串
+$req->setMchBillno($tradeNo ?: (time().rand(1000,9999)));
+$req->setMchId($conf['mchid']);
+$req->setSendName($sendName); //商户名称
+$req->setActName('内测活动'); //活动名称
+$req->setReOpenid($openId);
+$req->setTotalAmount($amount);
+$req->setTotalNum(1);
+$req->setRemark($remark);
+$req->setWishing($wishing);
+$req->setWxappid($conf['appid']);
+
+$ret = $pay->weChat($this->wechatConfig)->sendRedPack($req);
+var_dump($ret);
+
+```

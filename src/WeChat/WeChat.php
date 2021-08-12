@@ -25,6 +25,7 @@ use EasySwoole\Pay\WeChat\RequestBean\RefundFind as RefundFindRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Close as CloseRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Reverse as ReverseRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Refund as RefundRequest;
+use EasySwoole\Pay\WeChat\RequestBean\RedPack as RedPackRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Transfer as TransferRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Download as DownloadRequest;
 use EasySwoole\Pay\WeChat\RequestBean\DownloadFundFlow as DownloadFundFlowRequest;
@@ -183,6 +184,20 @@ class WeChat
     {
         return (new Utility($this->config))->requestApi('/secapi/pay/refund', $bean, true);
     }
+
+    /**
+     * 发送现金红包
+     * @param RedPackRequest $bean
+     * @return SplArray
+     * @throws GatewayException
+     * @throws InvalidSignException
+     * @throws \EasySwoole\Pay\Exceptions\InvalidArgumentException
+     */
+    public function sendRedPack(RedPackRequest $bean): SplArray
+    {
+        return (new Utility($this->config))->requestApi('/mmpaymkttransfers/sendredpack', $bean, true);
+    }
+
     /**
      * 企业打款至微信账户
      * @param  TransferRequest $bean
