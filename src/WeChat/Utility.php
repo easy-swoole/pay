@@ -111,10 +111,12 @@ class Utility
         if ($bean instanceof BarCode){
             $bean->setNotifyUrl(null);
         }
-        if($endpoint==='/mmpaymkttransfers/promotion/transfers'){ //企业付款需要商家号mch_appid
-            $bean->setMchAppId($this->config->getMchAppId());// 商家appid mch_appid
-            $bean->setTransferMchId($this->config->getMchId());      // 商家号mchid
-        }else{  //非企业付款
+        if($endpoint==='/mmpaymkttransfers/promotion/transfers'){
+            //企业付款需要商家号mch_appid
+            $bean->setMchAppId($this->config->getMchAppId()); // 商家appid mch_appid
+            $bean->setTransferMchId($this->config->getMchId()); // 商家号mchid
+        }else{
+            //非企业付款
             $bean->setAppId($bean instanceof \EasySwoole\Pay\WeChat\RequestBean\MiniProgram ? $this->config->getMiniAppId() : $this->config->getAppId());
             $bean->setMchId($this->config->getMchId()); // 商家号mch_id
         }
