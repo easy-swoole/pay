@@ -115,7 +115,10 @@ class Utility
             //企业付款需要商家号mch_appid
             $bean->setMchAppId($this->config->getMchAppId()); // 商家appid mch_appid
             $bean->setTransferMchId($this->config->getMchId()); // 商家号mchid
-        }else{
+        } elseif ($endpoint==='/mmpaymkttransfers/sendredpack') {
+            //企业红包
+            $bean->setMchId($this->config->getMchId());
+        } else {
             //非企业付款
             $bean->setAppId($bean instanceof \EasySwoole\Pay\WeChat\RequestBean\MiniProgram ? $this->config->getMiniAppId() : $this->config->getAppId());
             $bean->setMchId($this->config->getMchId()); // 商家号mch_id
