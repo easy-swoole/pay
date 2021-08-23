@@ -63,7 +63,7 @@ class RedPack extends Base
      * 客户端IP
      * @var string
      */
-    protected $client_ip = "192.168.0.1";
+    protected $client_ip;
 
     /**
      * @return string
