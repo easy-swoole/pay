@@ -442,6 +442,7 @@ var_dump($result);
 | miniProgram    | 小程序支付   | Request | Response |
 | transfer       | 单笔转账     | Request | Response |
 | sendRedPack    | 现金红包     | Request | Response |
+| micro          | 付款码支付   | Request | Response |
 
 #### 微信参数配置
 
@@ -550,6 +551,19 @@ $bean->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
 $pay = new Pay();
 $data = $pay->weChat($this->wechatConfig)->scan($bean);
 $url2 = $data->getCodeUrl();
+```
+
+## 付款码支付
+```php
+$micro = new \EasySwoole\Pay\WeChat\RequestBean\Micro();
+$micro->setOpenid('xxxxxxxxx');
+$micro->setOutTradeNo('CN' . date('YmdHis') . rand(1000, 9999));
+$micro->setBody('xxxx-测试' . $outTradeNo);
+$micro->setTotalFee(1);
+$micro->setAuthCode('10xxxxxxx');//18位纯数字，以10、11、12、13、14、15开头
+$micro->setSpbillCreateIp($this->request()->getHeader('x-real-ip')[0]);
+$pay = new \EasySwoole\Pay\Pay();
+$params = $pay->weChat($this->wechatConfig)->miniProgram($micro);
 ```
 
 ## 订单查询
