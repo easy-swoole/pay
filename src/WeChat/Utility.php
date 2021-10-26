@@ -84,6 +84,13 @@ class Utility
 
         $result = is_array($result) ? $result : $this->fromXML($result);
 
+        //处理扫描用户码返回支付状态未知code
+        if ((isset($result['return_code']) && $result['return_code'] == 'SUCCESS') && isset($result['err_code']) && $result['result_code'] == 'FAIL') {
+            if (in_array($result['err_code'], ['BANKERROR', 'SYSTEMERROR', 'USERPAYING', 'AUTH_CODE_ERROR'])) {
+                return new SplArray($result);
+            }
+        }
+
         if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
             throw new GatewayException('Get Wechat API Error:' . ($result['return_msg'] ?? $result['retmsg']) . ($result['err_code_des'] ?? ''),$result,$result['return_code']);
         }

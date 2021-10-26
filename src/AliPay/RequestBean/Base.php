@@ -21,6 +21,8 @@ class Base extends SplBean
     protected $body;
     protected $notify_url;
     protected $return_url;
+    protected $goods_detail;
+
     /**
      * @return mixed
      */
@@ -136,5 +138,20 @@ class Base extends SplBean
     public function setReturnUrl($returnUrl): void
     {
         $this->return_url = $returnUrl;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGoodsDetail() {
+        return $this->goods_detail;
+    }
+
+    /**
+     * @param $goods_detail
+     */
+    public function setGoodsDetail($goods_detail)
+    {
+        $this->goods_detail = $goods_detail;
     }
 }

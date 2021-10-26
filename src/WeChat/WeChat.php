@@ -18,6 +18,7 @@ use EasySwoole\Pay\WeChat\RequestBean\OfficialAccount as OfficialAccountRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Scan as ScanRequest;
 use EasySwoole\Pay\WeChat\RequestBean\Wap as WapRequest;
 use EasySwoole\Pay\WeChat\RequestBean\App as AppRequest;
+use EasySwoole\Pay\WeChat\RequestBean\Micro as MicroRequest;
 
 
 use EasySwoole\Pay\WeChat\RequestBean\OrderFind as OrderFindRequest;
@@ -33,12 +34,15 @@ use EasySwoole\Pay\WeChat\RequestBean\Comment as CommentRequest;
 use EasySwoole\Pay\WeChat\RequestBean\AuthCodeToOpenId as AuthCodeToOpenIdRequest;
 
 
+
+
 use EasySwoole\Pay\WeChat\ResponseBean\OfficialAccount as OfficialAccountResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Wap as WapResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\Scan as ScanResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\MiniProgram  as MiniProgramResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\App  as AppResponse;
 use EasySwoole\Pay\WeChat\ResponseBean\BarCode as BarCodeResponse;
+use EasySwoole\Pay\WeChat\ResponseBean\Micro as MicroResponse;
 
 use EasySwoole\Pay\WeChat\WeChatPay\BarCode;
 use EasySwoole\Pay\WeChat\WeChatPay\MiniProgram;
@@ -46,6 +50,7 @@ use EasySwoole\Pay\WeChat\WeChatPay\OfficialAccount;
 use EasySwoole\Pay\WeChat\WeChatPay\Scan;
 use EasySwoole\Pay\WeChat\WeChatPay\Wap;
 use EasySwoole\Pay\WeChat\WeChatPay\App;
+use EasySwoole\Pay\WeChat\WeChatPay\Micro;
 use EasySwoole\Spl\SplArray;
 
 /**
