@@ -36,11 +36,11 @@ class BarCode extends AbstractPayBase
                     $resultArray = new SplArray($result);
                     return new MicroPayResponse($resultArray->getArrayCopy());
                 }
+                throw new InvalidSignException('sign is error');
             }
         }
         if (!isset($result['return_code']) || $result['return_code'] != 'SUCCESS' || $result['result_code'] != 'SUCCESS') {
             throw new GatewayException('Get Wechat API Error:' . ($result['return_msg'] ?? $result['retmsg']) . ($result['err_code_des'] ?? ''),$result,$result['return_code']);
         }
-        throw new InvalidSignException('sign is error');
     }
 }
