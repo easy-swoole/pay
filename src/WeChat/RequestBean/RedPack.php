@@ -66,6 +66,12 @@ class RedPack extends Base
     protected $client_ip;
 
     /**
+     * 场景ID
+     * @var string
+     */
+    protected $scene_id;
+
+    /**
      * @return string
      */
     public function getWxappid(): string
@@ -223,5 +229,21 @@ class RedPack extends Base
     public function setClientIp(string $client_ip): void
     {
         $this->client_ip = $client_ip;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSceneId(): string
+    {
+        return $this->scene_id;
+    }
+
+    /**
+     * @param string $scene_id
+     */
+    public function setSceneId(string $scene_id): void
+    {
+        $this->scene_id = $scene_id;
     }
 }
