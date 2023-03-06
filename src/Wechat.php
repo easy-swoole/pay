@@ -11,6 +11,7 @@ use EasySwoole\Pay\Request\Wechat\H5;
 use EasySwoole\Pay\Request\Wechat\JsApi;
 use EasySwoole\Pay\Request\Wechat\Native;
 use EasySwoole\Pay\Utility\AesGcm;
+use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\Random;
 use EasySwoole\Pay\Response\Wechat\JsApi as JsApiResponse;
 use EasySwoole\Pay\Response\Wechat\App as AppResponse;
@@ -177,5 +178,19 @@ class Wechat
         }
 
         return $result === 1;
+    }
+
+    public static function success(): string
+    {
+        return '<xml><return_code>SUCCESS</return_code><return_msg>OK</return_msg></xml>';
+    }
+
+    /**
+     * 结果返回给微信服务器
+     * @return string
+     */
+    public static function fail(): string
+    {
+        return '<xml><return_code>FAIL</return_code><return_msg>FAIL</return_msg></xml>';
     }
 }
