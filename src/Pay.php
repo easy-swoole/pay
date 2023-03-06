@@ -20,9 +20,9 @@ class Pay
 
     private ?WechatConfig $wechatConfig;
 
-    private ?Wechat $wechat;
+    private ?Wechat $wechat = null;
 
-    private ?Alipay $alipay;
+    private ?Alipay $alipay = null;
 
 
     function setWechatConfig(WechatConfig $wechat):static
