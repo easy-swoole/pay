@@ -9,36 +9,47 @@
 namespace EasySwoole\Pay;
 
 
-use EasySwoole\Pay\AliPay\AliPay;
-use EasySwoole\Pay\AliPay\Config as AliPayConfig;
-use EasySwoole\Pay\WeChat\Config as WeChatConfig;
-use EasySwoole\Pay\WeChat\WeChat;
+
+
+use EasySwoole\Pay\Config\AlipayConfig;
+use EasySwoole\Pay\Config\WechatConfig;
 
 class Pay
 {
-	private $instanceList = [];
+	private ?AlipayConfig $alipayConfig;
 
-	function weChat( WeChatConfig $config = null ) : ?WeChat
-	{
-		if( $config ){
-			$this->instanceList['weChat'] = new WeChat( $config );
-		}
-		if( isset( $this->instanceList['weChat'] ) ){
-			return $this->instanceList['weChat'];
-		} else{
-			return null;
-		}
-	}
+    private ?WechatConfig $wechatConfig;
 
-	function aliPay( AliPayConfig $config = null ) : ?AliPay
-	{
-		if( $config ){
-			$this->instanceList['aliPay'] = new AliPay( $config );
-		}
-		if( isset( $this->instanceList['aliPay'] ) ){
-			return $this->instanceList['aliPay'];
-		} else{
-			return null;
-		}
-	}
+    private ?Wechat $wechat;
+
+    private ?Alipay $alipay;
+
+
+    function setWechatConfig(WechatConfig $wechat):static
+    {
+        $this->wechatConfig = $wechat;
+        return $this;
+    }
+
+    function setAlipayConfig(AlipayConfig $alipay):static
+    {
+        $this->alipayConfig = $alipay;
+        return $this;
+    }
+
+    function wechat():Wechat
+    {
+        if(!$this->wechat){
+            $this->wechat = new Wechat($this->wechatConfig);
+        }
+        return $this->wechat;
+    }
+
+    function alipay()
+    {
+        if($this->alipay){
+            $this->alipay = new Alipay($this->alipayConfig);
+        }
+        return $this->alipay;
+    }
 }
