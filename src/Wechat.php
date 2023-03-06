@@ -45,7 +45,10 @@ class Wechat
         $json = json_decode($resp->getBody(),true);
 
         if(isset($json['prepay_id'])){
-            return new JsApiResponse($json);
+            $json['appId'] = $this->config->getAppId();
+            $ret = new JsApiResponse($json);
+            $ret->makeSign($this->config);
+            return $ret;
         }
         throw new Exception\Wechat("jsApiPay make order error with response ".$resp->getBody());
     }
