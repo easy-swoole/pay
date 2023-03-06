@@ -8,6 +8,8 @@ class WechatConfig extends SplBean
 {
     protected $mch_private_key;
 
+    protected $mch_public_key;
+
     protected $mch_cert_serial_no;
 
     protected $mch_id;
@@ -78,12 +80,31 @@ class WechatConfig extends SplBean
         $this->app_id = $app_id;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getMchPublicKey()
+    {
+        return $this->mch_public_key;
+    }
+
+    /**
+     * @param mixed $mch_public_key
+     */
+    public function setMchPublicKey($mch_public_key): void
+    {
+        $this->mch_public_key = $mch_public_key;
+    }
 
 
     protected function initialize(): void
     {
         if(is_file($this->mch_private_key)){
             $this->mch_private_key = file_get_contents($this->mch_private_key);
+        }
+
+        if(is_file($this->mch_public_key)){
+            $this->mch_public_key = file_get_contents($this->mch_public_key);
         }
     }
 

@@ -6,6 +6,7 @@ use EasySwoole\HttpClient\Bean\Response;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Config\WechatConfig;
 use EasySwoole\Pay\Request\Wechat\App;
+use EasySwoole\Pay\Request\Wechat\Callback;
 use EasySwoole\Pay\Request\Wechat\H5;
 use EasySwoole\Pay\Request\Wechat\JsApi;
 use EasySwoole\Pay\Request\Wechat\Native;
@@ -147,8 +148,13 @@ class Wechat
     }
 
 
-    function verify()
+    function verify(Callback $callback):bool
     {
+        $body = "{$callback->getTimestamp()}\n{$callback->getNonce()}\n{$callback->getBody()}\n";
+        if (($result = openssl_verify($body, base64_decode($callback->getSignature()), $this->config->getMchPublicKey(), OPENSSL_ALGO_SHA256)) === false) {
+            throw new Exception\Wechat('Verified the input $message failed, please checking your $publicKey whether or nor correct.');
+        }
 
+        return $result === 1;
     }
 }
