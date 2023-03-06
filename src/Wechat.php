@@ -16,7 +16,9 @@ class Wechat
 
     function jsApi()
     {
-
+        $path = "/v3/pay/transactions/jsapi";
+        $json = json_encode([]);
+        $this->postRequest($path,$json);
     }
 
     protected function getReuest(string $url)
@@ -24,12 +26,14 @@ class Wechat
 
     }
 
-    protected function postRequest(string $url,string $json)
+    protected function postRequest(string $path,string $json)
     {
-        $path = "";
         $time = time();
         $nonce = strtoupper( Random::character(16));
         $body = "{POST}\n{$path}\n{$time}\n{$nonce}\n{$json}\n";
+        openssl_sign($body, $raw_sign, $this->config->getMchPrivateKey(), 'sha256WithRSAEncryption');
+        $sign = base64_encode($raw_sign);
+
     }
 
 }
