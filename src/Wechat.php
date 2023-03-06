@@ -146,4 +146,9 @@ class Wechat
                 $this->config->getMchId(), $nonce, $time, $this->config->getMchCertSerialNo(), $sign);
     }
 
+
+    function verify()
+    {
+
+    }
 }
