@@ -24,6 +24,17 @@ class Wechat
 
     }
 
+    function certificates()
+    {
+        $path = "/v3/certificates";
+        $resp = $this->getReuest($path);
+        $json = json_decode($resp->getBody(),true);
+        if(isset($json['data'])){
+            return $json['data'];
+        }
+        throw new Exception\Wechat("get certificates error with response ".$resp->getBody());
+    }
+
     function jsApi(JsApi $request): JsApiResponse
     {
         $path = "/v3/pay/transactions/jsapi";
@@ -97,21 +108,13 @@ class Wechat
     }
 
 
-    protected function getReuest(string $path):array
+    protected function getReuest(string $path):Response
     {
         $token = $this->sign("GET",$path,"");
         $url = "https://api.mch.weixin.qq.com{$path}";
         $client = new HttpClient($url);
         $client->setHeader("Authorization",$token,false);
-        $resp = $client->get();
-        if(!empty($resp->getErrMsg())){
-            throw new Exception\Wechat("Request Error case {$resp->getErrMsg()}");
-        }
-        $json = json_decode($resp->getBody(),true);
-        if(is_array($json)){
-            return $json;
-        }
-        throw new Exception\Wechat("Request Error with response {$resp->getBody()}");
+        return $client->get();
     }
 
     protected function postRequest(string $path,string $json):Response
