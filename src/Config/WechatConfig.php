@@ -16,6 +16,8 @@ class WechatConfig extends SplBean
 
     protected $app_id;
 
+    protected $encrypt_key;
+
     /**
      * @return mixed
      */
@@ -96,17 +98,30 @@ class WechatConfig extends SplBean
         $this->mch_public_key = $mch_public_key;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getEncryptKey()
+    {
+        return $this->encrypt_key;
+    }
+
+    /**
+     * @param mixed $encrypt_key
+     */
+    public function setEncryptKey($encrypt_key): void
+    {
+        $this->encrypt_key = $encrypt_key;
+    }
 
     protected function initialize(): void
     {
-        if(is_file($this->mch_private_key)){
+        if(($this->mch_private_key !== null) && is_file($this->mch_private_key)){
             $this->mch_private_key = file_get_contents($this->mch_private_key);
         }
 
-        if(is_file($this->mch_public_key)){
+        if(($this->mch_public_key !== null) && is_file($this->mch_public_key)){
             $this->mch_public_key = file_get_contents($this->mch_public_key);
         }
     }
-
-
 }

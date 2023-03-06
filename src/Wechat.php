@@ -10,6 +10,7 @@ use EasySwoole\Pay\Request\Wechat\Callback;
 use EasySwoole\Pay\Request\Wechat\H5;
 use EasySwoole\Pay\Request\Wechat\JsApi;
 use EasySwoole\Pay\Request\Wechat\Native;
+use EasySwoole\Pay\Utility\AesGcm;
 use EasySwoole\Utility\Random;
 use EasySwoole\Pay\Response\Wechat\JsApi as JsApiResponse;
 use EasySwoole\Pay\Response\Wechat\App as AppResponse;
@@ -25,13 +26,26 @@ class Wechat
 
     }
 
-    function certificates()
+    function certificates(bool $autoDecrypt = true)
     {
         $path = "/v3/certificates";
         $resp = $this->getReuest($path);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['data'])){
-            return $json['data'];
+            $final = [];
+            if($autoDecrypt){
+                foreach ($json['data'] as $key => $item){
+                    $str = AesGcm::decrypt($item['encrypt_certificate']['ciphertext'],$this->config->getEncryptKey(),$item['encrypt_certificate']['nonce'],$item['encrypt_certificate']['associated_data']);
+                    if($str){
+                        $json['data'][$key]['certificate'] = $str;
+                    }
+                }
+            }
+
+            foreach ($json['data'] as $item){
+                $final[$item['serial_no']] = $item;
+            }
+            return $final;
         }
         throw new Exception\Wechat("get certificates error with response ".$resp->getBody());
     }
@@ -148,10 +162,17 @@ class Wechat
     }
 
 
-    function verify(Callback $callback):bool
+    function verify(Callback $callback,?string $publicKey = null):bool
     {
+        if($publicKey == null){
+            $list = $this->certificates();
+            if(!isset($list[$callback->getCertSerial()])){
+                throw new Exception\Wechat("certificate no {$callback->getCertSerial()} not exist");
+            }
+            $publicKey = $list[$callback->getCertSerial()];
+        }
         $body = "{$callback->getTimestamp()}\n{$callback->getNonce()}\n{$callback->getBody()}\n";
-        if (($result = openssl_verify($body, base64_decode($callback->getSignature()), $this->config->getMchPublicKey(), OPENSSL_ALGO_SHA256)) === false) {
+        if (($result = openssl_verify($body, base64_decode($callback->getSignature()), $publicKey['certificate'], OPENSSL_ALGO_SHA256)) === false) {
             throw new Exception\Wechat('Verified the input $message failed, please checking your $publicKey whether or nor correct.');
         }
 
