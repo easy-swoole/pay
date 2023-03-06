@@ -5,9 +5,13 @@ namespace EasySwoole\Pay;
 use EasySwoole\HttpClient\Bean\Response;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Config\WechatConfig;
+use EasySwoole\Pay\Request\Wechat\App;
+use EasySwoole\Pay\Request\Wechat\H5;
 use EasySwoole\Pay\Request\Wechat\JsApi;
 use EasySwoole\Utility\Random;
 use EasySwoole\Pay\Response\Wechat\JsApi as JsApiResponse;
+use EasySwoole\Pay\Response\Wechat\App as AppResponse;
+use EasySwoole\Pay\Response\Wechat\H5 as H5Response;
 
 class Wechat
 {
@@ -29,7 +33,33 @@ class Wechat
         if(isset($json['prepay_id'])){
             return new JsApiResponse($json);
         }
-        throw new Exception\Wechat("jsapi make order error with response ".$resp->getBody());
+        throw new Exception\Wechat("jsApiPay make order error with response ".$resp->getBody());
+    }
+
+    function app(App $request)
+    {
+        $path = "/v3/pay/transactions/app";
+        $request->setAppid($this->config->getAppId());
+        $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
+        $resp = $this->postRequest($path,$json);
+        $json = json_decode($resp->getBody(),true);
+        if(isset($json['prepay_id'])){
+            return new AppResponse($json);
+        }
+        throw new Exception\Wechat("appPay make order error with response ".$resp->getBody());
+    }
+
+    function h5(H5 $request)
+    {
+        $path = "/v3/pay/transactions/h5";
+        $request->setAppid($this->config->getAppId());
+        $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
+        $resp = $this->postRequest($path,$json);
+        $json = json_decode($resp->getBody(),true);
+        if(isset($json['h5_url'])){
+            return new H5Response($json);
+        }
+        throw new Exception\Wechat("H5 Pay make order error with response ".$resp->getBody());
     }
 
     function query(string $transaction_id)
