@@ -90,7 +90,7 @@ class Base extends SplBean
     /**
      * @param mixed $out_trade_no
      */
-    public function setOutTradeNo($out_trade_no): void
+    public function setOutTradeNo(string $out_trade_no): void
     {
         $this->out_trade_no = $out_trade_no;
     }
