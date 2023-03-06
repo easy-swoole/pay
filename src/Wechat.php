@@ -2,9 +2,12 @@
 
 namespace EasySwoole\Pay;
 
+use EasySwoole\HttpClient\Bean\Response;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Config\WechatConfig;
+use EasySwoole\Pay\Request\Wechat\JsApi;
 use EasySwoole\Utility\Random;
+use EasySwoole\Pay\Response\Wechat\JsApi as JsApiResponse;
 
 class Wechat
 {
@@ -15,52 +18,64 @@ class Wechat
 
     }
 
-    function jsApi()
+    function jsApi(JsApi $request): JsApiResponse
     {
         $path = "/v3/pay/transactions/jsapi";
-        $json = json_encode([
-            'appid'=>'wx47e12b9ddcc41b44',
-            'description'=>"测试",
-            'out_trade_no'=>"NO".time(),
-            'mchid'=>"1526422621",
-            'notify_url'=>"https://www.baidu.com",
-            'amount'=>[
-                'total'=>1,
-                'currency'=>"CNY"
-            ],
-            "payer"=>[
-                'openid'=>"o3Mk26HWFAGp6zlUpeyqlLFtYgu4"
-            ]
-        ]);
-        $this->postRequest($path,$json);
+        $request->setAppid($this->config->getAppId());
+        $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
+        $resp = $this->postRequest($path,$json);
+        $json = json_decode($resp->getBody(),true);
+
+        if(isset($json['prepay_id'])){
+            return new JsApiResponse($json);
+        }
+        throw new Exception\Wechat("jsapi make order error with response ".$resp->getBody());
     }
 
-    function query(string $out_trade_no)
+    function query(string $transaction_id)
     {
-        $path = "/v3/pay/transactions/id/{$out_trade_no}?mchid={$this->config->getMchId()}";
-        $this->getReuest($path);
+        $path = "/v3/pay/transactions/id/{$transaction_id}?mchid={$this->config->getMchId()}";
+        $ret = $this->getReuest($path);
+    }
 
+    function close(string $out_trade_no)
+    {
+        $path = "/v3/pay/transactions/out-trade-no/{$out_trade_no}/close";
+        $ret = $this->postRequest($path,json_encode([
+            "mchid"=>$this->config->getMchId()
+        ]));
+        if($ret->getStatusCode() == 204){
+            return true;
+        }else{
+            return $ret->getStatusCode();
+        }
     }
 
 
-    protected function getReuest(string $path)
+    protected function getReuest(string $path):array
     {
         $token = $this->sign("GET",$path,"");
         $url = "https://api.mch.weixin.qq.com{$path}";
         $client = new HttpClient($url);
         $client->setHeader("Authorization",$token,false);
         $resp = $client->get();
-        var_dump($resp->getBody());
+        if(!empty($resp->getErrMsg())){
+            throw new Exception\Wechat("Request Error case {$resp->getErrMsg()}");
+        }
+        $json = json_decode($resp->getBody(),true);
+        if(is_array($json)){
+            return $json;
+        }
+        throw new Exception\Wechat("Request Error with response {$resp->getBody()}");
     }
 
-    protected function postRequest(string $path,string $json)
+    protected function postRequest(string $path,string $json):Response
     {
         $token = $this->sign("POST",$path,$json);
         $url = "https://api.mch.weixin.qq.com{$path}";
         $client = new HttpClient($url);
         $client->setHeader("Authorization",$token,false);
-        $resp = $client->postJson($json);
-        var_dump($resp->getBody());
+        return  $client->postJson($json);
     }
 
 

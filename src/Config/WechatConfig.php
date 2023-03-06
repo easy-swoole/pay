@@ -12,6 +12,8 @@ class WechatConfig extends SplBean
 
     protected $mch_id;
 
+    protected $app_id;
+
     /**
      * @return mixed
      */
@@ -59,6 +61,24 @@ class WechatConfig extends SplBean
     {
         $this->mch_id = $mch_id;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAppId()
+    {
+        return $this->app_id;
+    }
+
+    /**
+     * @param mixed $app_id
+     */
+    public function setAppId($app_id): void
+    {
+        $this->app_id = $app_id;
+    }
+
+
 
     protected function initialize(): void
     {
