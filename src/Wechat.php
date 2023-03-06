@@ -27,7 +27,7 @@ class Wechat
 
     }
 
-    function certificates(bool $autoDecrypt = true)
+    function certificates(bool $autoDecrypt = true): array
     {
         $path = "/v3/certificates";
         $resp = $this->getReuest($path);
@@ -36,7 +36,7 @@ class Wechat
             $final = [];
             if($autoDecrypt){
                 foreach ($json['data'] as $key => $item){
-                    $str = AesGcm::decrypt($item['encrypt_certificate']['ciphertext'],$this->config->getEncryptKey(),$item['encrypt_certificate']['nonce'],$item['encrypt_certificate']['associated_data']);
+                    $str = $this->decrypt($item['encrypt_certificate']['ciphertext'],$item['encrypt_certificate']['nonce'],$item['encrypt_certificate']['associated_data']);
                     if($str){
                         $json['data'][$key]['certificate'] = $str;
                     }
@@ -49,6 +49,12 @@ class Wechat
             return $final;
         }
         throw new Exception\Wechat("get certificates error with response ".$resp->getBody());
+    }
+
+
+    function decrypt(string $ciphertext, string $iv = '', string $aad = '')
+    {
+        return AesGcm::decrypt($ciphertext,$this->config->getEncryptKey(),$iv,$aad);
     }
 
     function jsApi(JsApi $request): JsApiResponse
