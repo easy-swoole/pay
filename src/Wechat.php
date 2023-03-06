@@ -8,10 +8,12 @@ use EasySwoole\Pay\Config\WechatConfig;
 use EasySwoole\Pay\Request\Wechat\App;
 use EasySwoole\Pay\Request\Wechat\H5;
 use EasySwoole\Pay\Request\Wechat\JsApi;
+use EasySwoole\Pay\Request\Wechat\Native;
 use EasySwoole\Utility\Random;
 use EasySwoole\Pay\Response\Wechat\JsApi as JsApiResponse;
 use EasySwoole\Pay\Response\Wechat\App as AppResponse;
 use EasySwoole\Pay\Response\Wechat\H5 as H5Response;
+use EasySwoole\Pay\Response\Wechat\Native as NativeResponse;
 
 class Wechat
 {
@@ -36,7 +38,7 @@ class Wechat
         throw new Exception\Wechat("jsApiPay make order error with response ".$resp->getBody());
     }
 
-    function app(App $request)
+    function app(App $request):AppResponse
     {
         $path = "/v3/pay/transactions/app";
         $request->setAppid($this->config->getAppId());
@@ -49,7 +51,7 @@ class Wechat
         throw new Exception\Wechat("appPay make order error with response ".$resp->getBody());
     }
 
-    function h5(H5 $request)
+    function h5(H5 $request):H5Response
     {
         $path = "/v3/pay/transactions/h5";
         $request->setAppid($this->config->getAppId());
@@ -60,6 +62,19 @@ class Wechat
             return new H5Response($json);
         }
         throw new Exception\Wechat("H5 Pay make order error with response ".$resp->getBody());
+    }
+
+    function native(Native $request):NativeResponse
+    {
+        $path = "/v3/pay/transactions/native";
+        $request->setAppid($this->config->getAppId());
+        $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
+        $resp = $this->postRequest($path,$json);
+        $json = json_decode($resp->getBody(),true);
+        if(isset($json['code_url'])){
+            return new NativeResponse($json);
+        }
+        throw new Exception\Wechat("Native Pay make order error with response ".$resp->getBody());
     }
 
     function query(string $transaction_id)
