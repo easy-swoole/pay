@@ -38,6 +38,7 @@ class Wechat
     function jsApi(JsApi $request): JsApiResponse
     {
         $path = "/v3/pay/transactions/jsapi";
+        $request->setMchid($this->config->getMchId());
         $request->setAppid($this->config->getAppId());
         $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
@@ -53,6 +54,7 @@ class Wechat
     {
         $path = "/v3/pay/transactions/app";
         $request->setAppid($this->config->getAppId());
+        $request->setMchid($this->config->getMchId());
         $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
@@ -66,6 +68,7 @@ class Wechat
     {
         $path = "/v3/pay/transactions/h5";
         $request->setAppid($this->config->getAppId());
+        $request->setMchid($this->config->getMchId());
         $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
@@ -79,6 +82,7 @@ class Wechat
     {
         $path = "/v3/pay/transactions/native";
         $request->setAppid($this->config->getAppId());
+        $request->setMchid($this->config->getMchId());
         $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
