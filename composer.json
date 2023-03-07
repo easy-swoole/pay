@@ -15,7 +15,7 @@
     },
     "require": {
         "php": "^8.0",
-        "easyswoole/spl": "^1.1",
+        "easyswoole/spl": "^2.0",
         "easyswoole/http-client": "^1.2",
         "ext-bcmath": "*",
         "ext-openssl":"*",
