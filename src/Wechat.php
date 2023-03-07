@@ -62,7 +62,7 @@ class Wechat
         $path = "/v3/pay/transactions/jsapi";
         $request->setMchid($this->config->getMchId());
         $request->setAppid($this->config->getAppId());
-        $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
+        $json = json_encode($request->toArray($request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
 
