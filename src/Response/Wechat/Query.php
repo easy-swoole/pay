@@ -2,11 +2,16 @@
 
 namespace EasySwoole\Pay\Response\Wechat;
 
+use EasySwoole\Pay\Response\Wechat\QueryBean\Amount;
+use EasySwoole\Pay\Response\Wechat\QueryBean\Payer;
+use EasySwoole\Pay\Response\Wechat\QueryBean\PromotionDetail;
+use EasySwoole\Spl\Attribute\ConvertBean;
 use EasySwoole\Spl\SplBean;
 
 class Query extends SplBean
 {
-    public $amount;
+    #[ConvertBean(Amount::class)]
+    public Amount $amount;
 
     public string $appid;
 
@@ -18,9 +23,11 @@ class Query extends SplBean
 
     public string $out_trade_no;
 
-    public $payer;
+    #[ConvertBean(Payer::class)]
+    public Payer $payer;
 
 
+    #[ConvertBean(PromotionDetail::class)]
     public $promotion_detail;
 
     public string $success_time;
