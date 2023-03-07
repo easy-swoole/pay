@@ -108,7 +108,7 @@ class Wechat
         $path = "/v3/pay/transactions/native";
         $request->setAppid($this->config->getAppId());
         $request->setMchid($this->config->getMchId());
-        $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
+        $json = json_encode($request->toArray($request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['code_url'])){
