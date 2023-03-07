@@ -10,6 +10,7 @@ use EasySwoole\Pay\Request\Wechat\Callback;
 use EasySwoole\Pay\Request\Wechat\H5;
 use EasySwoole\Pay\Request\Wechat\JsApi;
 use EasySwoole\Pay\Request\Wechat\Native;
+use EasySwoole\Pay\Response\Wechat\Query;
 use EasySwoole\Pay\Utility\AesGcm;
 use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\Random;
@@ -86,7 +87,9 @@ class Wechat
         if(isset($json['prepay_id'])){
             return new AppResponse($json);
         }
-        throw new Exception\Wechat("appPay make order error with response ".$resp->getBody());
+        $ex = new  Exception\Wechat("App Pay make order error");
+        $ex->setHttpResponse($resp->getBody());
+        throw $ex;
     }
 
     function h5(H5 $request):H5Response
@@ -100,7 +103,9 @@ class Wechat
         if(isset($json['h5_url'])){
             return new H5Response($json);
         }
-        throw new Exception\Wechat("H5 Pay make order error with response ".$resp->getBody());
+        $ex = new  Exception\Wechat("H5 Pay make order error");
+        $ex->setHttpResponse($resp->getBody());
+        throw $ex;
     }
 
     function native(Native $request):NativeResponse
@@ -114,13 +119,22 @@ class Wechat
         if(isset($json['code_url'])){
             return new NativeResponse($json);
         }
-        throw new Exception\Wechat("Native Pay make order error with response ".$resp->getBody());
+        $ex = new  Exception\Wechat("Native Pay make order error");
+        $ex->setHttpResponse($resp->getBody());
+        throw $ex;
     }
 
     function query(string $transaction_id)
     {
         $path = "/v3/pay/transactions/id/{$transaction_id}?mchid={$this->config->getMchId()}";
-        $ret = $this->getReuest($path);
+        $resp = $this->getReuest($path);
+        $json = json_decode($resp->getBody(),true);
+        if(isset($json['amount'])){
+            return new Query($json);
+        }
+        $ex = new  Exception\Wechat("query transaction info errorr");
+        $ex->setHttpResponse($resp->getBody());
+        throw $ex;
     }
 
     function close(string $out_trade_no)
