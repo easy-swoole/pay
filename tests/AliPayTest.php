@@ -396,7 +396,7 @@ class AliPayTest extends TestCase
     {
         $sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='" . $endpoint . "' method='POST'>";
         foreach ($payload as $key => $val) {
-            $val = str_replace("'", '&apos;', $val);
+            $val = str_replace("'", '&apos;', (string)$val);
             $sHtml .= "<input type='hidden' name='" . $key . "' value='" . $val . "'/>";
         }
         $sHtml .= "<input type='submit' value='ok' style='display:none;'></form>";

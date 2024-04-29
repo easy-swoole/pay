@@ -34,8 +34,8 @@ class Base extends SplBean
     protected $app_cert_sn;
     protected $alipay_root_cert_sn;
 
-    public function toArray(array $columns = null, $filter = null): array
+    public function toArray(int|callable $filter = null): array
     {
-        return parent::toArray(null, self::FILTER_NOT_NULL);
+        return parent::toArray($filter);
     }
 }

@@ -25,8 +25,8 @@ class Base extends SplBean
 	//    protected $refund_id;
 	//    protected $refund_channel;
 
-	public function toArray(array $columns = null, $filter = null): array
-	{
-		return parent::toArray($columns, self::FILTER_NOT_NULL);
-	}
+    public function toArray(int|callable $filter = null): array
+    {
+        return parent::toArray($filter);
+    }
 }
