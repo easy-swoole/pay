@@ -124,7 +124,7 @@ class Utility
             $bean->setMchId($this->config->getMchId()); // 商家号mch_id
         }
         $bean->setSign($this->generateSign($bean->toArray()));
-        $xml = (new SplArray($bean->toArray(null,$bean::FILTER_NOT_NULL)))->toXML(true);
+        $xml = (new SplArray($bean->toArray($bean::FILTER_NOT_NULL)))->toXML(true);
         $response = NewWork::postXML($this->config->getGateWay() . $endpoint,$xml , $useCert ? [
             'ssl_cert_file' => $this->config->getApiClientCert(),
             'ssl_key_file' => $this->config->getApiClientKey()]
