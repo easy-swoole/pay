@@ -21,6 +21,12 @@ class AlipayConfig extends SplBean
 
     protected bool $certMode = false;
 
+    protected string $alipayPublicCertPath; // 支付宝公钥文件路径
+
+    protected string $alipayRootCertPath; // 支付宝根证书文件路径
+
+    protected string $appPublicCertPath; // 应用公钥证书文件路径
+
     /**
      * @return mixed
      */
@@ -162,5 +168,33 @@ class AlipayConfig extends SplBean
         $this->certMode = $certMode;
     }
 
+    public function getAlipayPublicCertPath(): string
+    {
+        return $this->alipayPublicCertPath;
+    }
 
+    public function setAlipayPublicCertPath(string $alipayPublicCertPath): void
+    {
+        $this->alipayPublicCertPath = $alipayPublicCertPath;
+    }
+
+    public function getAlipayRootCertPath(): string
+    {
+        return $this->alipayRootCertPath;
+    }
+
+    public function setAlipayRootCertPath(string $alipayRootCertPath): void
+    {
+        $this->alipayRootCertPath = $alipayRootCertPath;
+    }
+
+    public function getAppPublicCertPath(): string
+    {
+        return $this->appPublicCertPath;
+    }
+
+    public function setAppPublicCertPath(string $appPublicCertPath): void
+    {
+        $this->appPublicCertPath = $appPublicCertPath;
+    }
 }

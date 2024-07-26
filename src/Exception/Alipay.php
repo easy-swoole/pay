@@ -2,6 +2,7 @@
 
 namespace EasySwoole\Pay\Exception;
 
-class Exception extends \Exception
+class Alipay extends Exception
 {
+
 }
