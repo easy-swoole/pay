@@ -8,16 +8,18 @@ use EasySwoole\Spl\SplBean;
 class AlipayConfig extends SplBean
 {
     protected $appId;
-    protected $notifyUrl;
-    protected $returnUrl;
-    protected $publicKey;
-    protected $privateKey;
+    protected string $notifyUrl;
+    protected string $returnUrl;
+    protected string $publicKey;
+    protected string $privateKey;
     protected Gateway $gateWay = Gateway::PRODUCE;
-    protected $charset = "utf-8";
-    protected $format = "JSON";
-    protected $signType = "RSA2";
-    protected $apiVersion = "1.0";
-    protected $appAuthToken;
+    protected string $charset = "utf-8";
+    protected string $format = "JSON";
+    protected string $signType = "RSA2";
+    protected string $apiVersion = "1.0";
+    protected string $appAuthToken;
+
+    protected bool $certMode = false;
 
     /**
      * @return mixed
@@ -149,4 +151,16 @@ class AlipayConfig extends SplBean
     {
         $this->appAuthToken = $appAuthToken;
     }
+
+    public function isCertMode(): bool
+    {
+        return $this->certMode;
+    }
+
+    public function setCertMode(bool $certMode): void
+    {
+        $this->certMode = $certMode;
+    }
+
+
 }
