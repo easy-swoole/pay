@@ -2,6 +2,7 @@
 
 namespace EasySwoole\Pay;
 
+use EasySwoole\Pay\AliPay\ResponseBean\Base;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
@@ -83,5 +84,20 @@ class Alipay
             }
         }
         return implode(',', $string);
+    }
+
+    private function getSysParams() : array
+    {
+        $sysParams                   = [];
+        $sysParams["app_id"]         = $this->config->getAppId();
+        $sysParams["version"]        = $this->config->getApiVersion();
+        $sysParams["format"]         = $this->config->getFormat();
+        $sysParams["sign_type"]      = $this->config->getSignType();
+        $sysParams["timestamp"]      = date( "Y-m-d H:i:s" );
+        $sysParams["return_url"]     = $this->config->getReturnUrl();
+        $sysParams["notify_url"]     = $this->config->getNotifyUrl();
+        $sysParams["charset"]        = $this->config->getCharset();
+        $sysParams["app_auth_token"] = $this->config->getAppAuthToken();
+        return $sysParams;
     }
 }
