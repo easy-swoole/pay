@@ -15,12 +15,11 @@
     },
     "require": {
         "php": "^8.1",
-        "easyswoole/spl": "^2.0",
-        "easyswoole/http-client": "^1.2",
+        "easyswoole/spl": "^2.1",
+        "easyswoole/http-client": "^1.6",
         "ext-bcmath": "*",
         "ext-openssl":"*",
-        "ext-json":"*",
-        "easyswoole/utility": "^1.0"
+        "ext-json":"*"
     },
     "require-dev": {
         "easyswoole/phpunit": "^1.0.0",

@@ -2,7 +2,6 @@
 
 namespace EasySwoole\Pay;
 
-use EasySwoole\Pay\AliPay\ResponseBean\Base;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
@@ -26,7 +25,10 @@ class Alipay
 
     function preQrCode(PreQrCode $request)
     {
-
+        $configArray = $this->getSysParams();
+        $configArray['$method'] = 'alipay.trade.precreate';
+        $request->restore($configArray);
+        var_dump($request->toArray());
     }
 
     protected function getCertSN($certPath){
@@ -94,10 +96,13 @@ class Alipay
         $sysParams["format"]         = $this->config->getFormat();
         $sysParams["sign_type"]      = $this->config->getSignType();
         $sysParams["timestamp"]      = date( "Y-m-d H:i:s" );
-        $sysParams["return_url"]     = $this->config->getReturnUrl();
         $sysParams["notify_url"]     = $this->config->getNotifyUrl();
         $sysParams["charset"]        = $this->config->getCharset();
         $sysParams["app_auth_token"] = $this->config->getAppAuthToken();
+        if ($this->config->isCertMode()) {
+            $sysParams["app_cert_sn"]    = $this->getCertSN($this->config->getAppPublicCertPath());
+            $sysParams["alipay_root_cert_sn"] = $this->getRootCertSN($this->config->getAlipayRootCertPath());
+        }
         return $sysParams;
     }
 }

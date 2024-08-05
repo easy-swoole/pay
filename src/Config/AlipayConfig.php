@@ -7,25 +7,25 @@ use EasySwoole\Spl\SplBean;
 
 class AlipayConfig extends SplBean
 {
-    protected $appId;
-    protected string $notifyUrl;
-    protected string $returnUrl;
-    protected string $publicKey;
-    protected string $privateKey;
+    protected string $appId;
+    protected ?string $notifyUrl = null;
+    protected ?string $returnUrl = null;
+    protected ?string $publicKey = null;
+    protected ?string $privateKey = null;
     protected Gateway $gateWay = Gateway::PRODUCE;
     protected string $charset = "utf-8";
     protected string $format = "JSON";
     protected string $signType = "RSA2";
     protected string $apiVersion = "1.0";
-    protected string $appAuthToken;
+    protected ?string $appAuthToken = null;
 
     protected bool $certMode = false;
 
-    protected string $alipayPublicCertPath; // 支付宝公钥文件路径
+    protected ?string $alipayPublicCertPath = null; // 支付宝公钥文件路径
 
-    protected string $alipayRootCertPath; // 支付宝根证书文件路径
+    protected ?string $alipayRootCertPath = null; // 支付宝根证书文件路径
 
-    protected string $appPublicCertPath; // 应用公钥证书文件路径
+    protected ?string $appPublicCertPath = null; // 应用公钥证书文件路径
 
     /**
      * @return mixed
@@ -62,7 +62,7 @@ class AlipayConfig extends SplBean
     /**
      * @return mixed
      */
-    public function getReturnUrl()
+    public function getReturnUrl():?string
     {
         return $this->returnUrl;
     }
