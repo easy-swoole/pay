@@ -2,10 +2,14 @@
 
 namespace EasySwoole\Pay;
 
+use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
 use EasySwoole\Pay\Config\AlipayConfig;
+use EasySwoole\Pay\Exceptions\InvalidConfigException;
+use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Spl\SplFileStream;
+use EasySwoole\Spl\SplString;
 
 class Alipay
 {
@@ -25,10 +29,18 @@ class Alipay
 
     function preQrCode(PreQrCode $request)
     {
-        $configArray = $this->getSysParams();
-        $configArray['method'] = 'alipay.trade.precreate';
-        $request->restore($configArray);
-        var_dump($request->toArray());
+        $baseRequest = $this->getSysParams();
+        $baseRequest->method = 'alipay.trade.precreate';
+
+        $baseRequest->biz_content = json_encode($request->toArray());
+        $requestData = $baseRequest->toArray();
+        $sign = $this->generateSign($requestData);
+        $requestData['sign'] = $sign;
+
+        var_dump($requestData);
+//        $client = new HttpClient($this->gateway);
+
+//        $res = $client->post($requestData);
     }
 
     protected function getCertSN($certPath){
@@ -88,7 +100,7 @@ class Alipay
         return implode(',', $string);
     }
 
-    private function getSysParams() : array
+    private function getSysParams() : BaseRequest
     {
         $sysParams                   = [];
         $sysParams["app_id"]         = $this->config->getAppId();
@@ -103,6 +115,43 @@ class Alipay
             $sysParams["app_cert_sn"]    = $this->getCertSN($this->config->getAppPublicCertPath());
             $sysParams["alipay_root_cert_sn"] = $this->getRootCertSN($this->config->getAlipayRootCertPath());
         }
-        return $sysParams;
+        return new BaseRequest($sysParams);
+    }
+
+    private function generateSign( array $params ) : string
+    {
+        $privateKey = $this->config->getPrivateKey();
+        if( is_null( $privateKey ) ){
+            throw new Exception\Alipay( 'Missing Alipay Config -- [private_key]' );
+        }
+        if(file_exists($privateKey)){
+            $privateKey = openssl_pkey_get_private( $privateKey );
+        } else{
+            $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n".wordwrap( $privateKey, 64, "\n", true )."\n-----END RSA PRIVATE KEY-----";
+        }
+        openssl_sign( $this->getSignContent( $params ), $sign, $privateKey, OPENSSL_ALGO_SHA256 );
+        $sign = base64_encode( $sign );
+        return $sign;
+    }
+
+    private function getSignContent( array $params ) : string
+    {
+        ksort( $params );
+        $stringToBeSigned = "";
+        $i                = 0;
+        foreach( $params as $k => $v ){
+            if( $k == 'sign' ){
+                continue;
+            }
+            if( !empty($v) && "@" != substr( $v, 0, 1 ) ){
+                if( $i == 0 ){
+                    $stringToBeSigned .= "$k"."="."$v";
+                } else{
+                    $stringToBeSigned .= "&"."$k"."="."$v";
+                }
+                $i ++;
+            }
+        }
+        return $stringToBeSigned;
     }
 }

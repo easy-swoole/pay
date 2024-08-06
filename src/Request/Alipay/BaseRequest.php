@@ -7,25 +7,28 @@ use EasySwoole\Spl\SplBean;
 
 class BaseRequest extends BaseBean
 {
-    protected string $app_id;
+    public string $app_id;
 
-    protected string $method;
+    public string $method;
 
-    protected string $format;
+    public string $format;
 
-    protected string $charset;
+    public string $charset;
 
-    protected string $sign_type;
+    public string $sign_type;
 
-    protected string $sign;
+    public ?string $sign;
 
-    protected string $timestamp;
+    public string $timestamp;
 
-    protected string $version;
+    public string $version;
     
-    protected ?string $notify_url;
+    public ?string $notify_url;
 
-    protected ?string $app_auth_token;
-    protected string $biz_content;
+    public ?string $app_auth_token;
+    public ?string $biz_content;
 
+    public ?string $app_cert_sn;
+
+    public ?string $alipay_root_cert_sn;
 }
