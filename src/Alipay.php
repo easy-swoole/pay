@@ -26,7 +26,7 @@ class Alipay
     function preQrCode(PreQrCode $request)
     {
         $configArray = $this->getSysParams();
-        $configArray['$method'] = 'alipay.trade.precreate';
+        $configArray['method'] = 'alipay.trade.precreate';
         $request->restore($configArray);
         var_dump($request->toArray());
     }
