@@ -2,10 +2,10 @@
 
 namespace EasySwoole\Pay\Request\Alipay;
 
-use EasySwoole\Pay\Beans\Alipay\BusinessParams;
+
 use EasySwoole\Pay\Beans\Alipay\ExtendParams;
 
-class PreQrCode extends BaseRequest
+class PreQrCode extends BaseBean
 {
     public string $out_trade_no;
 
@@ -36,6 +36,5 @@ class PreQrCode extends BaseRequest
     public ?string $terminal_id;
 
     public ?string $merchant_order_no;
-
 
 }
