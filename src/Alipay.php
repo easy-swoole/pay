@@ -5,8 +5,10 @@ namespace EasySwoole\Pay;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
 use EasySwoole\Pay\Config\AlipayConfig;
+use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Exceptions\GatewayException;
 use EasySwoole\Pay\Exceptions\InvalidConfigException;
+use EasySwoole\Pay\Request\Alipay\BaseBean;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Spl\SplFileStream;
@@ -30,8 +32,13 @@ class Alipay
 
     function preQrCode(PreQrCode $request)
     {
+        $this->requestApi($request,'alipay.trade.precreate');
+    }
+
+    protected function requestApi(BaseBean $request,string $method)
+    {
         $baseRequest = $this->getSysParams();
-        $baseRequest->method = 'alipay.trade.precreate';
+        $baseRequest->method = $method;
 
         $baseRequest->biz_content = json_encode($request->toArray());
         $requestData = $baseRequest->toArray();
@@ -44,7 +51,16 @@ class Alipay
         if(!empty($response)){
             $result = json_decode( mb_convert_encoding( $res->getBody(), 'utf-8', 'gb2312' ), true );
             if(is_array($result)){
-
+                $key =  str_replace( '.', '_', $baseRequest->method ).'_response';;
+                if($result[$key]['code'] == '10000'){
+                    var_dump($result);
+                }else{
+                    $ex = new AlipayApiError($result[$key]['sub_msg']);
+                    $ex->apiCode = $result[$key]['code'];
+                    $ex->apiSubCode = $result[$key]['sub_code'];
+                    $ex->apiMsg = $result[$key]['msg'];
+                    throw $ex;
+                }
             }else{
                 throw new Exception\Alipay("response from {$this->gateway} is not a json format");
             }
