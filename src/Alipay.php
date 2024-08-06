@@ -5,6 +5,7 @@ namespace EasySwoole\Pay;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
 use EasySwoole\Pay\Config\AlipayConfig;
+use EasySwoole\Pay\Exceptions\GatewayException;
 use EasySwoole\Pay\Exceptions\InvalidConfigException;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
@@ -36,11 +37,20 @@ class Alipay
         $requestData = $baseRequest->toArray();
         $sign = $this->generateSign($requestData);
         $requestData['sign'] = $sign;
+        $client = new HttpClient($this->gateway);
 
-        var_dump($requestData);
-//        $client = new HttpClient($this->gateway);
+        $res = $client->post($requestData);
+        $response = $res->getBody();
+        if(!empty($response)){
+            $result = json_decode( mb_convert_encoding( $res->getBody(), 'utf-8', 'gb2312' ), true );
+            if(is_array($result)){
 
-//        $res = $client->post($requestData);
+            }else{
+                throw new Exception\Alipay("response from {$this->gateway} is not a json format");
+            }
+        }else{
+            throw new Exception\Alipay("empty response from {$this->gateway}");
+        }
     }
 
     protected function getCertSN($certPath){

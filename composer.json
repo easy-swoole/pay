@@ -19,7 +19,8 @@
         "easyswoole/http-client": "^1.6",
         "ext-bcmath": "*",
         "ext-openssl":"*",
-        "ext-json":"*"
+        "ext-json":"*",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "easyswoole/phpunit": "^1.0.0",
