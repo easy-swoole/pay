@@ -6,13 +6,10 @@ use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
-use EasySwoole\Pay\Exceptions\GatewayException;
-use EasySwoole\Pay\Exceptions\InvalidConfigException;
 use EasySwoole\Pay\Request\Alipay\BaseBean;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Spl\SplFileStream;
-use EasySwoole\Spl\SplString;
 
 class Alipay
 {
