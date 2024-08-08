@@ -27,9 +27,13 @@ class Alipay
     }
 
 
-    function preQrCode(PreQrCode $request)
+    /*
+     * 当面付，预先生成二维码
+     */
+    function preQrCode(PreQrCode $request): Response\AliPay\PreQrCode
     {
-        $this->requestApi($request,'alipay.trade.precreate');
+        $res = $this->requestApi($request,'alipay.trade.precreate');
+        return new Response\AliPay\PreQrCode($res);
     }
 
     protected function requestApi(BaseBean $request,string $method)
@@ -50,7 +54,12 @@ class Alipay
             if(is_array($result)){
                 $key =  str_replace( '.', '_', $baseRequest->method ).'_response';;
                 if($result[$key]['code'] == '10000'){
-                    var_dump($result);
+                    $v = $this->verifySign($result[$key],true,$result['sign']);
+                    if($v){
+                        return $result[$key];
+                    }else{
+                        throw new AlipayApiError('verify api response sign error');
+                    }
                 }else{
                     $ex = new AlipayApiError($result[$key]['sub_msg']);
                     $ex->apiCode = $result[$key]['code'];
@@ -64,6 +73,34 @@ class Alipay
         }else{
             throw new Exception\Alipay("empty response from {$this->gateway}");
         }
+    }
+
+    public function verifySign( array $data, $sync = false, $sign = null ) : bool
+    {
+        unset($data['sign_type']);
+
+        $publicKey = null;
+
+        if ($this->config->isCertMode()) {
+            $publicKey = $this->getPublicKey($this->config->getAlipayPublicCertPath());
+        } else if ($this->config->getPublicKey()) {
+            $publicKey = $this->config->getPublicKey();
+            $publicKey = openssl_pkey_get_public( $publicKey );
+        }
+
+        $sign = $sign ?? $data['sign'];
+
+        $toVerify = $sync ? mb_convert_encoding( json_encode( $data, JSON_UNESCAPED_UNICODE ), 'gb2312', 'utf-8' ) : $this->getSignContent( $data );
+
+        return openssl_verify( $toVerify, base64_decode( $sign ), $publicKey, OPENSSL_ALGO_SHA256 ) === 1;
+    }
+
+    protected function getPublicKey($certPath):string
+    {
+        $cert =file_get_contents($certPath);
+        $pkey = openssl_pkey_get_public($cert);
+        $keyData = openssl_pkey_get_details($pkey);
+        return trim($keyData['key']);
     }
 
     protected function getCertSN($certPath){
