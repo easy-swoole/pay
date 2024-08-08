@@ -22,7 +22,7 @@ class Alipay
         if($this->config->getGateWay() == Gateway::PRODUCE){
             $this->gateway = 'https://openapi.alipay.com/gateway.do';
         }else{
-            $this->gateway = 'https://openapi.alipaydev.com/gateway.do';
+            $this->gateway = 'https://openapi-sandbox.dl.alipaydev.com/gateway.do';
         }
     }
 
@@ -83,8 +83,9 @@ class Alipay
 
         if ($this->config->isCertMode()) {
             $publicKey = $this->getPublicKey($this->config->getAlipayPublicCertPath());
-        } else if ($this->config->getPublicKey()) {
-            $publicKey = $this->config->getPublicKey();
+        } else if ($this->config->getAlipayPublicKey()) {
+            $publicKey = $this->config->getAlipayPublicKey();
+            $publicKey = "-----BEGIN PUBLIC KEY-----\n".wordwrap( $publicKey, 64, "\n", true )."\n-----END PUBLIC KEY-----";
             $publicKey = openssl_pkey_get_public( $publicKey );
         }
 
@@ -180,7 +181,7 @@ class Alipay
 
     private function generateSign( array $params ) : string
     {
-        $privateKey = $this->config->getPrivateKey();
+        $privateKey = $this->config->getAppPrivateKey();
         if( is_null( $privateKey ) ){
             throw new Exception\Alipay( 'Missing Alipay Config -- [private_key]' );
         }

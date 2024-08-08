@@ -10,8 +10,8 @@ class AlipayConfig extends SplBean
     protected string $appId;
     protected ?string $notifyUrl = null;
     protected ?string $returnUrl = null;
-    protected ?string $publicKey = null;
-    protected ?string $privateKey = null;
+    protected ?string $alipayPublicKey = null;//支付宝公钥
+    protected ?string $appPrivateKey = null;//应用私钥
     protected Gateway $gateWay = Gateway::PRODUCE;
     protected string $charset = "utf-8";
     protected string $format = "JSON";
@@ -78,33 +78,33 @@ class AlipayConfig extends SplBean
     /**
      * @return mixed
      */
-    public function getPublicKey()
+    public function getAlipayPublicKey()
     {
-        return $this->publicKey;
+        return $this->alipayPublicKey;
     }
 
     /**
-     * @param mixed $publicKey
+     * @param mixed $alipayPublicKey
      */
-    public function setPublicKey($publicKey): void
+    public function setAlipayPublicKey($alipayPublicKey): void
     {
-        $this->publicKey = $publicKey;
+        $this->alipayPublicKey = $alipayPublicKey;
     }
 
     /**
      * @return mixed
      */
-    public function getPrivateKey()
+    public function getAppPrivateKey()
     {
-        return $this->privateKey;
+        return $this->appPrivateKey;
     }
 
     /**
-     * @param mixed $privateKey
+     * @param mixed $appPrivateKey
      */
-    public function setPrivateKey($privateKey): void
+    public function setAppPrivateKey($appPrivateKey): void
     {
-        $this->privateKey = $privateKey;
+        $this->appPrivateKey = $appPrivateKey;
     }
 
     public function getGateWay(): Gateway
