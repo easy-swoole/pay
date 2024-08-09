@@ -118,7 +118,7 @@ class Alipay
         $publicKey = null;
 
         if ($this->config->isCertMode()) {
-            $publicKey = $this->getPublicKey($this->config->getAlipayPublicCertPath());
+            $publicKey = $this->getPublicKey($this->config->getAlipayPublicCert());
         } else if ($this->config->getAlipayPublicKey()) {
             $publicKey = $this->config->getAlipayPublicKey();
             $publicKey = "-----BEGIN PUBLIC KEY-----\n".wordwrap( $publicKey, 64, "\n", true )."\n-----END PUBLIC KEY-----";
@@ -132,24 +132,21 @@ class Alipay
         return openssl_verify( $toVerify, base64_decode( $sign ), $publicKey, OPENSSL_ALGO_SHA256 ) === 1;
     }
 
-    protected function getPublicKey($certPath):string
+    protected function getPublicKey($cert):string
     {
-        $cert =file_get_contents($certPath);
         $pkey = openssl_pkey_get_public($cert);
         $keyData = openssl_pkey_get_details($pkey);
         return trim($keyData['key']);
     }
 
-    protected function getCertSN($certPath):string
+    protected function getCertSN($cert):string
     {
-        $cert =file_get_contents($certPath);
         $ssl = openssl_x509_parse($cert);
         return md5($this->array2string(array_reverse($ssl['issuer'])) . $ssl['serialNumber']);
     }
 
-    protected function getRootCertSN($certPath):string
+    protected function getRootCertSN($cert):string
     {
-        $cert =file_get_contents($certPath);
         $array = explode("-----END CERTIFICATE-----", $cert);
         $SN = null;
         for ($i = 0; $i < count($array) - 1; $i++) {
@@ -209,8 +206,8 @@ class Alipay
         $sysParams["charset"]        = $this->config->getCharset();
         $sysParams["app_auth_token"] = $this->config->getAppAuthToken();
         if ($this->config->isCertMode()) {
-            $sysParams["app_cert_sn"]    = $this->getCertSN($this->config->getAppPublicCertPath());
-            $sysParams["alipay_root_cert_sn"] = $this->getRootCertSN($this->config->getAlipayRootCertPath());
+            $sysParams["app_cert_sn"]    = $this->getCertSN($this->config->getAppPublicCert());
+            $sysParams["alipay_root_cert_sn"] = $this->getRootCertSN($this->config->getAlipayRootCert());
         }
         return new BaseRequest($sysParams);
     }
@@ -221,11 +218,12 @@ class Alipay
         if( is_null( $privateKey ) ){
             throw new Exception\Alipay( 'Missing Alipay Config -- [private_key]' );
         }
-        if(file_exists($privateKey)){
-            $privateKey = openssl_pkey_get_private( $privateKey );
-        } else{
-            $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n".wordwrap( $privateKey, 64, "\n", true )."\n-----END RSA PRIVATE KEY-----";
-        }
+//        if(file_exists($privateKey)){
+//            $privateKey = openssl_pkey_get_private( $privateKey );
+//        } else{
+//            $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n".wordwrap( $privateKey, 64, "\n", true )."\n-----END RSA PRIVATE KEY-----";
+//        }
+        $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n".wordwrap( $privateKey, 64, "\n", true )."\n-----END RSA PRIVATE KEY-----";
         openssl_sign( $this->getSignContent( $params ), $sign, $privateKey, OPENSSL_ALGO_SHA256 );
         $sign = base64_encode( $sign );
         return $sign;

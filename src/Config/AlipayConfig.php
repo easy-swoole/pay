@@ -21,11 +21,11 @@ class AlipayConfig extends SplBean
 
     protected bool $certMode = false;
 
-    protected ?string $alipayPublicCertPath = null; // 支付宝公钥文件路径
+    protected ?string $alipayPublicCert = null; // 支付宝公钥文件路径
 
-    protected ?string $alipayRootCertPath = null; // 支付宝根证书文件路径
+    protected ?string $alipayRootCert = null; // 支付宝根证书文件路径
 
-    protected ?string $appPublicCertPath = null; // 应用公钥证书文件路径
+    protected ?string $appPublicCert = null; // 应用公钥证书文件路径
 
     /**
      * @return mixed
@@ -168,33 +168,33 @@ class AlipayConfig extends SplBean
         $this->certMode = $certMode;
     }
 
-    public function getAlipayPublicCertPath(): string
+    public function getAlipayPublicCert(): string
     {
-        return $this->alipayPublicCertPath;
+        return $this->alipayPublicCert;
     }
 
-    public function setAlipayPublicCertPath(string $alipayPublicCertPath): void
+    public function setAlipayPublicCert(string $alipayPublicCert): void
     {
-        $this->alipayPublicCertPath = $alipayPublicCertPath;
+        $this->alipayPublicCert = $alipayPublicCert;
     }
 
-    public function getAlipayRootCertPath(): string
+    public function getAlipayRootCert(): string
     {
-        return $this->alipayRootCertPath;
+        return $this->alipayRootCert;
     }
 
-    public function setAlipayRootCertPath(string $alipayRootCertPath): void
+    public function setAlipayRootCert(string $alipayRootCert): void
     {
-        $this->alipayRootCertPath = $alipayRootCertPath;
+        $this->alipayRootCert = $alipayRootCert;
     }
 
-    public function getAppPublicCertPath(): string
+    public function getAppPublicCert(): string
     {
-        return $this->appPublicCertPath;
+        return $this->appPublicCert;
     }
 
-    public function setAppPublicCertPath(string $appPublicCertPath): void
+    public function setAppPublicCert(string $appPublicCert): void
     {
-        $this->appPublicCertPath = $appPublicCertPath;
+        $this->appPublicCert = $appPublicCert;
     }
 }
