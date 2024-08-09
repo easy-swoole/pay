@@ -36,6 +36,22 @@ class Alipay
         return new Response\AliPay\PreQrCode($res);
     }
 
+    function verifyResponse(array $requestData)
+    {
+
+    }
+
+    public static function success() : string
+    {
+        return 'success';
+    }
+
+
+    public static function fail() : string
+    {
+        return 'failure';
+    }
+
     protected function requestApi(BaseBean $request,string $method)
     {
         $baseRequest = $this->getSysParams();
