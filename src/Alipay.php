@@ -10,7 +10,6 @@ use EasySwoole\Pay\Request\Alipay\BaseBean;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
-use EasySwoole\Spl\SplFileStream;
 
 class Alipay
 {
@@ -143,16 +142,14 @@ class Alipay
 
     protected function getCertSN($certPath):string
     {
-        $string = new SplFileStream($certPath);
-        $cert = $string->__toString();
+        $cert =file_get_contents($certPath);
         $ssl = openssl_x509_parse($cert);
         return md5($this->array2string(array_reverse($ssl['issuer'])) . $ssl['serialNumber']);
     }
 
     protected function getRootCertSN($certPath):string
     {
-        $string = new SplFileStream($certPath);
-        $cert = $string->__toString();
+        $cert =file_get_contents($certPath);
         $array = explode("-----END CERTIFICATE-----", $cert);
         $SN = null;
         for ($i = 0; $i < count($array) - 1; $i++) {
