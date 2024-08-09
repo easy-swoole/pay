@@ -38,7 +38,11 @@ class Alipay
 
     function verifyResponse(array $requestData)
     {
+        if( isset( $requestData['fund_bill_list'] ) ){
+            $requestData['fund_bill_list'] = htmlspecialchars_decode( $requestData['fund_bill_list'] );
+        }
 
+        return $this->verifySign( $requestData );
     }
 
     public static function success() : string
@@ -91,7 +95,7 @@ class Alipay
         }
     }
 
-    public function verifySign( array $data, $sync = false, $sign = null ) : bool
+    protected function verifySign( array $data, $sync = false, $sign = null ) : bool
     {
         unset($data['sign_type']);
 
@@ -120,14 +124,15 @@ class Alipay
         return trim($keyData['key']);
     }
 
-    protected function getCertSN($certPath){
+    protected function getCertSN($certPath):string
+    {
         $string = new SplFileStream($certPath);
         $cert = $string->__toString();
         $ssl = openssl_x509_parse($cert);
         return md5($this->array2string(array_reverse($ssl['issuer'])) . $ssl['serialNumber']);
     }
 
-    protected function getRootCertSN($certPath)
+    protected function getRootCertSN($certPath):string
     {
         $string = new SplFileStream($certPath);
         $cert = $string->__toString();
