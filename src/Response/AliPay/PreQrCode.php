@@ -4,7 +4,7 @@ namespace EasySwoole\Pay\Response\AliPay;
 
 use EasySwoole\Spl\SplBean;
 
-class PreQrCode extends SplBean
+class PreQrCode extends BaseBean
 {
     public string $code;
 

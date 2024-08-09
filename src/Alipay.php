@@ -9,6 +9,7 @@ use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Request\Alipay\BaseBean;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
+use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Spl\SplFileStream;
 
 class Alipay
@@ -34,6 +35,12 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.trade.precreate');
         return new Response\AliPay\PreQrCode($res);
+    }
+
+    function tradeQuery(TradeQuery $request):Response\AliPay\TradeQuery
+    {
+        $res = $this->requestApi($request,'alipay.trade.query');
+        return new Response\AliPay\TradeQuery($res);
     }
 
     function verifyResponse(array $requestData)
@@ -82,7 +89,7 @@ class Alipay
         if(!empty($response)){
             $result = json_decode( mb_convert_encoding( $res->getBody(), 'utf-8', 'gb2312' ), true );
             if(is_array($result)){
-                $key =  str_replace( '.', '_', $baseRequest->method ).'_response';;
+                $key =  str_replace( '.', '_', $baseRequest->method ).'_response';
                 if($result[$key]['code'] == '10000'){
                     $v = $this->verifySign($result[$key],true,$result['sign']);
                     if($v){
