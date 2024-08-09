@@ -58,8 +58,18 @@ class Alipay
 
     protected function requestApi(BaseBean $request,string $method)
     {
-        $baseRequest = $this->getSysParams();
+        $baseRequest = $this->getBaseParams();
         $baseRequest->method = $method;
+        /**
+         * 检查notify url 和 return_url
+         */
+        if(isset($request->notify_url)){
+            $baseRequest->notify_url = $request->notify_url;
+        }
+
+        if(isset($request->return_url)){
+            $baseRequest->return_url = $request->return_url;
+        }
 
         $baseRequest->biz_content = json_encode($request->toArray());
         $requestData = $baseRequest->toArray();
@@ -182,7 +192,7 @@ class Alipay
         return implode(',', $string);
     }
 
-    private function getSysParams() : BaseRequest
+    private function getBaseParams() : BaseRequest
     {
         $sysParams                   = [];
         $sysParams["app_id"]         = $this->config->getAppId();
@@ -191,6 +201,7 @@ class Alipay
         $sysParams["sign_type"]      = $this->config->getSignType();
         $sysParams["timestamp"]      = date( "Y-m-d H:i:s" );
         $sysParams["notify_url"]     = $this->config->getNotifyUrl();
+        $sysParams["return_url"]     = $this->config->getReturnUrl();
         $sysParams["charset"]        = $this->config->getCharset();
         $sysParams["app_auth_token"] = $this->config->getAppAuthToken();
         if ($this->config->isCertMode()) {

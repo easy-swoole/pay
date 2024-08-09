@@ -22,8 +22,10 @@ class BaseRequest extends BaseBean
     public string $timestamp;
 
     public string $version;
-    
+
     public ?string $notify_url;
+
+    public ?string $return_url;
 
     public ?string $app_auth_token;
     public ?string $biz_content;

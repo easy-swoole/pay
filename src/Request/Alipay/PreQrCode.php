@@ -37,4 +37,6 @@ class PreQrCode extends BaseBean
 
     public ?string $merchant_order_no;
 
+    public ?string $notify_url;
+
 }
