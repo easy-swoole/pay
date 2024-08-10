@@ -10,6 +10,7 @@ use EasySwoole\Pay\Request\Alipay\BaseBean;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
+use EasySwoole\Pay\Request\Alipay\TradeRefund;
 
 class Alipay
 {
@@ -40,6 +41,13 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.trade.query');
         return new Response\AliPay\TradeQuery($res);
+    }
+
+
+    function traderReund(TradeRefund $request):Response\AliPay\TradeRefund
+    {
+        $res = $this->requestApi($request,'alipay.trade.refund');
+        return new Response\AliPay\TradeRefund($res);
     }
 
     function verifyResponse(array $requestData)
