@@ -4,6 +4,7 @@ namespace EasySwoole\Pay;
 
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
+use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Request\Alipay\BaseBean;
@@ -16,6 +17,9 @@ class Alipay
 {
 
     private string $gateway;
+
+    private ?Proxy $proxy = null;
+
     function __construct(
         protected AlipayConfig $config
     )
@@ -90,6 +94,9 @@ class Alipay
         $sign = $this->generateSign($requestData);
         $requestData['sign'] = $sign;
         $client = new HttpClient($this->gateway);
+        if(!empty($this->proxy)){
+            $client->setClientSettings($this->proxy->toArray());
+        }
 
         $res = $client->post($requestData);
         $response = $res->getBody();
