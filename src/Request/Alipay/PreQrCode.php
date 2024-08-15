@@ -15,7 +15,7 @@ class PreQrCode extends BaseBean
 
     public ?string $product_code;
 
-    public ?string $seller_id;
+    public ?string $seller_id;//支付宝子账号ID
 
 
     public ?string $body;
