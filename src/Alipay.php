@@ -264,4 +264,10 @@ class Alipay
         }
         return $stringToBeSigned;
     }
+
+    function setProxy(?Proxy $proxy):Alipay
+    {
+        $this->proxy = $proxy;
+        return $this;
+    }
 }
