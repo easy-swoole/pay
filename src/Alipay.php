@@ -122,7 +122,7 @@ class Alipay
                 throw new Exception\Alipay("response from {$this->gateway} is not a json format");
             }
         }else{
-            throw new Exception\Alipay("empty response from {$this->gateway}");
+            throw new Exception\Alipay($res->getErrMsg());
         }
     }
 
