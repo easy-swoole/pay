@@ -25,7 +25,7 @@ class TradeQuery extends BaseBean
      */
     public string $total_amount;
 
-    public array $fund_bill_list;
+    public ?array $fund_bill_list;//还没有支付的时候，这个字段为空
 
     /** @var string|null
      *新商户建议使用buyer_open_id替代该字段。对于新商户，buyer_user_id字段未来计划逐步回收，存量商户可继续使用。如使用buyer_open_id，请确认 应用-开发配置-openid配置管理 已启用。无该配置项，可查看openid配置申请。
