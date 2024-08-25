@@ -109,7 +109,7 @@ class Alipay
                     if($v){
                         return $result[$key];
                     }else{
-                        throw new AlipayApiError('verify api response sign error');
+                        throw new Exception\Alipay('verify api response sign error');
                     }
                 }else{
                     $ex = new AlipayApiError($result[$key]['sub_msg']);
