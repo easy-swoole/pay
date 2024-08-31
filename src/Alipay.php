@@ -10,6 +10,7 @@ use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Request\Alipay\BaseBean;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
+use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
 
@@ -45,6 +46,12 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.trade.query');
         return new Response\AliPay\TradeQuery($res);
+    }
+
+    function tradeClose(TradeClose $request):Response\AliPay\TradeClose
+    {
+        $res = $this->requestApi($request,'alipay.trade.close');
+        return new Response\AliPay\TradeClose($res);
     }
 
 
