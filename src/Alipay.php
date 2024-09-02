@@ -13,6 +13,7 @@ use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
+use EasySwoole\Pay\Request\Alipay\Wap;
 
 class Alipay
 {
@@ -40,6 +41,12 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.trade.precreate');
         return new Response\AliPay\PreQrCode($res);
+    }
+
+    function wap(Wap $request)
+    {
+        $data = $this->buildRequestData($request,'alipay.trade.wap.pay');
+        return $this->gateway.'?'.http_build_query($data);
     }
 
     function tradeQuery(TradeQuery $request):Response\AliPay\TradeQuery
@@ -81,7 +88,7 @@ class Alipay
         return 'failure';
     }
 
-    protected function requestApi(BaseBean $request,string $method)
+    protected function buildRequestData(BaseBean $request,string $method):array
     {
         $baseRequest = $this->getBaseParams();
         $baseRequest->method = $method;
@@ -100,6 +107,12 @@ class Alipay
         $requestData = $baseRequest->toArray();
         $sign = $this->generateSign($requestData);
         $requestData['sign'] = $sign;
+        return $requestData;
+    }
+
+    protected function requestApi(BaseBean $request,string $method)
+    {
+        $requestData = $this->buildRequestData($request,$method);
         $client = new HttpClient($this->gateway);
         if(!empty($this->proxy)){
             $client->setClientSettings($this->proxy->toArray());
@@ -110,7 +123,7 @@ class Alipay
         if(!empty($response)){
             $result = json_decode( mb_convert_encoding( $res->getBody(), 'utf-8', 'gb2312' ), true );
             if(is_array($result)){
-                $key =  str_replace( '.', '_', $baseRequest->method ).'_response';
+                $key =  str_replace( '.', '_', $method ).'_response';
                 if($result[$key]['code'] == '10000'){
                     $v = $this->verifySign($result[$key],true,$result['sign']);
                     if($v){
