@@ -193,13 +193,14 @@ class Wechat
     {
         if($publicKey == null){
             $list = $this->certificates();
-            if(!isset($list[$callback->getCertSerial()])){
-                throw new Exception\Wechat("certificate no {$callback->getCertSerial()} not exist");
+            if(isset($list[$callback->certSerial])){
+                $publicKey = $list[$callback->certSerial]['certificate'];
+            }else{
+                throw new Exception\Wechat("certificates serial {$callback->certSerial} not found}");
             }
-            $publicKey = $list[$callback->getCertSerial()];
         }
-        $body = "{$callback->getTimestamp()}\n{$callback->getNonce()}\n{$callback->getBody()}\n";
-        if (($result = openssl_verify($body, base64_decode($callback->getSignature()), $publicKey['certificate'], OPENSSL_ALGO_SHA256)) === false) {
+        $body = "{$callback->timestamp}\n{$callback->nonce}\n{$callback->body}\n";
+        if (($result = openssl_verify($body, base64_decode($callback->signature), $publicKey, OPENSSL_ALGO_SHA256)) === false) {
             throw new Exception\Wechat('Verified the input $message failed, please checking your $publicKey whether or nor correct.');
         }
 
