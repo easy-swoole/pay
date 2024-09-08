@@ -2,7 +2,7 @@
 
 namespace EasySwoole\Pay\Request\Wechat;
 
-class Native extends Base
+class Native extends BaseRequest
 {
 
 }

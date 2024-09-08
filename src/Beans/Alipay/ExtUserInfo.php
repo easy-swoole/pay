@@ -2,9 +2,7 @@
 
 namespace EasySwoole\Pay\Beans\Alipay;
 
-use EasySwoole\Spl\SplBean;
-
-class ExtUserInfo extends SplBean
+class ExtUserInfo extends BaseBean
 {
     public ?string $cert_no;
 

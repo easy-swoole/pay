@@ -5,6 +5,7 @@ namespace EasySwoole\Pay;
 use EasySwoole\HttpClient\Bean\Response;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Config\WechatConfig;
+use EasySwoole\Pay\Exception\WechatApiError;
 use EasySwoole\Pay\Request\Wechat\App;
 use EasySwoole\Pay\Request\Wechat\Callback;
 use EasySwoole\Pay\Request\Wechat\H5;
@@ -31,7 +32,7 @@ class Wechat
     function certificates(bool $autoDecrypt = true): array
     {
         $path = "/v3/certificates";
-        $resp = $this->getReuest($path);
+        $resp = $this->getRequest($path);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['data'])){
             $final = [];
@@ -61,8 +62,8 @@ class Wechat
     function jsApi(JsApi $request): JsApiResponse
     {
         $path = "/v3/pay/transactions/jsapi";
-        $request->setMchid($this->config->getMchId());
-        $request->setAppid($this->config->getAppId());
+        $request->mchid = $this->config->getMchId();
+        $request->appid = $this->config->getAppId();
         $json = json_encode($request->toArray($request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
@@ -95,16 +96,21 @@ class Wechat
     function h5(H5 $request):H5Response
     {
         $path = "/v3/pay/transactions/h5";
-        $request->setAppid($this->config->getAppId());
-        $request->setMchid($this->config->getMchId());
-        $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
+        $request->mchid = $this->config->getMchId();
+        $request->appid = $this->config->getAppId();
+
+        $json = json_encode($request->toArray($request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['h5_url'])){
             return new H5Response($json);
         }
-        $ex = new  Exception\Wechat("H5 Pay make order error");
-        $ex->setHttpResponse($resp->getBody());
+
+        $ex = new WechatApiError($json['message']);
+        $ex->apiCode = $json['code'];
+        if(isset($json['detail'])){
+            $ex->detail = $json['detail'];
+        }
         throw $ex;
     }
 
@@ -127,7 +133,7 @@ class Wechat
     function query(string $transaction_id)
     {
         $path = "/v3/pay/transactions/id/{$transaction_id}?mchid={$this->config->getMchId()}";
-        $resp = $this->getReuest($path);
+        $resp = $this->getRequest($path);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['amount'])){
             return new Query($json);
@@ -151,7 +157,7 @@ class Wechat
     }
 
 
-    protected function getReuest(string $path):Response
+    protected function getRequest(string $path):Response
     {
         $token = $this->sign("GET",$path,"");
         $url = "https://api.mch.weixin.qq.com{$path}";

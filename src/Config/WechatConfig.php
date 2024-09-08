@@ -6,17 +6,17 @@ use EasySwoole\Spl\SplBean;
 
 class WechatConfig extends SplBean
 {
-    protected $mch_private_key;
+    protected ?string $mch_private_key;
 
-    protected $mch_public_key;
+    protected ?string $mch_public_key;
 
-    protected $mch_cert_serial_no;
+    protected ?string $mch_cert_serial_no;
 
-    protected $mch_id;
+    protected ?string $mch_id;
 
-    protected $app_id;
+    protected ?string $app_id;
 
-    protected $encrypt_key;
+    protected ?string $encrypt_key;
 
     /**
      * @return mixed

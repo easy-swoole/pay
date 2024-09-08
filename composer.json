@@ -20,7 +20,8 @@
         "ext-bcmath": "*",
         "ext-openssl":"*",
         "ext-json":"*",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "easyswoole/utility": "^1.3"
     },
     "require-dev": {
         "easyswoole/phpunit": "^1.0.0",

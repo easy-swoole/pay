@@ -2,9 +2,7 @@
 
 namespace EasySwoole\Pay\Beans\Alipay;
 
-use EasySwoole\Spl\SplBean;
-
-class ExtendParams extends SplBean
+class ExtendParams extends BaseBean
 {
     public string $sys_service_provider_id;
 

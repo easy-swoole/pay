@@ -1,6 +1,7 @@
 <?php
 
 namespace EasySwoole\Pay\Response\AliPay;
+use EasySwoole\Pay\Beans\Wechat\BaseBean;
 
 class TradeClose extends BaseBean
 {

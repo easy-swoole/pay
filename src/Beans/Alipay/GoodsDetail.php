@@ -2,9 +2,8 @@
 
 namespace EasySwoole\Pay\Beans\Alipay;
 
-use EasySwoole\Spl\SplBean;
 
-class GoodsDetail extends SplBean
+class GoodsDetail extends BaseBean
 {
     public string $goods_id;
 

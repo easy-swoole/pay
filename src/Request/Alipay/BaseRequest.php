@@ -2,8 +2,7 @@
 
 namespace EasySwoole\Pay\Request\Alipay;
 
-use EasySwoole\Pay\Exception\Alipay;
-use EasySwoole\Spl\SplBean;
+use EasySwoole\Pay\Beans\Alipay\BaseBean;
 
 class BaseRequest extends BaseBean
 {

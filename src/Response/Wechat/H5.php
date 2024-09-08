@@ -2,25 +2,9 @@
 
 namespace EasySwoole\Pay\Response\Wechat;
 
-use EasySwoole\Spl\SplBean;
+use EasySwoole\Pay\Beans\Wechat\BaseBean;
 
-class H5 extends SplBean
+class H5 extends BaseBean
 {
-    protected $h5_url;
-    /**
-     * @return mixed
-     */
-    public function getH5Url()
-    {
-        return $this->h5_url;
-    }
-
-    /**
-     * @param mixed $h5_url
-     */
-    public function setH5Url($h5_url): void
-    {
-        $this->h5_url = $h5_url;
-    }
-
+    public string $h5_url;
 }

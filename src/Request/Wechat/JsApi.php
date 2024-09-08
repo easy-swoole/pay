@@ -2,7 +2,7 @@
 
 namespace EasySwoole\Pay\Request\Wechat;
 
-class JsApi extends Base
+class JsApi extends BaseRequest
 {
     protected $payer;
 

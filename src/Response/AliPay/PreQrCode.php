@@ -2,7 +2,7 @@
 
 namespace EasySwoole\Pay\Response\AliPay;
 
-use EasySwoole\Spl\SplBean;
+use EasySwoole\Pay\Beans\Wechat\BaseBean;
 
 class PreQrCode extends BaseBean
 {

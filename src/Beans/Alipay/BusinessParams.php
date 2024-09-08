@@ -2,9 +2,8 @@
 
 namespace EasySwoole\Pay\Beans\Alipay;
 
-use EasySwoole\Spl\SplBean;
 
-class BusinessParams extends SplBean
+class BusinessParams extends BaseBean
 {
     public string $good_taxes;
 
