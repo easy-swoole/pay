@@ -2,11 +2,10 @@
 
 namespace EasySwoole\Pay\Request\Alipay;
 
-use EasySwoole\Pay\Beans\Alipay\BaseBean;
 use EasySwoole\Pay\Beans\Alipay\ExtendParams;
 use EasySwoole\Pay\Beans\Alipay\ExtUserInfo;
 
-class Wap extends BaseBean
+class Wap extends BaseRequest
 {
     public string $out_trade_no;
 

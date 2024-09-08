@@ -7,7 +7,6 @@ use EasySwoole\Pay\Beans\Alipay\Gateway;
 use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
-use EasySwoole\Pay\Request\Alipay\BaseBean;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
@@ -88,7 +87,7 @@ class Alipay
         return 'failure';
     }
 
-    protected function buildRequestData(BaseBean $request,string $method):array
+    protected function buildRequestData(BaseRequest $request,string $method):array
     {
         $baseRequest = $this->getBaseParams();
         $baseRequest->method = $method;
@@ -110,7 +109,7 @@ class Alipay
         return $requestData;
     }
 
-    protected function requestApi(BaseBean $request,string $method)
+    protected function requestApi(BaseRequest $request,string $method)
     {
         $requestData = $this->buildRequestData($request,$method);
         $client = new HttpClient($this->gateway);

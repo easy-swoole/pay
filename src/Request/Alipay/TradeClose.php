@@ -2,9 +2,8 @@
 
 namespace EasySwoole\Pay\Request\Alipay;
 
-use EasySwoole\Pay\Beans\Alipay\BaseBean;
 
-class TradeClose extends BaseBean
+class TradeClose extends BaseRequest
 {
     public ?string $out_trade_no;
 
