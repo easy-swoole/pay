@@ -3,6 +3,7 @@
 namespace EasySwoole\Pay;
 
 use EasySwoole\HttpClient\HttpClient;
+use EasySwoole\Pay\Beans\Alipay\BaseBean;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
 use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\AlipayConfig;
@@ -87,7 +88,7 @@ class Alipay
         return 'failure';
     }
 
-    protected function buildRequestData(BaseRequest $request,string $method):array
+    protected function buildRequestData(BaseBean $request,string $method):array
     {
         $baseRequest = $this->getBaseParams();
         $baseRequest->method = $method;
@@ -109,7 +110,7 @@ class Alipay
         return $requestData;
     }
 
-    protected function requestApi(BaseRequest $request,string $method)
+    protected function requestApi(BaseBean $request,string $method)
     {
         $requestData = $this->buildRequestData($request,$method);
         $client = new HttpClient($this->gateway);

@@ -3,7 +3,9 @@
 namespace EasySwoole\Pay\Request\Alipay;
 
 
-class TradeRefund extends BaseRequest
+use EasySwoole\Pay\Beans\Alipay\BaseBean;
+
+class TradeRefund extends BaseBean
 {
     public string $refund_amount;
 
