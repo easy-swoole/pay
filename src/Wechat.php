@@ -99,7 +99,7 @@ class Wechat
         $request->mchid = $this->config->getMchId();
         $request->appid = $this->config->getAppId();
 
-        $json = json_encode($request->toArray($request::FILTER_NOT_NULL));
+        $json = json_encode($request->toArray(),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['h5_url'])){
@@ -181,7 +181,7 @@ class Wechat
         $time = time();
         $nonce = strtoupper( Random::character(32));
         $body = "{$method}\n{$path}\n{$time}\n{$nonce}\n{$body}\n";
-        openssl_sign($body, $raw_sign, $this->config->getMchPrivateKey(), 'sha256WithRSAEncryption');
+        openssl_sign($body, $raw_sign, $this->config->getMchPrivateKey(), OPENSSL_ALGO_SHA256);
         $sign = base64_encode($raw_sign);
         $schema = 'WECHATPAY2-SHA256-RSA2048 ';
         return $schema.sprintf('mchid="%s",nonce_str="%s",timestamp="%d",serial_no="%s",signature="%s"',
