@@ -138,8 +138,11 @@ class Wechat
         if(isset($json['amount'])){
             return new Query($json);
         }
-        $ex = new  Exception\Wechat("query transaction info errorr");
-        $ex->setHttpResponse($resp->getBody());
+        $ex = new WechatApiError($json['message']);
+        $ex->apiCode = $json['code'];
+        if(isset($json['detail'])){
+            $ex->detail = $json['detail'];
+        }
         throw $ex;
     }
 

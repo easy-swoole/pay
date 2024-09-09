@@ -27,8 +27,7 @@ class Query extends SplBean
     public Payer $payer;
 
 
-    #[ConvertBean(PromotionDetail::class)]
-    public $promotion_detail;
+    public array $promotion_detail;
 
     public string $success_time;
 
