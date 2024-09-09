@@ -24,10 +24,7 @@ class Wechat
 {
     function __construct(
         protected WechatConfig $config
-    )
-    {
-
-    }
+    ){}
 
     function certificates(bool $autoDecrypt = true): array
     {
@@ -146,16 +143,39 @@ class Wechat
         throw $ex;
     }
 
+    function queryByOutTradeNo(string $out_trade_no)
+    {
+        $path = "/v3/pay/transactions/out-trade-no/{$out_trade_no}?mchid={$this->config->getMchId()}";
+        $resp = $this->getRequest($path);
+        $json = json_decode($resp->getBody(),true);
+        if(isset($json['amount'])){
+            return new Query($json);
+        }
+        $ex = new WechatApiError($json['message']);
+        $ex->apiCode = $json['code'];
+        if(isset($json['detail'])){
+            $ex->detail = $json['detail'];
+        }
+        throw $ex;
+    }
+
     function close(string $out_trade_no)
     {
         $path = "/v3/pay/transactions/out-trade-no/{$out_trade_no}/close";
-        $ret = $this->postRequest($path,json_encode([
+        $resp = $this->postRequest($path,json_encode([
             "mchid"=>$this->config->getMchId()
         ]));
-        if($ret->getStatusCode() == 204){
+
+        if($resp->getStatusCode() == 204){
             return true;
         }else{
-            return $ret->getStatusCode();
+            $json = json_decode($resp->getBody(),true);
+            $ex = new WechatApiError($json['message']);
+            $ex->apiCode = $json['code'];
+            if(isset($json['detail'])){
+                $ex->detail = $json['detail'];
+            }
+            throw $ex;
         }
     }
 
