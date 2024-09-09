@@ -61,7 +61,7 @@ class Wechat
         $path = "/v3/pay/transactions/jsapi";
         $request->mchid = $this->config->getMchId();
         $request->appid = $this->config->getAppId();
-        $json = json_encode($request->toArray($request::FILTER_NOT_NULL));
+        $json = json_encode($request->toArray());
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
 
@@ -71,7 +71,13 @@ class Wechat
             $ret->makeSign($this->config);
             return $ret;
         }
-        throw new Exception\Wechat("jsApiPay make order error with response ".$resp->getBody());
+
+        $ex = new WechatApiError($json['message']);
+        $ex->apiCode = $json['code'];
+        if(isset($json['detail'])){
+            $ex->detail = $json['detail'];
+        }
+        throw $ex;
     }
 
     function app(App $request):AppResponse

@@ -3,42 +3,27 @@
 namespace EasySwoole\Pay\Response\Wechat;
 
 use EasySwoole\Component\Process\Config;
+use EasySwoole\Pay\Beans\Wechat\BaseBean;
 use EasySwoole\Pay\Config\WechatConfig;
 use EasySwoole\Pay\Exception\Wechat;
-use EasySwoole\Spl\SplBean;
 use EasySwoole\Utility\Random;
 
-class JsApi extends SplBean
+class JsApi extends BaseBean
 {
-    protected $prepay_id;
+    public string $prepay_id;
 
-    protected $appId;
+    public string $appId;
 
-    protected $timeStamp;
+    public int $timeStamp;
 
-    protected $nonceStr;
+    public string $nonceStr;
 
-    protected $package;
+    public string $package;
 
-    protected $signType = 'RSA';
+    public string $signType = 'RSA';
 
-    protected $paySign;
+    public string $paySign;
 
-    /**
-     * @return mixed
-     */
-    public function getPrepayId()
-    {
-        return $this->prepay_id;
-    }
-
-    /**
-     * @param mixed $prepay_id
-     */
-    public function setPrepayId($prepay_id): void
-    {
-        $this->prepay_id = $prepay_id;
-    }
 
     protected function initialize(): void
     {
@@ -57,6 +42,4 @@ class JsApi extends SplBean
         $this->paySign = base64_encode($signature);
         return $this->paySign;
     }
-
-
 }
