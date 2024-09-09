@@ -1,6 +1,6 @@
 <?php
 
-namespace EasySwoole\Pay\Response\Wechat\QueryBean;
+namespace EasySwoole\Pay\Beans\Wechat;
 
 use EasySwoole\Spl\SplBean;
 

@@ -2,14 +2,16 @@
 
 namespace EasySwoole\Pay\Request\Wechat;
 
+use EasySwoole\Pay\Beans\Wechat\Payer;
+
 class JsApi extends BaseRequest
 {
-    protected $payer;
+    public Payer $payer;
 
-    function setPayer(string $openId)
+    protected function initialize():void
     {
-        $this->payer = [
-            'openid'=>$openId
-        ];
+        if(empty($this->payer)){
+            $this->payer = new Payer();
+        }
     }
 }

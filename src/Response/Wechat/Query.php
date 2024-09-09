@@ -2,9 +2,8 @@
 
 namespace EasySwoole\Pay\Response\Wechat;
 
+use EasySwoole\Pay\Beans\Wechat\Payer;
 use EasySwoole\Pay\Response\Wechat\QueryBean\Amount;
-use EasySwoole\Pay\Response\Wechat\QueryBean\Payer;
-use EasySwoole\Pay\Response\Wechat\QueryBean\PromotionDetail;
 use EasySwoole\Spl\Attribute\ConvertBean;
 use EasySwoole\Spl\SplBean;
 
