@@ -10,6 +10,7 @@ class JsApi extends BaseRequest
 
     protected function initialize():void
     {
+        parent::initialize();
         if(empty($this->payer)){
             $this->payer = new Payer();
         }
