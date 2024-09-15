@@ -9,6 +9,7 @@ use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
+use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
@@ -41,6 +42,19 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.trade.precreate');
         return new Response\AliPay\PreQrCode($res);
+    }
+
+    /**
+     * 订单码
+     * @param OffLineQrCode $request
+     * @return Response\AliPay\OffLineQrCode
+     * @throws AlipayApiError
+     * @throws Exception\Alipay
+     */
+    function offLineQrCode(OffLineQrCode $request):Response\AliPay\OffLineQrCode
+    {
+        $res = $this->requestApi($request,'alipay.trade.precreate');
+        return new Response\AliPay\OffLineQrCode($res);
     }
 
     function wap(Wap $request)
