@@ -3,6 +3,7 @@
 namespace EasySwoole\Pay\Request\Alipay;
 
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
+use EasySwoole\Pay\Beans\Alipay\SettleExtendParams;
 
 class OrderSettle extends BaseBean
 {
@@ -14,5 +15,5 @@ class OrderSettle extends BaseBean
 
     public ?string $operator_id;
 
-    public $extend_params;
+    public ?SettleExtendParams $extend_params;
 }

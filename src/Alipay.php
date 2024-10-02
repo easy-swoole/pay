@@ -68,9 +68,10 @@ class Alipay
         return $this->gateway.'?'.http_build_query($data);
     }
 
-    function orderSettle(OrderSettle $request)
+    function orderSettle(OrderSettle $request):Response\AliPay\OrderSettle
     {
         $res = $this->requestApi($request,'alipay.trade.order.settle');
+        return new Response\AliPay\OrderSettle($res);
     }
 
     function orderSettleRelationBind(OrderSettleRelationBind $request):Response\Alipay\OrderSettleRelationBind
