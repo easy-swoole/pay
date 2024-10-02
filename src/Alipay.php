@@ -78,22 +78,22 @@ class Alipay
         return new Response\AliPay\OrderSettle($res);
     }
 
-    function orderSettleRelationBind(OrderSettleRelationBind $request):Response\Alipay\OrderSettleRelationBind
+    function orderSettleRelationBind(OrderSettleRelationBind $request):Response\AliPay\OrderSettleRelationBind
     {
         $res = $this->requestApi($request,'alipay.trade.royalty.relation.bind');
-        return new Response\Alipay\OrderSettleRelationBind($res);
+        return new Response\AliPay\OrderSettleRelationBind($res);
     }
 
-    function orderSettleRelationUnBind(OrderSettleRelationUnBind $request):Response\Alipay\OrderSettleRelationUnBind
+    function orderSettleRelationUnBind(OrderSettleRelationUnBind $request):Response\AliPay\OrderSettleRelationUnBind
     {
         $res = $this->requestApi($request,'alipay.trade.royalty.relation.unbind');
-        return new Response\Alipay\OrderSettleRelationUnBind($res);
+        return new Response\AliPay\OrderSettleRelationUnBind($res);
     }
 
-    function orderSettleRelationQuery(OrderSettleRelationQuery $request):Response\Alipay\OrderSettleRelationQuery
+    function orderSettleRelationQuery(OrderSettleRelationQuery $request):Response\AliPay\OrderSettleRelationQuery
     {
         $res = $this->requestApi($request,'alipay.trade.royalty.relation.batchquery');
-        $res = new Response\Alipay\OrderSettleRelationQuery($res);
+        $res = new Response\AliPay\OrderSettleRelationQuery($res);
         $temp = $res->receiver_list;
         $res->receiver_list = [];
         foreach ($temp as $item){
@@ -102,10 +102,10 @@ class Alipay
         return $res;
     }
 
-    function orderSettleQuery(OrderSettleQuery $request)
+    function orderSettleQuery(OrderSettleQuery $request):Response\AliPay\OrderSettleQuery
     {
         $res = $this->requestApi($request,'alipay.trade.order.settle.query');
-        $res = new Response\Alipay\OrderSettleQuery($res);
+        $res = new Response\AliPay\OrderSettleQuery($res);
         $temp = $res->royalty_detail_list;
         $res->royalty_detail_list = [];
         foreach ($temp as $item){
@@ -114,16 +114,16 @@ class Alipay
         return $res;
     }
 
-    function orderSettleRateQuery(OrderSettleRateQuery $request):Response\Alipay\OrderSettleRateQuery
+    function orderSettleRateQuery(OrderSettleRateQuery $request):Response\AliPay\OrderSettleRateQuery
     {
         $res = $this->requestApi($request,'alipay.trade.royalty.rate.query');
-        return new Response\Alipay\OrderSettleRateQuery($res);
+        return new Response\AliPay\OrderSettleRateQuery($res);
     }
 
-    function orderUnSettleQuery(OrderUnSettleQuery $request):Response\Alipay\OrderUnSettleQuery
+    function orderUnSettleQuery(OrderUnSettleQuery $request):Response\AliPay\OrderUnSettleQuery
     {
         $res = $this->requestApi($request,'alipay.trade.order.onsettle.query');
-        return new Response\Alipay\OrderUnSettleQuery($res);
+        return new Response\AliPay\OrderUnSettleQuery($res);
     }
 
     function tradeQuery(TradeQuery $request):Response\AliPay\TradeQuery
