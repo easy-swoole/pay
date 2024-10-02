@@ -5,6 +5,7 @@ namespace EasySwoole\Pay;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
+use EasySwoole\Pay\Beans\Alipay\RoyaltyDetail;
 use EasySwoole\Pay\Beans\Alipay\RoyaltyEntity;
 use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\AlipayConfig;
@@ -12,9 +13,12 @@ use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
 use EasySwoole\Pay\Request\Alipay\OrderSettle;
+use EasySwoole\Pay\Request\Alipay\OrderSettleQuery;
+use EasySwoole\Pay\Request\Alipay\OrderSettleRateQuery;
 use EasySwoole\Pay\Request\Alipay\OrderSettleRelationBind;
 use EasySwoole\Pay\Request\Alipay\OrderSettleRelationQuery;
 use EasySwoole\Pay\Request\Alipay\OrderSettleRelationUnBind;
+use EasySwoole\Pay\Request\Alipay\OrderUnSettleQuery;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
@@ -96,6 +100,30 @@ class Alipay
             $res->receiver_list[] = new RoyaltyEntity($item);
         }
         return $res;
+    }
+
+    function orderSettleQuery(OrderSettleQuery $request)
+    {
+        $res = $this->requestApi($request,'alipay.trade.order.settle.query');
+        $res = new Response\Alipay\OrderSettleQuery($res);
+        $temp = $res->royalty_detail_list;
+        $res->royalty_detail_list = [];
+        foreach ($temp as $item){
+            $res->royalty_detail_list[] = new RoyaltyDetail($item);
+        }
+        return $res;
+    }
+
+    function orderSettleRateQuery(OrderSettleRateQuery $request):Response\Alipay\OrderSettleRateQuery
+    {
+        $res = $this->requestApi($request,'alipay.trade.royalty.rate.query');
+        return new Response\Alipay\OrderSettleRateQuery($res);
+    }
+
+    function orderUnSettleQuery(OrderUnSettleQuery $request):Response\Alipay\OrderUnSettleQuery
+    {
+        $res = $this->requestApi($request,'alipay.trade.order.onsettle.query');
+        return new Response\Alipay\OrderUnSettleQuery($res);
     }
 
     function tradeQuery(TradeQuery $request):Response\AliPay\TradeQuery
