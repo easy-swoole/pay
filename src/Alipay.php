@@ -5,6 +5,7 @@ namespace EasySwoole\Pay;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
 use EasySwoole\Pay\Beans\Alipay\Gateway;
+use EasySwoole\Pay\Beans\Alipay\RoyaltyEntity;
 use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
@@ -12,6 +13,8 @@ use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
 use EasySwoole\Pay\Request\Alipay\OrderSettle;
 use EasySwoole\Pay\Request\Alipay\OrderSettleRelationBind;
+use EasySwoole\Pay\Request\Alipay\OrderSettleRelationQuery;
+use EasySwoole\Pay\Request\Alipay\OrderSettleRelationUnBind;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
@@ -74,6 +77,24 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.trade.royalty.relation.bind');
         return new Response\Alipay\OrderSettleRelationBind($res);
+    }
+
+    function orderSettleRelationUnBind(OrderSettleRelationUnBind $request):Response\Alipay\OrderSettleRelationUnBind
+    {
+        $res = $this->requestApi($request,'alipay.trade.royalty.relation.unbind');
+        return new Response\Alipay\OrderSettleRelationUnBind($res);
+    }
+
+    function orderSettleRelationQuery(OrderSettleRelationQuery $request):Response\Alipay\OrderSettleRelationQuery
+    {
+        $res = $this->requestApi($request,'alipay.trade.royalty.relation.batchquery');
+        $res = new Response\Alipay\OrderSettleRelationQuery($res);
+        $temp = $res->receiver_list;
+        $res->receiver_list = [];
+        foreach ($temp as $item){
+            $res->receiver_list[] = new RoyaltyEntity($item);
+        }
+        return $res;
     }
 
     function tradeQuery(TradeQuery $request):Response\AliPay\TradeQuery
