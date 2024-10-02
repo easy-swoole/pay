@@ -10,6 +10,8 @@ use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
+use EasySwoole\Pay\Request\Alipay\OrderSettle;
+use EasySwoole\Pay\Request\Alipay\OrderSettleRelationBind;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
@@ -61,6 +63,17 @@ class Alipay
     {
         $data = $this->buildRequestData($request,'alipay.trade.wap.pay');
         return $this->gateway.'?'.http_build_query($data);
+    }
+
+    function orderSettle(OrderSettle $request)
+    {
+        $res = $this->requestApi($request,'alipay.trade.order.settle');
+    }
+
+    function orderSettleRelationBind(OrderSettleRelationBind $request):Response\Alipay\OrderSettleRelationBind
+    {
+        $res = $this->requestApi($request,'alipay.trade.royalty.relation.bind');
+        return new Response\Alipay\OrderSettleRelationBind($res);
     }
 
     function tradeQuery(TradeQuery $request):Response\AliPay\TradeQuery
