@@ -24,6 +24,7 @@ use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
 use EasySwoole\Pay\Request\Alipay\Wap;
+use EasySwoole\Pay\Request\Alipay\Web;
 
 class Alipay
 {
@@ -69,6 +70,12 @@ class Alipay
     function wap(Wap $request)
     {
         $data = $this->buildRequestData($request,'alipay.trade.wap.pay');
+        return $this->gateway.'?'.http_build_query($data);
+    }
+
+    function web(Web $request)
+    {
+        $data = $this->buildRequestData($request,'alipay.trade.page.pay');
         return $this->gateway.'?'.http_build_query($data);
     }
 
