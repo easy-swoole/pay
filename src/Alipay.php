@@ -20,6 +20,7 @@ use EasySwoole\Pay\Request\Alipay\OrderSettleRelationQuery;
 use EasySwoole\Pay\Request\Alipay\OrderSettleRelationUnBind;
 use EasySwoole\Pay\Request\Alipay\OrderUnSettleQuery;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
+use EasySwoole\Pay\Request\Alipay\RedPacketPay;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
@@ -67,16 +68,21 @@ class Alipay
         return new Response\AliPay\OffLineQrCode($res);
     }
 
-    function wap(Wap $request)
+    function wap(Wap $request):string
     {
         $data = $this->buildRequestData($request,'alipay.trade.wap.pay');
         return $this->gateway.'?'.http_build_query($data);
     }
 
-    function web(Web $request)
+    function web(Web $request):string
     {
         $data = $this->buildRequestData($request,'alipay.trade.page.pay');
         return $this->gateway.'?'.http_build_query($data);
+    }
+
+    function redPacketPayApp(RedPacketPay $request):array
+    {
+        return $this->buildRequestData($request,'alipay.fund.trans.app.pay');
     }
 
     function orderSettle(OrderSettle $request):Response\AliPay\OrderSettle
