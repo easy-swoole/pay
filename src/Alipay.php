@@ -26,6 +26,7 @@ use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
 use EasySwoole\Pay\Request\Alipay\Wap;
 use EasySwoole\Pay\Request\Alipay\Web;
+use EasySwoole\Utility\Random;
 
 class Alipay
 {
@@ -156,6 +157,13 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.trade.refund');
         return new Response\AliPay\TradeRefund($res);
+    }
+
+    function userInfo(string $authToken)
+    {
+        $this->requestV3('https://openapi.alipay.com/v3/alipay/user/info/share?auth_token='.$authToken,'POST',[
+
+        ]);
     }
 
     function verifyResponse(array $requestData)
@@ -354,7 +362,7 @@ class Alipay
         return $sign;
     }
 
-    private function getSignContent( array $params ) : string
+    private function getSignContent( array $params , $explod = '&') : string
     {
         ksort( $params );
         $stringToBeSigned = "";
@@ -367,7 +375,7 @@ class Alipay
                 if( $i == 0 ){
                     $stringToBeSigned .= "$k"."="."$v";
                 } else{
-                    $stringToBeSigned .= "&"."$k"."="."$v";
+                    $stringToBeSigned .= $explod."$k"."="."$v";
                 }
                 $i ++;
             }
@@ -379,5 +387,82 @@ class Alipay
     {
         $this->proxy = $proxy;
         return $this;
+    }
+
+    private function buildV3AuthString()
+    {
+        if($this->config->isCertMode()){
+            $nonce = Random::makeUUIDV4();
+            $timestamp = intval(microtime(true)*1000);
+            $app_cert_sn = $this->getCertSN($this->config->getAppPublicCert());
+            return "app_id={$this->config->getAppId()},app_cert_sn={$app_cert_sn},nonce={$nonce},timestamp={$timestamp}";
+        }else{
+            $nonce = Random::makeUUIDV4();
+            $timestamp = intval(microtime(true)*1000);
+            return "app_id={$this->config->getAppId()},nonce={$nonce},timestamp={$timestamp}";
+        }
+    }
+
+    private function buildV3SignString(string $authString,string $httpMethod,string $requestUrl,array $body):string
+    {
+        $str = "{$authString}\n";
+        $str .= "{$httpMethod}\n";
+        $str .= "{$requestUrl}\n";
+        if(!empty($body)){
+            $body = json_encode($body);
+            $str .= "{$body}\n";
+        }else{
+            $str .= "\n";
+        }
+
+        if(!empty($this->config->getAppAuthToken())){
+            $str .= "{$this->config->getAppAuthToken()}\n";
+        }
+
+        return $str;
+    }
+
+    function requestV3(string $url,string $method,array $body)
+    {
+        $authString = $this->buildV3AuthString();
+        $urlInfo = parse_url($url);
+        $path = $urlInfo['path'];
+        if(!empty($urlInfo['query'])){
+            $path .= '?'.$urlInfo['query'];
+        }
+        $signBody = $this->buildV3SignString($authString,$method,$path,$body);
+
+        var_dump($signBody);
+
+        file_put_contents('str.txt',$signBody,FILE_APPEND);
+
+        file_put_contents('str.txt',"========\n",FILE_APPEND);
+
+        $privateKey = $this->config->getAppPrivateKey();
+        if( is_null( $privateKey ) ){
+            throw new Exception\Alipay( 'Missing Alipay Config -- [private_key]' );
+        }
+
+
+        $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n".wordwrap( $privateKey, 64, "\n", true )."\n-----END RSA PRIVATE KEY-----";
+        openssl_sign($signBody, $sign, $privateKey, OPENSSL_ALGO_SHA256 );
+        $sign = base64_encode( $sign );
+        var_dump($sign);
+        $authorization = "ALIPAY-SHA256withRSA {$authString},sign={$sign}";
+//
+        $client = new HttpClient($url);
+        $client->setHeaders([
+            'Authorization'=>$authorization,
+            'Alipay-Root-Cert-Sn'=>$this->getRootCertSN($this->config->getAlipayRootCert())
+        ],true,false);
+        if(!empty($body)){
+            $body = json_encode($body);
+        }else{
+            $body = null;
+        }
+        $res = $client->postJson($body);
+        var_dump($res->getBody());
+
+        file_put_contents('str.txt',$res->getBody(),FILE_APPEND);
     }
 }
