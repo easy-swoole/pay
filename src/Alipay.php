@@ -26,6 +26,8 @@ use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
 use EasySwoole\Pay\Request\Alipay\Wap;
 use EasySwoole\Pay\Request\Alipay\Web;
+use EasySwoole\Pay\Response\AliPay\OAuthToken;
+use EasySwoole\Pay\Response\AliPay\UserInfo;
 use EasySwoole\Utility\Random;
 
 class Alipay
@@ -158,12 +160,31 @@ class Alipay
         $res = $this->requestApi($request,'alipay.trade.refund');
         return new Response\AliPay\TradeRefund($res);
     }
-
-    function userInfo(string $authToken)
+    
+    function oAuthToken(string $grantType, ?string $code = null, ?string $refreshToken = null): OAuthToken
     {
-        $this->requestV3('https://openapi.alipay.com/v3/alipay/user/info/share?auth_token='.$authToken,'POST',[
+        $path = '/v3/alipay/system/oauth/token';
+        $body = [
+            'grant_type' => $grantType
+        ];
+        if (!empty($code)) {
+            $body['code'] = $code;
+        }
+        if (!empty($refreshToken)) {
+            $body['refresh_token'] = $refreshToken;
+        }
+        $url = $this->gateway . $path;
+        $res = $this->requestV3($url, 'POST', $body);
+        return new Response\AliPay\OAuthToken($res);
+    }
 
-        ]);
+    function userInfo(string $authToken): UserInfo
+    {
+        $path = '/v3/alipay/user/info/share';
+        $queryParams = ['auth_token' => $authToken];
+        $url = $this->gateway . $path . '?' . http_build_query($queryParams);
+        $res = $this->requestV3($url,'POST',[]);
+        return new Response\AliPay\UserInfo($res);
     }
 
     function verifyResponse(array $requestData)
@@ -278,7 +299,7 @@ class Alipay
         return md5($this->array2string(array_reverse($ssl['issuer'])) . $ssl['serialNumber']);
     }
 
-    protected function getRootCertSN($cert):string
+    protected function getRootCertSN($cert):?string
     {
         $array = explode("-----END CERTIFICATE-----", $cert);
         $SN = null;
@@ -432,37 +453,38 @@ class Alipay
         }
         $signBody = $this->buildV3SignString($authString,$method,$path,$body);
 
-        var_dump($signBody);
-
-        file_put_contents('str.txt',$signBody,FILE_APPEND);
-
-        file_put_contents('str.txt',"========\n",FILE_APPEND);
-
         $privateKey = $this->config->getAppPrivateKey();
         if( is_null( $privateKey ) ){
             throw new Exception\Alipay( 'Missing Alipay Config -- [private_key]' );
         }
 
-
         $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n".wordwrap( $privateKey, 64, "\n", true )."\n-----END RSA PRIVATE KEY-----";
         openssl_sign($signBody, $sign, $privateKey, OPENSSL_ALGO_SHA256 );
         $sign = base64_encode( $sign );
-        var_dump($sign);
         $authorization = "ALIPAY-SHA256withRSA {$authString},sign={$sign}";
-//
+
         $client = new HttpClient($url);
         $client->setHeaders([
-            'Authorization'=>$authorization,
-            'Alipay-Root-Cert-Sn'=>$this->getRootCertSN($this->config->getAlipayRootCert())
-        ],true,false);
+            'Authorization' => $authorization,
+            'Alipay-Root-Cert-Sn' => $this->getRootCertSN($this->config->getAlipayRootCert())
+        ], true, false);
         if(!empty($body)){
             $body = json_encode($body);
         }else{
             $body = null;
         }
-        $res = $client->postJson($body);
-        var_dump($res->getBody());
 
-        file_put_contents('str.txt',$res->getBody(),FILE_APPEND);
+        $res = $client->postJson($body);
+        $response = $res->getBody();
+        $statusCode = $res->getStatusCode();
+
+        if ($statusCode < 200 || $statusCode > 299) {
+            //验签 TODO::
+            // $this->verifySignV3();
+        }
+
+        if (!empty($response)) {
+            $result = json_decode($response, true);
+        }
     }
 }
