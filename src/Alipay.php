@@ -191,6 +191,11 @@ class Alipay
         return $this->requestV3($url,'POST',[]);
     }
 
+    function openAuth(string $redirectUrl,string $scope = 'auth_base')
+    {
+        return  "https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id={$this->config->getAppId()}&scope={$scope}&redirect_uri=".urlencode($redirectUrl);
+    }
+
     function verifyResponse(array $requestData)
     {
         if( isset( $requestData['fund_bill_list'] ) ){
