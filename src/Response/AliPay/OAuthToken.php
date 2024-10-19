@@ -4,15 +4,19 @@ use EasySwoole\Pay\Beans\Alipay\BaseBean;
 
 class OAuthToken extends BaseBean
 {
-    public string $access_token;
+    public ?string $access_token;
 
-    public string $expires_in;
+    public ?string $expires_in;
 
-    public string $refresh_token;
+    public ?string $refresh_token;
 
-    public string $user_id;
+    public ?string $re_expires_in;
 
-    public string $open_id;
+    public ?string $user_id;
 
-    public string $auth_start;
+    public ?string $open_id;
+
+    public ?string $auth_start;
+
+    public ?string $alipay_user_id;
 }

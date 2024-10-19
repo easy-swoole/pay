@@ -178,7 +178,7 @@ class AlipayConfig extends SplBean
         $this->alipayPublicCert = $alipayPublicCert;
     }
 
-    public function getAlipayRootCert(): string
+    public function getAlipayRootCert(): ?string
     {
         return $this->alipayRootCert;
     }

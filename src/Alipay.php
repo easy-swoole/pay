@@ -11,6 +11,7 @@ use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
+use EasySwoole\Pay\Request\Alipay\OAuthToken;
 use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
 use EasySwoole\Pay\Request\Alipay\OrderSettle;
 use EasySwoole\Pay\Request\Alipay\OrderSettleQuery;
@@ -26,14 +27,13 @@ use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
 use EasySwoole\Pay\Request\Alipay\Wap;
 use EasySwoole\Pay\Request\Alipay\Web;
-use EasySwoole\Pay\Response\AliPay\OAuthToken;
-use EasySwoole\Pay\Response\AliPay\UserInfo;
 use EasySwoole\Utility\Random;
 
 class Alipay
 {
 
     private string $gateway;
+    private string $serverUrl;
 
     private ?Proxy $proxy = null;
 
@@ -43,8 +43,10 @@ class Alipay
     {
         if($this->config->getGateWay() == Gateway::PRODUCE){
             $this->gateway = 'https://openapi.alipay.com/gateway.do';
+            $this->serverUrl = 'https://openapi.alipay.com';
         }else{
             $this->gateway = 'https://openapi-sandbox.dl.alipaydev.com/gateway.do';
+            $this->serverUrl = 'https://openapi-sandbox.dl.alipaydev.com';
         }
     }
 
@@ -155,36 +157,38 @@ class Alipay
     }
 
 
-    function traderReund(TradeRefund $request):Response\AliPay\TradeRefund
+    function tradeRefund(TradeRefund $request):Response\AliPay\TradeRefund
     {
         $res = $this->requestApi($request,'alipay.trade.refund');
         return new Response\AliPay\TradeRefund($res);
     }
-    
-    function oAuthToken(string $grantType, ?string $code = null, ?string $refreshToken = null): OAuthToken
+
+    /**
+     * 换取授权访问令牌
+     */
+    function token(OAuthToken $request): Response\AliPay\OAuthToken
     {
         $path = '/v3/alipay/system/oauth/token';
         $body = [
-            'grant_type' => $grantType
+            'grant_type' => $request->grant_type
         ];
-        if (!empty($code)) {
-            $body['code'] = $code;
+        if (!empty($request->code)) {
+            $body['code'] = $request->code;
         }
-        if (!empty($refreshToken)) {
-            $body['refresh_token'] = $refreshToken;
+        if (!empty($request->refresh_token)) {
+            $body['refresh_token'] = $request->refresh_token;
         }
-        $url = $this->gateway . $path;
+        $url = $this->serverUrl . $path;
         $res = $this->requestV3($url, 'POST', $body);
         return new Response\AliPay\OAuthToken($res);
     }
 
-    function userInfo(string $authToken): UserInfo
+    function userInfo(string $authToken)
     {
         $path = '/v3/alipay/user/info/share';
         $queryParams = ['auth_token' => $authToken];
-        $url = $this->gateway . $path . '?' . http_build_query($queryParams);
-        $res = $this->requestV3($url,'POST',[]);
-        return new Response\AliPay\UserInfo($res);
+        $url = $this->serverUrl . $path . '?' . http_build_query($queryParams);
+        return $this->requestV3($url,'POST',[]);
     }
 
     function verifyResponse(array $requestData)
@@ -454,8 +458,8 @@ class Alipay
         $signBody = $this->buildV3SignString($authString,$method,$path,$body);
 
         $privateKey = $this->config->getAppPrivateKey();
-        if( is_null( $privateKey ) ){
-            throw new Exception\Alipay( 'Missing Alipay Config -- [private_key]' );
+        if (is_null( $privateKey)){
+            throw new Exception\Alipay( 'Missing Alipay Config -- [private_key]');
         }
 
         $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n".wordwrap( $privateKey, 64, "\n", true )."\n-----END RSA PRIVATE KEY-----";
@@ -464,27 +468,88 @@ class Alipay
         $authorization = "ALIPAY-SHA256withRSA {$authString},sign={$sign}";
 
         $client = new HttpClient($url);
-        $client->setHeaders([
+        $headers = [
             'Authorization' => $authorization,
-            'Alipay-Root-Cert-Sn' => $this->getRootCertSN($this->config->getAlipayRootCert())
-        ], true, false);
-        if(!empty($body)){
+        ];
+
+        if ($this->config->isCertMode() && $this->config->getAlipayRootCert()) {
+            $certSn = $this->getRootCertSN($this->config->getAlipayRootCert());
+            if (!$certSn) {
+                throw new Exception\Alipay('Alipay Config -- [alipay root cert] error');
+            }
+            $headers['Alipay-Root-Cert-Sn'] = $certSn;
+        }
+
+        $client->setHeaders($headers, true, false);
+
+        if (!empty($body)) {
             $body = json_encode($body);
-        }else{
+        } else {
             $body = null;
         }
 
-        $res = $client->postJson($body);
-        $response = $res->getBody();
-        $statusCode = $res->getStatusCode();
+        $response = $client->postJson($body);
+        $respBody = $response->getBody();
+        $statusCode = $response->getStatusCode();
 
         if ($statusCode < 200 || $statusCode > 299) {
-            //验签 TODO::
-            // $this->verifySignV3();
+            throw new Exception\Alipay(sprintf(
+                '[%d] Error connecting to the API (%s)',
+                $statusCode,
+                $path
+            ));
         }
 
-        if (!empty($response)) {
-            $result = json_decode($response, true);
+        if (!empty($respBody)) {
+            //验签
+            $respHeaders = $response->getHeaders();
+            $reqSign = $respHeaders['alipay-signature'] ?? '';
+            $verify = $this->verifyResponseV3($respBody, $respHeaders, true);
+            if (!$verify) {
+                throw new Exception\Alipay("sign check fail: check Sign and Data Fail! [sign=" . $reqSign . ", respBody=" . $respBody . "]");
+            }
+
+            return json_decode($respBody, true);
         }
+
+        throw new Exception\Alipay($response->getErrMsg());
+    }
+
+    protected function verifyResponseV3($respBody, $headers, bool $isCheckSign): bool
+    {
+        $sign = $headers['alipay-signature'] ?? null;
+        if ($isCheckSign && !$sign) {
+            return true;
+        }
+
+        $timestamp = $headers['alipay-timestamp'] ?? null;
+        $nonce = $headers['alipay-nonce'] ?? null;
+
+        //验签
+        if ($this->config->isCertMode()) {
+            //证书模式
+            if (!$this->config->getAlipayPublicCert()) {
+                throw new Exception\Alipay('支付宝公钥证书错误。请检查公钥文件格式是否正确');
+            }
+            $res = $this->getPublicKey($this->config->getAlipayPublicCert());
+        } else {
+            //公钥模式
+            $publicKeyStr = $this->config->getAlipayPublicKey();
+            $publicKey = "-----BEGIN PUBLIC KEY-----\n".wordwrap($publicKeyStr, 64, "\n", true )."\n-----END PUBLIC KEY-----";
+            $res = openssl_pkey_get_public( $publicKey );
+        }
+
+        if (!$res) {
+            if (!$this->config->getAppPrivateKey()) {
+                return true;
+            }
+            throw new Exception\Alipay('支付宝RSA公钥错误。请检查公钥文件格式是否正确');
+        }
+
+        $content = $timestamp . "\n"
+            . $nonce . "\n"
+            . (!$respBody ? "" : $respBody) . "\n";
+        //调用openssl内置方法验签，返回bool值
+        return (openssl_verify($content, base64_decode($sign), $res, OPENSSL_ALGO_SHA256) === 1);
     }
 }
