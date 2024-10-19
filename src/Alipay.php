@@ -33,7 +33,7 @@ class Alipay
 {
 
     private string $gateway;
-    private string $serverUrl;
+    private string $apiV3GateWay;
 
     private ?Proxy $proxy = null;
 
@@ -43,10 +43,10 @@ class Alipay
     {
         if($this->config->getGateWay() == Gateway::PRODUCE){
             $this->gateway = 'https://openapi.alipay.com/gateway.do';
-            $this->serverUrl = 'https://openapi.alipay.com';
+            $this->apiV3GateWay = 'https://openapi.alipay.com';
         }else{
             $this->gateway = 'https://openapi-sandbox.dl.alipaydev.com/gateway.do';
-            $this->serverUrl = 'https://openapi-sandbox.dl.alipaydev.com';
+            $this->apiV3GateWay = 'https://openapi-sandbox.dl.alipaydev.com';
         }
     }
 
@@ -178,7 +178,7 @@ class Alipay
         if (!empty($request->refresh_token)) {
             $body['refresh_token'] = $request->refresh_token;
         }
-        $url = $this->serverUrl . $path;
+        $url = $this->apiV3GateWay . $path;
         $res = $this->requestV3($url, 'POST', $body);
         return new Response\AliPay\OAuthToken($res);
     }
@@ -187,7 +187,7 @@ class Alipay
     {
         $path = '/v3/alipay/user/info/share';
         $queryParams = ['auth_token' => $authToken];
-        $url = $this->serverUrl . $path . '?' . http_build_query($queryParams);
+        $url = $this->apiV3GateWay . $path . '?' . http_build_query($queryParams);
         return $this->requestV3($url,'POST',[]);
     }
 
@@ -482,37 +482,43 @@ class Alipay
 
         $client->setHeaders($headers, true, false);
 
-        if (!empty($body)) {
-            $body = json_encode($body);
-        } else {
-            $body = null;
+        if($method == "POST"){
+            if (!empty($body)) {
+                $body = json_encode($body);
+            } else {
+                $body = null;
+            }
+            $res = $client->postJson($body);
+        }else{
+            $res = $client->get();
         }
 
-        $response = $client->postJson($body);
-        $respBody = $response->getBody();
-        $statusCode = $response->getStatusCode();
 
-        if ($statusCode < 200 || $statusCode > 299) {
-            throw new Exception\Alipay(sprintf(
-                '[%d] Error connecting to the API (%s)',
-                $statusCode,
-                $path
-            ));
-        }
-
-        if (!empty($respBody)) {
-            //验签
-            $respHeaders = $response->getHeaders();
-            $reqSign = $respHeaders['alipay-signature'] ?? '';
-            $verify = $this->verifyResponseV3($respBody, $respHeaders, true);
+        $response = $res->getBody();
+        if(!empty($response)){
+            $respHeaders = $res->getHeaders();
+            $verify = $this->verifyResponseV3($response, $respHeaders, true);
             if (!$verify) {
-                throw new Exception\Alipay("sign check fail: check Sign and Data Fail! [sign=" . $reqSign . ", respBody=" . $respBody . "]");
+                throw new Exception\Alipay("verify api response signature error");
             }
 
-            return json_decode($respBody, true);
-        }
+            $json = json_decode($response,true);
+            if(!is_array($json)){
+                throw new Exception\Alipay("response from {$this->apiV3GateWay} is not a json format");
+            }
 
-        throw new Exception\Alipay($response->getErrMsg());
+            $statusCode = $res->getStatusCode();
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                $ex = new AlipayApiError($json['message']);
+                $ex->apiCode = $json['code'];
+                throw $ex;
+            }
+
+            return $json;
+        }else{
+            throw new Exception\Alipay($res->getErrMsg());
+        }
     }
 
     protected function verifyResponseV3($respBody, $headers, bool $isCheckSign): bool

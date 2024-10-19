@@ -6,8 +6,8 @@ class AlipayApiError extends Alipay
 {
     public string $apiCode;
 
-    public string $apiMsg;
+    public ?string $apiMsg;
 
-    public string $apiSubCode;
+    public ?string $apiSubCode;
 
 }
