@@ -25,6 +25,7 @@ use EasySwoole\Pay\Request\Alipay\RedPacketPay;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
+use EasySwoole\Pay\Request\Alipay\Transfer;
 use EasySwoole\Pay\Request\Alipay\Wap;
 use EasySwoole\Pay\Request\Alipay\Web;
 use EasySwoole\Utility\Random;
@@ -88,6 +89,11 @@ class Alipay
     function redPacketPayApp(RedPacketPay $request):array
     {
         return $this->buildRequestData($request,'alipay.fund.trans.app.pay');
+    }
+
+    function transfer(Transfer $request)
+    {
+
     }
 
     function orderSettle(OrderSettle $request):Response\AliPay\OrderSettle
