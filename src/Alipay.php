@@ -91,9 +91,17 @@ class Alipay
         return $this->buildRequestData($request,'alipay.fund.trans.app.pay');
     }
 
+    /**
+     * 单笔转账
+     * doc link: https://opendocs.alipay.com/open-v3/08e7ef12_alipay.fund.trans.uni.transfer
+     */
     function transfer(Transfer $request)
     {
-
+        $path = '/v3/alipay/fund/trans/uni/transfer';
+        $url = $this->apiV3GateWay . $path;
+        $body = $request->toArray();
+        $result = $this->requestV3($url, 'POST', $body);
+        return new Response\AliPay\Transfer($result);
     }
 
     function orderSettle(OrderSettle $request):Response\AliPay\OrderSettle
