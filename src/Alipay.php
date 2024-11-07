@@ -10,6 +10,7 @@ use EasySwoole\Pay\Beans\Alipay\RoyaltyEntity;
 use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
+use EasySwoole\Pay\Request\Alipay\App;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\OAuthToken;
 use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
@@ -89,6 +90,11 @@ class Alipay
     function redPacketPayApp(RedPacketPay $request):array
     {
         return $this->buildRequestData($request,'alipay.fund.trans.app.pay');
+    }
+
+    function appPay(App $request):array
+    {
+        return $this->buildRequestData($request,'alipay.trade.app.pay');
     }
 
     /**
