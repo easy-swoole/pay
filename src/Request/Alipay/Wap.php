@@ -40,4 +40,6 @@ class Wap extends BaseBean
     public ?string $passback_params;
 
     public ?ExtUserInfo $ext_user_info;
+
+    public ?string $seller_id;//支付宝子账号ID
 }

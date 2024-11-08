@@ -26,4 +26,6 @@ class Web extends BaseBean
     public ?string $sub_merchant;
 
     public ?ExtendParams $extend_params;
+
+    public ?string $seller_id;//支付宝子账号ID
 }

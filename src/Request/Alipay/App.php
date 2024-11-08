@@ -34,4 +34,6 @@ class App extends BaseBean
     public ?ExtUserInfo $ext_user_info;
 
     public ?string $query_options;
+
+    public ?string $seller_id;//支付宝子账号ID
 }
