@@ -11,6 +11,7 @@ use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Request\Alipay\App;
+use EasySwoole\Pay\Request\Alipay\BalanceQuery;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\OAuthToken;
 use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
@@ -140,6 +141,12 @@ class Alipay
         return $res;
     }
 
+    function balanceQuery(BalanceQuery $request):Response\AliPay\BalanceQuery
+    {
+        $res = $this->requestApi($request,'alipay.data.bill.balance.query');
+        return new Response\AliPay\BalanceQuery($res);
+    }
+
     function orderSettleQuery(OrderSettleQuery $request):Response\AliPay\OrderSettleQuery
     {
         $res = $this->requestApi($request,'alipay.trade.order.settle.query');
@@ -265,7 +272,6 @@ class Alipay
         if(!empty($this->proxy)){
             $client->setClientSettings($this->proxy->toArray());
         }
-
         $res = $client->post($requestData);
         $response = $res->getBody();
         if(!empty($response)){
