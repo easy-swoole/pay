@@ -3,6 +3,7 @@
 namespace EasySwoole\Pay\Request\Alipay;
 
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
+use EasySwoole\Pay\Beans\Alipay\Participant;
 
 class Transfer extends BaseBean
 {
@@ -16,14 +17,9 @@ class Transfer extends BaseBean
 
     public string $order_title;
 
-    public array $payee_info;
+    public Participant $payee_info;
 
     public ?string $remark;
 
     public ?string $business_params;
-
-    function toArray(int|callable $filter = null): array
-    {
-        return parent::toArray(self::FILTER_NOT_NULL);
-    }
 }
