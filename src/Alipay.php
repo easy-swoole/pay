@@ -12,6 +12,7 @@ use EasySwoole\Pay\Config\AlipayConfig;
 use EasySwoole\Pay\Exception\AlipayApiError;
 use EasySwoole\Pay\Request\Alipay\App;
 use EasySwoole\Pay\Request\Alipay\BalanceQuery;
+use EasySwoole\Pay\Request\Alipay\BalanceQueryV3;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
 use EasySwoole\Pay\Request\Alipay\OAuthToken;
 use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
@@ -145,6 +146,14 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.data.bill.balance.query');
         return new Response\AliPay\BalanceQuery($res);
+    }
+
+    function balanceQueryV3(BalanceQueryV3 $request):Response\AliPay\BalanceQueryV3
+    {
+        $path = '/v3/alipay/fund/account/query?'.http_build_query($request->toArray());
+        $url = $this->apiV3GateWay . $path;
+        $res = $this->requestV3($url, 'GET',[]);
+        return new Response\AliPay\BalanceQueryV3($res);
     }
 
     function orderSettleQuery(OrderSettleQuery $request):Response\AliPay\OrderSettleQuery
