@@ -28,6 +28,7 @@ use EasySwoole\Pay\Request\Alipay\RedPacketPay;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
+use EasySwoole\Pay\Request\Alipay\Transfer;
 use EasySwoole\Pay\Request\Alipay\TransferV3;
 use EasySwoole\Pay\Request\Alipay\Wap;
 use EasySwoole\Pay\Request\Alipay\Web;
@@ -103,13 +104,19 @@ class Alipay
      * 单笔转账
      * doc link: https://opendocs.alipay.com/open-v3/08e7ef12_alipay.fund.trans.uni.transfer
      */
-    function transferV3(TransferV3 $request)
+    function transferV3(TransferV3 $request):Response\AliPay\TransferV3
     {
         $path = '/v3/alipay/fund/trans/uni/transfer';
         $url = $this->apiV3GateWay . $path;
         $body = $request->toArray();
         $result = $this->requestV3($url, 'POST', $body);
         return new Response\AliPay\TransferV3($result);
+    }
+
+    function transfer(Transfer $request):Response\AliPay\Transfer
+    {
+        $res = $this->requestApi($request,'alipay.fund.trans.uni.transfer');
+        return new Response\AliPay\Transfer($res);
     }
 
     function orderSettle(OrderSettle $request):Response\AliPay\OrderSettle
