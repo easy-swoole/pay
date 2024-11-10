@@ -60,7 +60,7 @@ $alipayConfig->setAlipayPublicKey('支付宝公钥字符串');
 $alipayConfig->setAppId('应用appid，如：9021000140620408');
 $alipay = new \EasySwoole\Pay\Alipay($alipayConfig);
 
-$request                  = new \EasySwoole\Pay\Request\Alipay\Transfer();
+$request                  = new \EasySwoole\Pay\Request\Alipay\TransferV3();
 $request->out_biz_no      = '201806300001';
 $request->trans_amount    = '23.00';
 $request->order_title     = '201905代发';
