@@ -14,6 +14,7 @@ class App extends BaseBean
 
     public string $subject;
 
+    public ?string $body;
 
     public ?string $notify_url;
 
