@@ -28,4 +28,7 @@ class Web extends BaseBean
     public ?ExtendParams $extend_params;
 
     public ?string $seller_id;//支付宝子账号ID
+
+    public ?string $return_url;
+
 }
