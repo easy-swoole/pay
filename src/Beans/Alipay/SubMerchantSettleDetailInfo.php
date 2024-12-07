@@ -2,7 +2,7 @@
 
 namespace EasySwoole\Pay\Beans\Alipay;
 
-class SettleDetailInfo extends BaseBean
+class SubMerchantSettleDetailInfo extends BaseBean
 {
 
     /**
