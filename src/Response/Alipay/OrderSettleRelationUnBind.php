@@ -1,6 +1,6 @@
 <?php
 
-namespace EasySwoole\Pay\Response\AliPay;
+namespace EasySwoole\Pay\Response\Alipay;
 
 class OrderSettleRelationUnBind extends OrderSettleRelationBind
 {

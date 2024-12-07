@@ -5,6 +5,8 @@ namespace EasySwoole\Pay\Request\Alipay;
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
 use EasySwoole\Pay\Beans\Alipay\ExtendParams;
 use EasySwoole\Pay\Beans\Alipay\ExtUserInfo;
+use EasySwoole\Pay\Beans\Alipay\SubMerchant;
+use EasySwoole\Pay\Beans\Alipay\SubMerchantSettleInfo;
 
 class Wap extends BaseBean
 {
@@ -42,4 +44,9 @@ class Wap extends BaseBean
     public ?ExtUserInfo $ext_user_info;
 
     public ?string $seller_id;//支付宝子账号ID
+
+
+    public ?SubMerchant $sub_merchant;
+
+    public ?SubMerchantSettleInfo $settle_info;
 }

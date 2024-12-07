@@ -1,10 +1,10 @@
 <?php
 
-namespace EasySwoole\Pay\Response\AliPay;
+namespace EasySwoole\Pay\Response\Alipay;
 
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
 
-class Transfer extends BaseBean
+class TransferV3 extends BaseBean
 {
     public string $out_biz_no;
 

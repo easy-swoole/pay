@@ -1,5 +1,5 @@
 <?php
-namespace EasySwoole\Pay\Response\AliPay;
+namespace EasySwoole\Pay\Response\Alipay;
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
 
 class OAuthToken extends BaseBean

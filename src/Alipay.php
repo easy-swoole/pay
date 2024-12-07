@@ -25,6 +25,7 @@ use EasySwoole\Pay\Request\Alipay\OrderSettleRelationUnBind;
 use EasySwoole\Pay\Request\Alipay\OrderUnSettleQuery;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\RedPacketPay;
+use EasySwoole\Pay\Request\Alipay\SubMerchantSettleConfirm;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
@@ -59,23 +60,23 @@ class Alipay
     /*
      * 当面付，预先生成二维码
      */
-    function preQrCode(PreQrCode $request): Response\AliPay\PreQrCode
+    function preQrCode(PreQrCode $request): Response\Alipay\PreQrCode
     {
         $res = $this->requestApi($request,'alipay.trade.precreate');
-        return new Response\AliPay\PreQrCode($res);
+        return new Response\Alipay\PreQrCode($res);
     }
 
     /**
      * 订单码
      * @param OffLineQrCode $request
-     * @return Response\AliPay\OffLineQrCode
+     * @return Response\Alipay\OffLineQrCode
      * @throws AlipayApiError
      * @throws Exception\Alipay
      */
-    function offLineQrCode(OffLineQrCode $request):Response\AliPay\OffLineQrCode
+    function offLineQrCode(OffLineQrCode $request):Response\Alipay\OffLineQrCode
     {
         $res = $this->requestApi($request,'alipay.trade.precreate');
-        return new Response\AliPay\OffLineQrCode($res);
+        return new Response\Alipay\OffLineQrCode($res);
     }
 
     function wap(Wap $request):string
@@ -104,43 +105,49 @@ class Alipay
      * 单笔转账
      * doc link: https://opendocs.alipay.com/open-v3/08e7ef12_alipay.fund.trans.uni.transfer
      */
-    function transferV3(TransferV3 $request):Response\AliPay\TransferV3
+    function transferV3(TransferV3 $request):Response\Alipay\TransferV3
     {
         $path = '/v3/alipay/fund/trans/uni/transfer';
         $url = $this->apiV3GateWay . $path;
         $body = $request->toArray();
         $result = $this->requestV3($url, 'POST', $body);
-        return new Response\AliPay\TransferV3($result);
+        return new Response\Alipay\TransferV3($result);
     }
 
-    function transfer(Transfer $request):Response\AliPay\Transfer
+    function subMerchantSettleConfirm(SubMerchantSettleConfirm $request):Response\Alipay\SubMerchantSettleConfirm
+    {
+        $res = $this->requestApi($request,'alipay.trade.settle.confirm');
+        return new Response\Alipay\SubMerchantSettleConfirm($res);
+    }
+
+    function transfer(Transfer $request):Response\Alipay\Transfer
     {
         $res = $this->requestApi($request,'alipay.fund.trans.uni.transfer');
-        return new Response\AliPay\Transfer($res);
+        return new Response\Alipay\Transfer($res);
     }
 
-    function orderSettle(OrderSettle $request):Response\AliPay\OrderSettle
+    function orderSettle(OrderSettle $request):Response\Alipay\OrderSettle
     {
         $res = $this->requestApi($request,'alipay.trade.order.settle');
-        return new Response\AliPay\OrderSettle($res);
+        return new Response\Alipay\OrderSettle($res);
     }
 
-    function orderSettleRelationBind(OrderSettleRelationBind $request):Response\AliPay\OrderSettleRelationBind
+    function orderSettleRelationBind(OrderSettleRelationBind $request):Response\Alipay\OrderSettleRelationBind
     {
         $res = $this->requestApi($request,'alipay.trade.royalty.relation.bind');
-        return new Response\AliPay\OrderSettleRelationBind($res);
+        return new Response\Alipay\OrderSettleRelationBind($res);
     }
 
-    function orderSettleRelationUnBind(OrderSettleRelationUnBind $request):Response\AliPay\OrderSettleRelationUnBind
+    function orderSettleRelationUnBind(OrderSettleRelationUnBind $request):Response\Alipay\OrderSettleRelationUnBind
     {
         $res = $this->requestApi($request,'alipay.trade.royalty.relation.unbind');
-        return new Response\AliPay\OrderSettleRelationUnBind($res);
+        return new Response\Alipay\OrderSettleRelationUnBind($res);
     }
 
-    function orderSettleRelationQuery(OrderSettleRelationQuery $request):Response\AliPay\OrderSettleRelationQuery
+    function orderSettleRelationQuery(OrderSettleRelationQuery $request):Response\Alipay\OrderSettleRelationQuery
     {
         $res = $this->requestApi($request,'alipay.trade.royalty.relation.batchquery');
-        $res = new Response\AliPay\OrderSettleRelationQuery($res);
+        $res = new Response\Alipay\OrderSettleRelationQuery($res);
         $temp = $res->receiver_list;
         $res->receiver_list = [];
         foreach ($temp as $item){
@@ -149,24 +156,24 @@ class Alipay
         return $res;
     }
 
-    function balanceQuery(BalanceQuery $request):Response\AliPay\BalanceQuery
+    function balanceQuery(BalanceQuery $request):Response\Alipay\BalanceQuery
     {
         $res = $this->requestApi($request,'alipay.data.bill.balance.query');
-        return new Response\AliPay\BalanceQuery($res);
+        return new Response\Alipay\BalanceQuery($res);
     }
 
-    function balanceQueryV3(BalanceQueryV3 $request):Response\AliPay\BalanceQueryV3
+    function balanceQueryV3(BalanceQueryV3 $request):Response\Alipay\BalanceQueryV3
     {
         $path = '/v3/alipay/fund/account/query?'.http_build_query($request->toArray());
         $url = $this->apiV3GateWay . $path;
         $res = $this->requestV3($url, 'GET',[]);
-        return new Response\AliPay\BalanceQueryV3($res);
+        return new Response\Alipay\BalanceQueryV3($res);
     }
 
-    function orderSettleQuery(OrderSettleQuery $request):Response\AliPay\OrderSettleQuery
+    function orderSettleQuery(OrderSettleQuery $request):Response\Alipay\OrderSettleQuery
     {
         $res = $this->requestApi($request,'alipay.trade.order.settle.query');
-        $res = new Response\AliPay\OrderSettleQuery($res);
+        $res = new Response\Alipay\OrderSettleQuery($res);
         $temp = $res->royalty_detail_list;
         $res->royalty_detail_list = [];
         foreach ($temp as $item){
@@ -175,41 +182,41 @@ class Alipay
         return $res;
     }
 
-    function orderSettleRateQuery(OrderSettleRateQuery $request):Response\AliPay\OrderSettleRateQuery
+    function orderSettleRateQuery(OrderSettleRateQuery $request):Response\Alipay\OrderSettleRateQuery
     {
         $res = $this->requestApi($request,'alipay.trade.royalty.rate.query');
-        return new Response\AliPay\OrderSettleRateQuery($res);
+        return new Response\Alipay\OrderSettleRateQuery($res);
     }
 
-    function orderUnSettleQuery(OrderUnSettleQuery $request):Response\AliPay\OrderUnSettleQuery
+    function orderUnSettleQuery(OrderUnSettleQuery $request):Response\Alipay\OrderUnSettleQuery
     {
         $res = $this->requestApi($request,'alipay.trade.order.onsettle.query');
-        return new Response\AliPay\OrderUnSettleQuery($res);
+        return new Response\Alipay\OrderUnSettleQuery($res);
     }
 
-    function tradeQuery(TradeQuery $request):Response\AliPay\TradeQuery
+    function tradeQuery(TradeQuery $request):Response\Alipay\TradeQuery
     {
         $res = $this->requestApi($request,'alipay.trade.query');
-        return new Response\AliPay\TradeQuery($res);
+        return new Response\Alipay\TradeQuery($res);
     }
 
-    function tradeClose(TradeClose $request):Response\AliPay\TradeClose
+    function tradeClose(TradeClose $request):Response\Alipay\TradeClose
     {
         $res = $this->requestApi($request,'alipay.trade.close');
-        return new Response\AliPay\TradeClose($res);
+        return new Response\Alipay\TradeClose($res);
     }
 
 
-    function tradeRefund(TradeRefund $request):Response\AliPay\TradeRefund
+    function tradeRefund(TradeRefund $request):Response\Alipay\TradeRefund
     {
         $res = $this->requestApi($request,'alipay.trade.refund');
-        return new Response\AliPay\TradeRefund($res);
+        return new Response\Alipay\TradeRefund($res);
     }
 
     /**
      * 换取授权访问令牌
      */
-    function token(OAuthToken $request): Response\AliPay\OAuthToken
+    function token(OAuthToken $request): Response\Alipay\OAuthToken
     {
         $path = '/v3/alipay/system/oauth/token';
         $body = [
@@ -223,7 +230,7 @@ class Alipay
         }
         $url = $this->apiV3GateWay . $path;
         $res = $this->requestV3($url, 'POST', $body);
-        return new Response\AliPay\OAuthToken($res);
+        return new Response\Alipay\OAuthToken($res);
     }
 
     function userInfo(string $authToken)
