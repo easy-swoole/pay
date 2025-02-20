@@ -14,6 +14,7 @@ use EasySwoole\Pay\Request\Alipay\App;
 use EasySwoole\Pay\Request\Alipay\BalanceQuery;
 use EasySwoole\Pay\Request\Alipay\BalanceQueryV3;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
+use EasySwoole\Pay\Request\Alipay\JsApi;
 use EasySwoole\Pay\Request\Alipay\OAuthToken;
 use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
 use EasySwoole\Pay\Request\Alipay\OrderSettle;
@@ -88,6 +89,12 @@ class Alipay
     function web(Web $request):string
     {
         $data = $this->buildRequestData($request,'alipay.trade.page.pay');
+        return $this->gateway.'?'.http_build_query($data);
+    }
+
+    function jsApi(JsApi $request):string
+    {
+        $data = $this->buildRequestData($request,'alipay.trade.create');
         return $this->gateway.'?'.http_build_query($data);
     }
 
