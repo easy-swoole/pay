@@ -19,9 +19,9 @@ class JsApi extends BaseBean
 
     public string $op_app_id;
 
-    public string $buyer_id;
+    public ?string $buyer_id;
 
-    public string $buyer_open_id;
+    public ?string $buyer_open_id;
 
     public ?string $op_buyer_open_id;
 
