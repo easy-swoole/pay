@@ -121,7 +121,14 @@ class Alipay
         return new Response\Alipay\TransferV3($result);
     }
 
-    function subMerchantSettleConfirm(SubMerchantSettleConfirm $request):Response\Alipay\SubMerchantSettleConfirm
+    /**
+     * @param OrderSettle $request
+     * @return Response\Alipay\SubMerchantSettleConfirm
+     * @throws AlipayApiError
+     * @throws Exception\Alipay
+     * 直付通结算
+     */
+    function subMerchantSettleConfirm(OrderSettle $request):Response\Alipay\SubMerchantSettleConfirm
     {
         $res = $this->requestApi($request,'alipay.trade.settle.confirm');
         return new Response\Alipay\SubMerchantSettleConfirm($res);
