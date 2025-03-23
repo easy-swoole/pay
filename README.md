@@ -128,3 +128,70 @@ $alipay = new \EasySwoole\Pay\Alipay($alipayConfig);
 $accessToken = '20120823ac6ffaa4d2d84e7384bf983531473993';
 $result      = $alipay->userInfo($accessToken);
 ```
+
+### 直付通发起支付
+```
+$req = new Wap();
+$req->subject = '测试商品';
+$req->total_amount = 1.0;
+$req->out_trade_no = 'xxxxxxxxx';
+$req->settle_info = new SubMerchantSettleInfo();
+$req->settle_info->settle_period_time = '1d';
+
+$req->sub_merchant = new SubMerchant();
+$req->sub_merchant->merchant_id = 'SMID';
+
+$settleDetailInfo = new SubMerchantSettleDetailInfo();
+$settleDetailInfo->trans_in_type =  'defaultSettle';
+
+//    $settleDetailInfo->trans_in_type =  'userId';
+//    $settleDetailInfo->trans_in = 'USERID';
+//OR
+//    $settleDetailInfo->trans_in_type =  'loginName';
+//    $settleDetailInfo->trans_in = 'xxxxx@qq.com';
+
+$settleDetailInfo->amount = 1;
+
+$req->settle_info->settle_detail_infos = [$settleDetailInfo->toArray()];
+
+$url = $pay->wap($req);
+```
+
+### 直付通确认结算
+
+```php
+$req = new OrderSettle();
+$req->out_request_no = time();
+$req->trade_no = 'xxxxxx';
+
+$settleDetailInfo = new SubMerchantSettleDetailInfo();
+
+$settleDetailInfo->trans_in_type =  'defaultSettle';
+//    $settleDetailInfo->trans_in = 'xxxxx@qq.com';
+
+$settleDetailInfo->amount = 1;
+$req->settle_info = new SubMerchantSettleInfo();
+$req->settle_info->settle_period_time =  '1d';
+$req->settle_info->settle_detail_infos = [$settleDetailInfo->toArray()];
+
+$ret = $pay->subMerchantSettleConfirm($req);
+//    var_dump($ret);
+```
+
+### 直付通分账(服务商抽佣)
+
+```php
+$req = new OrderSettle();
+$req->out_request_no = time();
+$req->trade_no = 'xxxxxxx';
+
+$s = new OpenApiRoyaltyDetailInfoPojo();
+$s->royalty_type = 'transfer';
+$s->trans_in_type = 'loginName';
+$s->trans_in = 'xxxxxxx@qq.com';
+$s->amount = 0.2;
+
+$req->royalty_parameters = [$s->toArray()];
+$ret = $pay->orderSettle($req);
+var_dump($ret);
+```
