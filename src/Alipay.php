@@ -98,6 +98,12 @@ class Alipay
         return $this->gateway.'?'.http_build_query($data);
     }
 
+    function jsApiWithReq(JsApi $req):Response\Alipay\JsApi
+    {
+        $res = $this->requestApi($req,'alipay.trade.create');
+        return new Response\Alipay\JsApi($res);
+    }
+
     function redPacketPayApp(RedPacketPay $request):array
     {
         return $this->buildRequestData($request,'alipay.fund.trans.app.pay');
