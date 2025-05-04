@@ -31,9 +31,11 @@ use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
 use EasySwoole\Pay\Request\Alipay\Transfer;
+use EasySwoole\Pay\Request\Alipay\TransferBillQuery;
 use EasySwoole\Pay\Request\Alipay\TransferV3;
 use EasySwoole\Pay\Request\Alipay\Wap;
 use EasySwoole\Pay\Request\Alipay\Web;
+use EasySwoole\Pay\Response\Alipay\AccountBilLog;
 use EasySwoole\Utility\Random;
 
 class Alipay
@@ -144,6 +146,12 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.fund.trans.uni.transfer');
         return new Response\Alipay\Transfer($res);
+    }
+
+    function accountBillLogQuery(TransferBillQuery $request)
+    {
+        $res = $this->requestApi($request,'alipay.data.bill.accountlog.query');
+        return new AccountBilLog($res);
     }
 
     function orderSettle(OrderSettle $request):Response\Alipay\OrderSettle
