@@ -56,4 +56,6 @@ class JsApi extends BaseBean
     public ?string $query_options;
 
     public ?SignParams $agreement_sign_params;
+
+    public ?string $notify_url;
 }
