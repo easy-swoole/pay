@@ -244,7 +244,7 @@ class Alipay
     /**
      * 换取授权访问令牌
      */
-    function token(OAuthToken $request): Response\Alipay\OAuthToken
+    function authCode2token(OAuthToken $request): Response\Alipay\OAuthToken
     {
         $path = '/v3/alipay/system/oauth/token';
         $body = [
@@ -261,7 +261,7 @@ class Alipay
         return new Response\Alipay\OAuthToken($res);
     }
 
-    function userInfo(string $authToken)
+    function authToken2UserInfo(string $authToken)
     {
         $path = '/v3/alipay/user/info/share';
         $queryParams = ['auth_token' => $authToken];
