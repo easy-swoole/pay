@@ -31,7 +31,7 @@ use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
 use EasySwoole\Pay\Request\Alipay\TradeRefund;
 use EasySwoole\Pay\Request\Alipay\Transfer;
-use EasySwoole\Pay\Request\Alipay\TransferBillQuery;
+use EasySwoole\Pay\Request\Alipay\AccountBillLogQuery;
 use EasySwoole\Pay\Request\Alipay\TransferV3;
 use EasySwoole\Pay\Request\Alipay\Wap;
 use EasySwoole\Pay\Request\Alipay\Web;
@@ -148,7 +148,7 @@ class Alipay
         return new Response\Alipay\Transfer($res);
     }
 
-    function accountBillLogQuery(TransferBillQuery $request)
+    function accountBillLogQuery(AccountBillLogQuery $request)
     {
         $res = $this->requestApi($request,'alipay.data.bill.accountlog.query');
         return new AccountBilLog($res);
