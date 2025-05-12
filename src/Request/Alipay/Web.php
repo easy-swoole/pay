@@ -4,6 +4,8 @@ namespace EasySwoole\Pay\Request\Alipay;
 
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
 use EasySwoole\Pay\Beans\Alipay\ExtendParams;
+use EasySwoole\Pay\Beans\Alipay\SubMerchant;
+use EasySwoole\Pay\Beans\Alipay\SubMerchantSettleInfo;
 
 class Web extends BaseBean
 {
@@ -23,12 +25,15 @@ class Web extends BaseBean
 
     public ?string $time_expire;
 
-    public ?string $sub_merchant;
-
     public ?ExtendParams $extend_params;
 
     public ?string $seller_id;//支付宝子账号ID
 
     public ?string $return_url;
 
+    public ?string $notify_url;
+
+    public ?SubMerchant $sub_merchant;
+
+    public ?SubMerchantSettleInfo $settle_info;
 }
