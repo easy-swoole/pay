@@ -23,7 +23,7 @@ class Proxy extends SplBean
     public ?string $socks5_password;
 
 
-    function toArray(int|callable $filter = null): array
+    function toArray(int|callable|null $filter = null): array
     {
         return parent::toArray(self::FILTER_NOT_NULL);
     }
