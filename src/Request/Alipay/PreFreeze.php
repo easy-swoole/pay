@@ -7,7 +7,7 @@ use EasySwoole\Pay\Beans\Alipay\PostPayments;
 
 class PreFreeze extends BaseBean
 {
-    public string $out_trade_no;
+    public string $out_order_no;
 
     public string $out_request_no;
 
