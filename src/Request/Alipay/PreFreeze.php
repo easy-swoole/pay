@@ -17,6 +17,11 @@ class PreFreeze extends BaseBean
 
     public string $product_code = 'PREAUTH_PAY';
 
+    public ?string $notify_url;
+
+
+    public ?string $return_url;
+
     /*
 【枚举值】
 后付金额已知: POSTPAY
@@ -46,7 +51,6 @@ class PreFreeze extends BaseBean
 
 
     public ?string $extra_param;
-
 
 
     public ?string $business_params;
