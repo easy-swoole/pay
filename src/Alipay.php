@@ -126,6 +126,7 @@ class Alipay
     function requestPreFreezePay(PreFreezePay $request): Response\Alipay\PreFreezePay
     {
         $res = $this->requestApi($request,'alipay.trade.pay');
+        return new Response\Alipay\PreFreezePay($res);
     }
 
     /**
