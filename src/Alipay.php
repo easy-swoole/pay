@@ -25,6 +25,7 @@ use EasySwoole\Pay\Request\Alipay\OrderSettleRelationQuery;
 use EasySwoole\Pay\Request\Alipay\OrderSettleRelationUnBind;
 use EasySwoole\Pay\Request\Alipay\OrderUnSettleQuery;
 use EasySwoole\Pay\Request\Alipay\PreFreeze;
+use EasySwoole\Pay\Request\Alipay\PreFreezePay;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\RedPacketPay;
 use EasySwoole\Pay\Request\Alipay\SubMerchantSettleConfirm;
@@ -120,6 +121,11 @@ class Alipay
     function preFreeze(PreFreeze $request):array
     {
         return $this->buildRequestData($request,'alipay.fund.auth.order.app.freeze');
+    }
+
+    function requestPreFreezePay(PreFreezePay $request): Response\Alipay\PreFreezePay
+    {
+        $res = $this->requestApi($request,'alipay.trade.pay');
     }
 
     /**

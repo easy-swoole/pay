@@ -14,11 +14,11 @@ class GoodsDetail extends BaseBean
     public int $price;
 
 
-    public string $goods_category;
+    public ?string $goods_category;
 
-    public string $categories_tree;
+    public ?string $categories_tree;
 
-    public string $show_url;
+    public ?string $show_url;
 
     public function getGoodsId(): string
     {
