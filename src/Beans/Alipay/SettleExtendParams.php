@@ -4,5 +4,7 @@ namespace EasySwoole\Pay\Beans\Alipay;
 
 class SettleExtendParams extends BaseBean
 {
-    public ?bool $royalty_finish;
+    public ?string $royalty_finish;
+
+    public ?string $royalty_freeze;
 }
