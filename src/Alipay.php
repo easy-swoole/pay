@@ -123,12 +123,6 @@ class Alipay
         return $this->buildRequestData($request,'alipay.fund.auth.order.app.freeze');
     }
 
-    function preFreeze2(PreFreeze $request):string
-    {
-        $data = $this->buildRequestData($request,'alipay.fund.auth.order.app.freeze');
-        return $this->gateway.'?'.http_build_query($data);
-    }
-
     function requestPreFreezePay(PreFreezePay $request): Response\Alipay\PreFreezePay
     {
         $res = $this->requestApi($request,'alipay.trade.pay');
