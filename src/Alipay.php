@@ -27,6 +27,7 @@ use EasySwoole\Pay\Request\Alipay\OrderUnSettleQuery;
 use EasySwoole\Pay\Request\Alipay\PreFreeze;
 use EasySwoole\Pay\Request\Alipay\PreFreezePay;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
+use EasySwoole\Pay\Request\Alipay\QueryComplaint;
 use EasySwoole\Pay\Request\Alipay\RedPacketPay;
 use EasySwoole\Pay\Request\Alipay\SubMerchantSettleConfirm;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
@@ -127,6 +128,14 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.trade.pay');
         return new Response\Alipay\PreFreezePay($res);
+    }
+
+    function queryComplaint(QueryComplaint $request):Response\Alipay\QueryComplaint
+    {
+        $res = $this->requestApi($request,'alipay.security.risk.complaint.info.batchquery');
+
+        return new Response\Alipay\QueryComplaint($res);
+
     }
 
     /**
