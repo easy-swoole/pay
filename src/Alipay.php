@@ -348,7 +348,7 @@ class Alipay
         $res = $client->post($requestData);
         $response = $res->getBody();
         if(!empty($response)){
-            $result = json_decode( mb_convert_encoding( $res->getBody(), 'utf-8', 'gb2312' ), true );
+            $result = json_decode( mb_convert_encoding( $res->getBody(), 'utf-8', 'GBK' ), true );
             if(is_array($result)){
                 $key =  str_replace( '.', '_', $method ).'_response';
                 if($result[$key]['code'] == '10000'){
@@ -389,7 +389,7 @@ class Alipay
 
         $sign = $sign ?? $data['sign'];
 
-        $toVerify = $sync ? mb_convert_encoding( json_encode( $data, JSON_UNESCAPED_UNICODE ), 'gb2312', 'utf-8' ) : $this->getSignContent( $data );
+        $toVerify = $sync ? mb_convert_encoding( json_encode( $data, JSON_UNESCAPED_UNICODE ), 'GBK', 'utf-8' ) : $this->getSignContent( $data );
 
         return openssl_verify( $toVerify, base64_decode( $sign ), $publicKey, OPENSSL_ALGO_SHA256 ) === 1;
     }
