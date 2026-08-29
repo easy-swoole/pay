@@ -16,5 +16,14 @@ class BillTransferLogQuery extends BaseBean
 
     public int|null $page_size;
 
+    function setStartTime(int $timestamp):void
+    {
+        $this->start_time = date('Y-m-d H:i:s', $timestamp);
+    }
+
+    function setEndTime(int $timestamp):void
+    {
+        $this->end_time = date('Y-m-d H:i:s', $timestamp);
+    }
 
 }
