@@ -4,7 +4,7 @@ namespace EasySwoole\Pay\Response\Alipay;
 
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
 
-class BillTransferQuery extends BaseBean
+class BillTransferLogQuery extends BaseBean
 {
     public string $code;
 

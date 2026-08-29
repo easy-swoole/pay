@@ -4,7 +4,7 @@ namespace EasySwoole\Pay\Request\Alipay;
 
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
 
-class BillTransferQuery extends BaseBean
+class BillTransferLogQuery extends BaseBean
 {
     public string $start_time;//【示例值】2019-01-01 00:00:00
 
