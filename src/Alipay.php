@@ -29,6 +29,7 @@ use EasySwoole\Pay\Request\Alipay\PreFreezePay;
 use EasySwoole\Pay\Request\Alipay\PreQrCode;
 use EasySwoole\Pay\Request\Alipay\QueryComplaint;
 use EasySwoole\Pay\Request\Alipay\RedPacketPay;
+use EasySwoole\Pay\Request\Alipay\RefundQuery;
 use EasySwoole\Pay\Request\Alipay\SubMerchantSettleConfirm;
 use EasySwoole\Pay\Request\Alipay\TradeClose;
 use EasySwoole\Pay\Request\Alipay\TradeQuery;
@@ -261,6 +262,12 @@ class Alipay
     {
         $res = $this->requestApi($request,'alipay.trade.refund');
         return new Response\Alipay\TradeRefund($res);
+    }
+
+    function refundQuery(RefundQuery $request):Response\Alipay\RefundQuery
+    {
+        $res = $this->requestApi($request,'alipay.trade.fastpay.refund.query');
+        return new Response\Alipay\RefundQuery($res);
     }
 
     /**
