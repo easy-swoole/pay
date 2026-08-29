@@ -14,6 +14,7 @@ use EasySwoole\Pay\Request\Alipay\App;
 use EasySwoole\Pay\Request\Alipay\BalanceQuery;
 use EasySwoole\Pay\Request\Alipay\BalanceQueryV3;
 use EasySwoole\Pay\Request\Alipay\BaseRequest;
+use EasySwoole\Pay\Request\Alipay\BillTransferQuery;
 use EasySwoole\Pay\Request\Alipay\JsApi;
 use EasySwoole\Pay\Request\Alipay\OAuthToken;
 use EasySwoole\Pay\Request\Alipay\OffLineQrCode;
@@ -171,10 +172,16 @@ class Alipay
         return new Response\Alipay\Transfer($res);
     }
 
-    function accountBillLogQuery(AccountBillLogQuery $request)
+    function accountBillLogQuery(AccountBillLogQuery $request):AccountBilLog
     {
         $res = $this->requestApi($request,'alipay.data.bill.accountlog.query');
         return new AccountBilLog($res);
+    }
+
+    function accountBillTransferQuery(BillTransferQuery $request):Response\Alipay\BillTransferQuery
+    {
+        $res = $this->requestApi($request,'alipay.data.bill.transfer.query');
+        return new Response\Alipay\BillTransferQuery($res);
     }
 
     function orderSettle(OrderSettle $request):Response\Alipay\OrderSettle
