@@ -15,7 +15,7 @@ class QueryComplaint extends BaseBean
     public string|null $gmt_complaint_end = null;
 
 
-    public string|null $out_trade_no = null;
+    public string|null $trade_no = null;
 
     /**
      * @var string|null
