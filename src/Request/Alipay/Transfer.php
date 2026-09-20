@@ -31,5 +31,8 @@ class Transfer  extends BaseBean
      */
     public ?string $transfer_scene_name;
 
-    public TransferSceneReportInfos|null $transfer_scene_report_infos;
+    /**
+     * @var array<TransferSceneReportInfos>|null
+     */
+    public array|null $transfer_scene_report_infos;
 }
