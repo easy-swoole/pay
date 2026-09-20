@@ -4,6 +4,7 @@ namespace EasySwoole\Pay\Request\Alipay;
 
 use EasySwoole\Pay\Beans\Alipay\BaseBean;
 use EasySwoole\Pay\Beans\Alipay\Participant;
+use EasySwoole\Pay\Beans\Alipay\TransferSceneReportInfos;
 
 class Transfer  extends BaseBean
 {
@@ -29,4 +30,6 @@ class Transfer  extends BaseBean
      * 注意：26年及以后新接入商户必须传入该字段。
      */
     public ?string $transfer_scene_name;
+
+    public TransferSceneReportInfos|null $transfer_scene_report_infos;
 }
