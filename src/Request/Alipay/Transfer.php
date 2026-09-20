@@ -22,4 +22,11 @@ class Transfer  extends BaseBean
     public ?string $remark;
 
     public ?string $business_params;
+
+    /**
+     * @var string|null
+     * 目前支持以下枚举值：现金营销、企业退款、佣金报酬、业务结算、二手回收、公益补助、行政补贴和退款、保险理赔
+     * 注意：26年及以后新接入商户必须传入该字段。
+     */
+    public ?string $transfer_scene_name;
 }
