@@ -8,9 +8,9 @@ class Amount extends SplBean
 {
     public string $currency;
 
-    public string $payer_currency;
+    public ?string $payer_currency;
 
-    public string $payer_total;
+    public ?int $payer_total;
 
     public int $total;
 

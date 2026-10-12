@@ -20,6 +20,7 @@ use EasySwoole\Pay\Response\Wechat\JsApi as JsApiResponse;
 use EasySwoole\Pay\Response\Wechat\App as AppResponse;
 use EasySwoole\Pay\Response\Wechat\H5 as H5Response;
 use EasySwoole\Pay\Response\Wechat\Native as NativeResponse;
+use EasySwoole\Pay\Response\Wechat\Balance as BalanceResponse;
 
 class Wechat
 {
@@ -60,6 +61,28 @@ class Wechat
         throw new Exception\Wechat("get certificates error with response ".$resp->getBody());
     }
 
+    function balance(string $accountType = 'BASIC'): BalanceResponse
+    {
+        $accountTypes = ['BASIC', 'OPERATION', 'FEES'];
+        if (!in_array($accountType, $accountTypes, true)) {
+            throw new \InvalidArgumentException('Account type must be BASIC, OPERATION or FEES.');
+        }
+
+        $path = "/v3/merchant/fund/balance/{$accountType}";
+        $resp = $this->getRequest($path);
+        $json = json_decode($resp->getBody(), true);
+        if (isset($json['available_amount'])) {
+            return new BalanceResponse($json);
+        }
+
+        $ex = new WechatApiError($json['message'] ?? 'Query merchant balance failed.');
+        $ex->apiCode = $json['code'] ?? 'UNKNOWN_ERROR';
+        if (isset($json['detail'])) {
+            $ex->detail = $json['detail'];
+        }
+        throw $ex;
+    }
+
 
     function decrypt(string $ciphertext, string $iv = '', string $aad = '')
     {
@@ -93,16 +116,26 @@ class Wechat
     function app(App $request):AppResponse
     {
         $path = "/v3/pay/transactions/app";
-        $request->setAppid($this->config->getAppId());
-        $request->setMchid($this->config->getMchId());
+        $request->appid = $this->config->getAppId();
+        $request->mchid = $this->config->getMchId();
         $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['prepay_id'])){
-            return new AppResponse($json);
+            $ret = new AppResponse([
+                'appId' => $this->config->getAppId(),
+                'partnerId' => $this->config->getMchId(),
+                'prepayId' => $json['prepay_id'],
+            ]);
+            $ret->makeSign($this->config);
+            return $ret;
         }
-        $ex = new  Exception\Wechat("App Pay make order error");
-        $ex->setHttpResponse($resp->getBody());
+
+        $ex = new WechatApiError($json['message'] ?? 'APP payment order failed.');
+        $ex->apiCode = $json['code'] ?? 'UNKNOWN_ERROR';
+        if(isset($json['detail'])){
+            $ex->detail = $json['detail'];
+        }
         throw $ex;
     }
 
@@ -130,29 +163,35 @@ class Wechat
     function native(Native $request):NativeResponse
     {
         $path = "/v3/pay/transactions/native";
-        $request->setAppid($this->config->getAppId());
-        $request->setMchid($this->config->getMchId());
+        $request->appid = $this->config->getAppId();
+        $request->mchid = $this->config->getMchId();
         $json = json_encode($request->toArray($request::FILTER_NOT_NULL));
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['code_url'])){
             return new NativeResponse($json);
         }
-        $ex = new  Exception\Wechat("Native Pay make order error");
-        $ex->setHttpResponse($resp->getBody());
+
+        $ex = new WechatApiError($json['message'] ?? 'Native payment order failed.');
+        $ex->apiCode = $json['code'] ?? 'UNKNOWN_ERROR';
+        if(isset($json['detail'])){
+            $ex->detail = $json['detail'];
+        }
         throw $ex;
     }
 
     function query(string $transaction_id)
     {
-        $path = "/v3/pay/transactions/id/{$transaction_id}?mchid={$this->config->getMchId()}";
+        $transactionId = rawurlencode($transaction_id);
+        $mchId = rawurlencode($this->config->getMchId());
+        $path = "/v3/pay/transactions/id/{$transactionId}?mchid={$mchId}";
         $resp = $this->getRequest($path);
         $json = json_decode($resp->getBody(),true);
-        if(isset($json['amount'])){
+        if(isset($json['trade_state'])){
             return new Query($json);
         }
-        $ex = new WechatApiError($json['message']);
-        $ex->apiCode = $json['code'];
+        $ex = new WechatApiError($json['message'] ?? 'Query transaction failed.');
+        $ex->apiCode = $json['code'] ?? 'UNKNOWN_ERROR';
         if(isset($json['detail'])){
             $ex->detail = $json['detail'];
         }
@@ -161,14 +200,16 @@ class Wechat
 
     function queryByOutTradeNo(string $out_trade_no)
     {
-        $path = "/v3/pay/transactions/out-trade-no/{$out_trade_no}?mchid={$this->config->getMchId()}";
+        $outTradeNo = rawurlencode($out_trade_no);
+        $mchId = rawurlencode($this->config->getMchId());
+        $path = "/v3/pay/transactions/out-trade-no/{$outTradeNo}?mchid={$mchId}";
         $resp = $this->getRequest($path);
         $json = json_decode($resp->getBody(),true);
-        if(isset($json['amount'])){
+        if(isset($json['trade_state'])){
             return new Query($json);
         }
-        $ex = new WechatApiError($json['message']);
-        $ex->apiCode = $json['code'];
+        $ex = new WechatApiError($json['message'] ?? 'Query transaction failed.');
+        $ex->apiCode = $json['code'] ?? 'UNKNOWN_ERROR';
         if(isset($json['detail'])){
             $ex->detail = $json['detail'];
         }
@@ -177,7 +218,8 @@ class Wechat
 
     function close(string $out_trade_no)
     {
-        $path = "/v3/pay/transactions/out-trade-no/{$out_trade_no}/close";
+        $outTradeNo = rawurlencode($out_trade_no);
+        $path = "/v3/pay/transactions/out-trade-no/{$outTradeNo}/close";
         $resp = $this->postRequest($path,json_encode([
             "mchid"=>$this->config->getMchId()
         ]));
@@ -186,8 +228,8 @@ class Wechat
             return true;
         }else{
             $json = json_decode($resp->getBody(),true);
-            $ex = new WechatApiError($json['message']);
-            $ex->apiCode = $json['code'];
+            $ex = new WechatApiError($json['message'] ?? 'Close transaction failed.');
+            $ex->apiCode = $json['code'] ?? 'UNKNOWN_ERROR';
             if(isset($json['detail'])){
                 $ex->detail = $json['detail'];
             }
@@ -205,7 +247,10 @@ class Wechat
             $client->setClientSettings($this->proxy->toArray());
         }
         $client->setHeader("Authorization",$token,false);
-        return $client->get();
+        $client->setHeader("Accept","application/json",false);
+        $response = $client->get();
+        $this->verifyResponse($response);
+        return $response;
     }
 
     protected function postRequest(string $path,string $json):Response
@@ -217,7 +262,10 @@ class Wechat
             $client->setClientSettings($this->proxy->toArray());
         }
         $client->setHeader("Authorization",$token,false);
-        return  $client->postJson($json);
+        $client->setHeader("Accept","application/json",false);
+        $response = $client->postJson($json);
+        $this->verifyResponse($response);
+        return $response;
     }
 
 
@@ -226,7 +274,7 @@ class Wechat
         $time = time();
         $nonce = strtoupper( Random::character(32));
         $body = "{$method}\n{$path}\n{$time}\n{$nonce}\n{$body}\n";
-        openssl_sign($body, $raw_sign, $this->config->getMchPrivateKey(), OPENSSL_ALGO_SHA256);
+        openssl_sign($body, $raw_sign, $this->config->getMchApiClientKey(), OPENSSL_ALGO_SHA256);
         $sign = base64_encode($raw_sign);
         $schema = 'WECHATPAY2-SHA256-RSA2048 ';
         return $schema.sprintf('mchid="%s",nonce_str="%s",timestamp="%d",serial_no="%s",signature="%s"',
@@ -237,11 +285,13 @@ class Wechat
     function verify(Callback $callback,?string $publicKey = null):bool
     {
         if($publicKey == null){
-            $list = $this->certificates();
-            if(isset($list[$callback->certSerial])){
-                $publicKey = $list[$callback->certSerial]['certificate'];
-            }else{
-                throw new Exception\Wechat("certificates serial {$callback->certSerial} not found}");
+            $publicKey = $this->config->getWechatPayPublicKey();
+            $publicKeyId = $this->config->getWechatPayPublicKeyId();
+            if(empty($publicKey) || empty($publicKeyId)){
+                throw new Exception\Wechat('Wechat Pay public key or public key ID is not configured.');
+            }
+            if(!hash_equals($publicKeyId, $callback->certSerial)){
+                throw new Exception\Wechat("Wechat Pay public key ID {$callback->certSerial} does not match the configured ID.");
             }
         }
         $body = "{$callback->timestamp}\n{$callback->nonce}\n{$callback->body}\n";
@@ -250,6 +300,36 @@ class Wechat
         }
 
         return $result === 1;
+    }
+
+    private function verifyResponse(Response $response): void
+    {
+        $headers = array_change_key_case((array)$response->getHeaders(), CASE_LOWER);
+        $requiredHeaders = [
+            'wechatpay-timestamp',
+            'wechatpay-nonce',
+            'wechatpay-signature',
+            'wechatpay-serial',
+        ];
+        foreach ($requiredHeaders as $header) {
+            if (!isset($headers[$header])) {
+                throw new Exception\Wechat("Wechat Pay response header {$header} is missing.");
+            }
+        }
+
+        $publicKey = $this->config->getWechatPayPublicKey();
+        $publicKeyId = $this->config->getWechatPayPublicKeyId();
+        if (empty($publicKey) || empty($publicKeyId)) {
+            throw new Exception\Wechat('Wechat Pay public key or public key ID is not configured.');
+        }
+        if (!hash_equals($publicKeyId, $headers['wechatpay-serial'])) {
+            throw new Exception\Wechat("Wechat Pay public key ID {$headers['wechatpay-serial']} does not match the configured ID.");
+        }
+
+        $body = "{$headers['wechatpay-timestamp']}\n{$headers['wechatpay-nonce']}\n{$response->getBody()}\n";
+        if (openssl_verify($body, base64_decode($headers['wechatpay-signature']), $publicKey, OPENSSL_ALGO_SHA256) !== 1) {
+            throw new Exception\Wechat('Wechat Pay response signature verification failed.');
+        }
     }
 
     public static function success(): string

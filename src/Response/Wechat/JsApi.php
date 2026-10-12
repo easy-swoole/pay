@@ -2,7 +2,6 @@
 
 namespace EasySwoole\Pay\Response\Wechat;
 
-use EasySwoole\Component\Process\Config;
 use EasySwoole\Pay\Beans\Wechat\BaseBean;
 use EasySwoole\Pay\Config\WechatConfig;
 use EasySwoole\Pay\Exception\Wechat;
@@ -14,7 +13,7 @@ class JsApi extends BaseBean
 
     public string $appId;
 
-    public int $timeStamp;
+    public string $timeStamp;
 
     public string $nonceStr;
 
@@ -29,13 +28,13 @@ class JsApi extends BaseBean
     {
         $this->package = "prepay_id={$this->prepay_id}";
         $this->nonceStr = strtoupper(Random::character(32));
-        $this->timeStamp = time();
+        $this->timeStamp = (string)time();
     }
 
-    function makeSign(WechatConfig $config):string
+    public function makeSign(WechatConfig $config):string
     {
         $body = "{$this->appId}\n{$this->timeStamp}\n{$this->nonceStr}\n{$this->package}\n";
-        if (!openssl_sign($body, $signature, $config->getMchPrivateKey(), OPENSSL_ALGO_SHA256)) {
+        if (!openssl_sign($body, $signature, $config->getMchApiClientKey(), OPENSSL_ALGO_SHA256)) {
             throw new Wechat('Signing the input $message failed, please checking your $privateKey whether or nor correct.');
         }
 

@@ -4,7 +4,7 @@ namespace EasySwoole\Pay\Beans\Wechat;
 
 class H5Info extends BaseBean
 {
-    public string $type = 'Mobile';
+    public string $type = 'Wap';
 
     public ?string $app_name;
 

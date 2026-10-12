@@ -6,12 +6,12 @@ use EasySwoole\Spl\SplBean;
 
 class Native extends SplBean
 {
-    protected $code_url;
+    public string $code_url;
 
     /**
      * @return mixed
      */
-    public function getCodeUrl()
+    public function getCodeUrl(): string
     {
         return $this->code_url;
     }
@@ -19,7 +19,7 @@ class Native extends SplBean
     /**
      * @param mixed $code_url
      */
-    public function setCodeUrl($code_url): void
+    public function setCodeUrl(string $code_url): void
     {
         $this->code_url = $code_url;
     }
