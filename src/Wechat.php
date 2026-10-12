@@ -4,6 +4,7 @@ namespace EasySwoole\Pay;
 
 use EasySwoole\HttpClient\Bean\Response;
 use EasySwoole\HttpClient\HttpClient;
+use EasySwoole\Pay\Beans\Proxy;
 use EasySwoole\Pay\Config\WechatConfig;
 use EasySwoole\Pay\Exception\WechatApiError;
 use EasySwoole\Pay\Request\Wechat\App;
@@ -22,9 +23,18 @@ use EasySwoole\Pay\Response\Wechat\Native as NativeResponse;
 
 class Wechat
 {
+    private ?Proxy $proxy = null;
+
     function __construct(
         protected WechatConfig $config
     ){}
+
+
+    function setProxy(?Proxy $proxy):Wechat
+    {
+        $this->proxy = $proxy;
+        return $this;
+    }
 
     function certificates(bool $autoDecrypt = true): array
     {
@@ -191,6 +201,9 @@ class Wechat
         $token = $this->sign("GET",$path,"");
         $url = "https://api.mch.weixin.qq.com{$path}";
         $client = new HttpClient($url);
+        if(!empty($this->proxy)){
+            $client->setClientSettings($this->proxy->toArray());
+        }
         $client->setHeader("Authorization",$token,false);
         return $client->get();
     }
@@ -200,6 +213,9 @@ class Wechat
         $token = $this->sign("POST",$path,$json);
         $url = "https://api.mch.weixin.qq.com{$path}";
         $client = new HttpClient($url);
+        if(!empty($this->proxy)){
+            $client->setClientSettings($this->proxy->toArray());
+        }
         $client->setHeader("Authorization",$token,false);
         return  $client->postJson($json);
     }
