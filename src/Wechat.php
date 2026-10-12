@@ -15,6 +15,7 @@ use EasySwoole\Pay\Request\Wechat\Native;
 use EasySwoole\Pay\Response\Wechat\Query;
 use EasySwoole\Pay\Utility\AesGcm;
 use EasySwoole\Spl\SplArray;
+use EasySwoole\Spl\SplBean;
 use EasySwoole\Utility\Random;
 use EasySwoole\Pay\Response\Wechat\JsApi as JsApiResponse;
 use EasySwoole\Pay\Response\Wechat\App as AppResponse;
@@ -94,7 +95,10 @@ class Wechat
         $path = "/v3/pay/transactions/jsapi";
         $request->mchid = $this->config->getMchId();
         $request->appid = $this->config->getAppId();
-        $json = json_encode($request->toArray());
+        $json = json_encode(
+            $request->toArray(SplBean::FILTER_NOT_NULL),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
 
@@ -118,7 +122,10 @@ class Wechat
         $path = "/v3/pay/transactions/app";
         $request->appid = $this->config->getAppId();
         $request->mchid = $this->config->getMchId();
-        $json = json_encode($request->toArray(null,$request::FILTER_NOT_NULL));
+        $json = json_encode(
+            $request->toArray(SplBean::FILTER_NOT_NULL),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['prepay_id'])){
@@ -145,7 +152,10 @@ class Wechat
         $request->mchid = $this->config->getMchId();
         $request->appid = $this->config->getAppId();
 
-        $json = json_encode($request->toArray(),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+        $json = json_encode(
+            $request->toArray(SplBean::FILTER_NOT_NULL),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['h5_url'])){
@@ -165,7 +175,10 @@ class Wechat
         $path = "/v3/pay/transactions/native";
         $request->appid = $this->config->getAppId();
         $request->mchid = $this->config->getMchId();
-        $json = json_encode($request->toArray($request::FILTER_NOT_NULL));
+        $json = json_encode(
+            $request->toArray(SplBean::FILTER_NOT_NULL),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
         $resp = $this->postRequest($path,$json);
         $json = json_decode($resp->getBody(),true);
         if(isset($json['code_url'])){

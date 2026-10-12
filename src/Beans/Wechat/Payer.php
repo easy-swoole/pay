@@ -2,9 +2,7 @@
 
 namespace EasySwoole\Pay\Beans\Wechat;
 
-use EasySwoole\Spl\SplBean;
-
-class Payer extends SplBean
+class Payer extends BaseBean
 {
     public string $openid;
 }
